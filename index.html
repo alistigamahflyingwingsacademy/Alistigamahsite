@@ -49,11 +49,11 @@
 <div id="toast" class="toast"></div>
 <div id="globalLoader" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[9998] hidden"><div class="spinner"></div></div>
 
-<!-- LANDING PAGE (unchanged) -->
+<!-- LANDING PAGE -->
 <div id="landingPage" class="min-h-screen flex flex-col">
     <div class="hero-pattern text-white py-16 md:py-20">
         <div class="container mx-auto px-6 text-center">
-            <img src="logo.jpg" alt="Academy Logo" class="h-20 w-auto mx-auto mb-4 rounded-full shadow-lg border-2 border-amber-300">
+            <img src="https://placehold.co/100x100?text=Logo" alt="Academy Logo" class="h-20 w-auto mx-auto mb-4 rounded-full shadow-lg border-2 border-amber-300">
             <h1 class="text-4xl md:text-5xl font-bold">Al‑Istiqaamah <span class="text-amber-300">Flying Wings Academy</span></h1>
             <p class="text-lg opacity-90 mt-2">Faith • Knowledge • Leadership</p>
             <div class="bg-amber-900/30 border-l-4 border-amber-400 p-3 rounded-r-xl mb-4 mx-auto max-w-2xl">
@@ -91,7 +91,7 @@
     <footer class="bg-slate-900 text-white text-center py-4 mt-auto"><p>© 2026 Al‑Istiqaamah Flying Wings Academy | No. 10 Federal Government Layout, Samaru, Zaria | <i class="fas fa-microchip"></i> Powered by Arrahmahtelecommunications</p></footer>
 </div>
 
-<!-- MODALS (same as before, all present) -->
+<!-- MODALS -->
 <div id="loginModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('loginModal')">&times;</span><h2 class="text-2xl font-bold mb-4">Access Portal</h2><div class="flex gap-3 mb-4"><button id="adminTab" class="flex-1 py-2 bg-amber-500 rounded-full text-white">Admin</button><button id="staffTab" class="flex-1 py-2 bg-gray-200 rounded-full">Staff</button></div><form id="adminLoginForm"><input id="adminEmail" placeholder="Email" class="border p-3 w-full mb-3 rounded-xl"><input id="adminPassword" placeholder="Password" type="password" class="border p-3 w-full mb-4 rounded-xl"><button type="submit" class="apply-btn w-full py-3 rounded-xl font-semibold">Login</button></form><form id="staffLoginForm" style="display:none"><input id="staffUsername" placeholder="Staff ID" class="border p-3 w-full mb-3 rounded-xl"><input id="staffPassword" placeholder="Password" type="password" class="border p-3 w-full mb-4 rounded-xl"><button type="submit" class="apply-btn w-full py-3 rounded-xl">Login</button></form></div></div>
 <div id="parentModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('parentModal')">&times;</span><h2 class="text-2xl font-bold mb-4">Parent Login</h2><form id="parentLoginForm"><input id="studentRegNo" placeholder="Student Reg Number" class="border p-3 w-full mb-3 rounded-xl"><input id="parentPwd" placeholder="Password (default: al123)" type="password" class="border p-3 w-full mb-4 rounded-xl"><button type="submit" class="apply-btn w-full py-3 rounded-xl">Login</button></form></div></div>
 <div id="adminSignupModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('adminSignupModal')">&times;</span><h2 class="text-2xl font-bold mb-3">Admin Signup</h2><form id="adminSignupForm"><input id="regCode" placeholder="Registration Code" class="border p-3 w-full mb-2 rounded-xl"><input id="signupEmail" placeholder="Email" class="border p-3 w-full mb-2 rounded-xl"><input id="signupPassword" placeholder="Password" type="password" class="border p-3 w-full mb-2 rounded-xl"><input id="signupFullName" placeholder="Full Name" class="border p-3 w-full mb-2 rounded-xl"><select id="signupRole" class="border p-3 w-full mb-4 rounded-xl"><option value="dg_ceo">DG/CEO</option><option value="daf">DAF</option><option value="management_committee">Management Committee</option><option value="do">DO</option><option value="der">DER</option><option value="dprpa">DPRPA</option><option value="headteacher">Headteacher</option><option value="teacher">Teacher</option></select><button type="submit" class="apply-btn w-full py-3 rounded-xl">Create Account</button></form></div></div>
@@ -132,7 +132,6 @@ let currentUser = null;
 let schoolData = { students: [], teachers: [], profiles: [], applications: [], results: [], payments: [], bankTransfers: [], staffAppraisals: [], slides: [], announcements: [], resultExtras: [], payrollRecords: [], dgAppraisals: [], studentAppraisals: [] };
 let idleTimeout;
 
-// ========== UTILITIES ==========
 function showToast(msg, isErr=false) { let t=document.getElementById('toast'); t.textContent=msg; t.style.backgroundColor=isErr?'#dc2626':'#10b981'; t.style.display='block'; setTimeout(()=>t.style.display='none',4000); }
 function showLoading(show) { document.getElementById('globalLoader').style.display=show?'flex':'none'; }
 function escapeHtml(str) { return String(str??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
@@ -150,7 +149,7 @@ async function refreshData() {
             supabaseClient.from('payroll_records').select('*'), supabaseClient.from('dg_appraisals').select('*'), supabaseClient.from('student_appraisals').select('*')
         ]);
         schoolData = { students: sRes.data||[], teachers: tRes.data||[], profiles: pRes.data||[], applications: aRes.data||[], results: rRes.data||[], payments: payRes.data||[], bankTransfers: btRes.data||[], staffAppraisals: saRes.data||[], slides: slRes.data||[], announcements: annRes.data||[], resultExtras: rexRes.data||[], payrollRecords: payrollRes.data||[], dgAppraisals: dgRes.data||[], studentAppraisals: stuAppRes.data||[] };
-    } catch(e) { console.error(e); } finally { showLoading(false); }
+    } catch(e) { console.error(e); showToast("Data sync error: "+e.message, true); } finally { showLoading(false); }
 }
 
 function resetIdleTimer() { if (!currentUser) return; if (idleTimeout) clearTimeout(idleTimeout); idleTimeout = setTimeout(() => { if (currentUser) { showToast("Auto-logout due to inactivity", false); logoutUser(); } }, 60 * 1000); }
@@ -169,7 +168,7 @@ function logoutUser() {
 async function renderLandingCarouselAndAnnouncement() {
     const ann = schoolData.announcements[0]?.content || 'Welcome to Flying Wings – Excellence in Islamic Education';
     document.getElementById('announcementBarWrapper').innerHTML = `<div class="bg-amber-100 border-l-4 border-amber-500 p-3 rounded-r-xl">📢 ${escapeHtml(ann)}</div>`;
-    let slides = schoolData.slides.length ? schoolData.slides : [{ image_url: 'https://via.placeholder.com/1200x500?text=Flying+Wings+Academy', caption: 'Empowering Minds & Souls' }];
+    let slides = schoolData.slides.length ? schoolData.slides : [{ image_url: 'https://picsum.photos/1200/500?random=1', caption: 'Empowering Minds & Souls' }];
     let idx = 0;
     const container = document.getElementById('slidesContainer');
     const dotsContainer = document.getElementById('dotsContainer');
@@ -192,7 +191,37 @@ async function staffLogin(username, pwd) { let {data:staff,error}=await supabase
 async function parentLogin(regNo, pwd) { if(pwd!=='al123') throw new Error('Invalid password'); let student=schoolData.students.find(s=>s.reg_number===regNo); if(!student) throw new Error('Student not found'); currentUser={role:'parent', full_name:`Parent of ${student.name}`, studentId:student.id}; await refreshData(); showDashboard(); closeModal('parentModal'); showToast(`Logged in as parent`); attachActivityListeners(); }
 async function adminSignup(code,email,pwd,name,role){ if(code!=='ALIFLY2026') throw new Error('Invalid code'); let {data,error}=await supabaseClient.auth.signUp({email,password:pwd}); if(error) throw error; await supabaseClient.from('profiles').insert([{id:data.user.id, full_name:name, role}]); showToast('Account created! Please verify email.'); closeModal('adminSignupModal'); }
 
-// ========== DASHBOARD & MENU ==========
+// ========== DASHBOARD VIEW (MISSING, NOW ADDED) ==========
+async function dashboardView() {
+    const stats = {
+        students: schoolData.students.length,
+        teachers: schoolData.teachers.length + schoolData.profiles.filter(p=>p.role && p.role!=='parent').length,
+        totalFeesCollected: schoolData.payments.reduce((s,p)=>s+(p.amount||0),0),
+        pendingApps: schoolData.applications.filter(a=>a.status!=='accepted').length
+    };
+    const recentStudents = [...schoolData.students].slice(-5);
+    const html = `
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
+            <div class="bg-white p-5 rounded-2xl shadow border-l-8 border-emerald-500"><p class="text-gray-500">Total Students</p><p class="text-3xl font-bold">${stats.students}</p></div>
+            <div class="bg-white p-5 rounded-2xl shadow border-l-8 border-amber-500"><p class="text-gray-500">Staff Members</p><p class="text-3xl font-bold">${stats.teachers}</p></div>
+            <div class="bg-white p-5 rounded-2xl shadow border-l-8 border-blue-500"><p class="text-gray-500">Fees Collected (₦)</p><p class="text-3xl font-bold">₦${stats.totalFeesCollected.toLocaleString()}</p></div>
+            <div class="bg-white p-5 rounded-2xl shadow border-l-8 border-purple-500"><p class="text-gray-500">Pending Apps</p><p class="text-3xl font-bold">${stats.pendingApps}</p></div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white p-5 rounded-2xl shadow"><h3 class="font-bold text-lg mb-3">📋 Recent Enrollments</h3><ul class="space-y-2">${recentStudents.map(s=>`<li>${escapeHtml(s.name)} - ${s.reg_number}</li>`).join('')}</ul></div>
+            <div class="bg-white p-5 rounded-2xl shadow"><canvas id="feeChart" height="200"></canvas></div>
+        </div>
+    `;
+    document.getElementById('mainContent').innerHTML = html;
+    setTimeout(() => {
+        const ctx = document.getElementById('feeChart')?.getContext('2d');
+        if(ctx) new Chart(ctx, { type: 'bar', data: { labels: TERMS, datasets: [{ label: 'Fees Collected (₦)', data: TERMS.map(t=> schoolData.payments.filter(p=>p.term===t).reduce((a,b)=>a+(b.amount||0),0)), backgroundColor: '#f59e0b' }] } });
+    }, 100);
+}
+async function saveStaffAppraisal(staffId, comment, rating) { await supabaseClient.from('staff_appraisals').insert([{ staff_id: staffId, comment, rating, created_at: new Date() }]); }
+async function saveDGAppraisal(data) { await supabaseClient.from('dg_appraisals').insert([data]); }
+
+// ========== DASHBOARD & MENU (FIXED DEFAULT VIEW) ==========
 async function showDashboard() {
     document.getElementById('landingPage').style.display='none';
     document.getElementById('appContainer').classList.remove('hidden');
@@ -1107,98 +1136,3 @@ async function staffPerformanceAnalysisView() {
             <div class="table-container overflow-x-auto">
                 <table class="min-w-full">
                     <thead class="bg-gray-100">
-                        <tr><th>Name</th><th>Role</th><th>Avg Goal Completion (%)</th><th>Avg Skill Rating (1-5)</th><th>Overall Score (%)</th><th># Appraisals</th></tr>
-                    </thead>
-                    <tbody id="perfTableBody"></tbody>
-                </table>
-            </div>
-            <canvas id="staffPerformanceChart" class="mt-8 max-h-80"></canvas>
-        </div>
-    `;
-    document.getElementById('mainContent').innerHTML = html;
-
-    function renderTable() {
-        const roleFilter = document.getElementById('staffRolePerfFilter').value;
-        const search = document.getElementById('staffPerfSearch').value.toLowerCase();
-        let filtered = staffPerformance.filter(s => (roleFilter === 'all' || s.role === roleFilter) &&
-            (s.name.toLowerCase().includes(search) || (s.role || '').toLowerCase().includes(search)));
-        const tbody = document.getElementById('perfTableBody');
-        tbody.innerHTML = filtered.map(s => `
-            <tr>
-                <td class="font-medium">${escapeHtml(s.name)}</td>
-                <td>${s.role}</td>
-                <td>${s.avgGoal.toFixed(1)}%</td>
-                <td>${s.avgSkill.toFixed(1)}</td>
-                <td><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-emerald-600 h-2.5 rounded-full" style="width: ${s.overallScore}%"></div></div>${s.overallScore}%</td>
-                <td>${s.appraisalCount}</td>
-            </tr>
-        `).join('');
-        // Update chart (top 10 by overall score)
-        const top10 = [...filtered].sort((a,b) => b.overallScore - a.overallScore).slice(0,10);
-        if (window.staffPerfChart) window.staffPerfChart.destroy();
-        window.staffPerfChart = new Chart(document.getElementById('staffPerformanceChart'), {
-            type: 'bar',
-            data: {
-                labels: top10.map(s => s.name.split(' ')[0]),
-                datasets: [{
-                    label: 'Overall Performance Score (%)',
-                    data: top10.map(s => s.overallScore),
-                    backgroundColor: 'rgba(16, 185, 129, 0.6)',
-                    borderRadius: 8
-                }]
-            },
-            options: { scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score %' } } } }
-        });
-    }
-
-    document.getElementById('staffRolePerfFilter').addEventListener('change', renderTable);
-    document.getElementById('staffPerfSearch').addEventListener('input', renderTable);
-    document.getElementById('refreshPerfBtn').addEventListener('click', async () => {
-        await refreshData();
-        // Recompute staffPerformance
-        const newAppraisals = schoolData.staffAppraisals;
-        staffPerformance.forEach(s => {
-            const my = newAppraisals.filter(a => a.staff_id === s.id);
-            const avgGoal = my.length ? my.reduce((sum, a) => sum + (a.goal_completion || 0), 0) / my.length : 0;
-            const avgSkill = my.length ? my.reduce((sum, a) => sum + (a.skill_rating || 0), 0) / my.length : 0;
-            s.avgGoal = avgGoal;
-            s.avgSkill = avgSkill;
-            s.overallScore = (((avgGoal / 100) * 5 + avgSkill) / 2 * 20).toFixed(1);
-            s.appraisalCount = my.length;
-        });
-        renderTable();
-        showToast("Data refreshed");
-    });
-    renderTable();
-}
-async function academicPerformanceView() { document.getElementById('mainContent').innerHTML = `<div class="bg-white p-5"><canvas id="perfChart" height="200"></canvas></div>`; setTimeout(()=>{ new Chart(document.getElementById('perfChart'),{ type:'bar', data:{ labels:CLASSES, datasets:[{ label:'Average Score', data:CLASSES.map(ac=>{ let avg = schoolData.results.filter(r=>schoolData.students.find(s=>s.id===r.student_id)?.academic_class===ac).reduce((a,b)=>a+(b.ca1+b.ca2+b.exam),0)/Math.max(1, schoolData.results.filter(r=>schoolData.students.find(s=>s.id===r.student_id)?.academic_class===ac).length); return avg||0; }), backgroundColor:'#f59e0b' }] } }); },100); }
-async function saveAppraisal(studentId, comment, rating) { await supabaseClient.from('student_appraisals').insert([{ student_id: studentId, comment, rating, created_at: new Date() }]); }
-
-// ========== EVENT LISTENERS ==========
-document.addEventListener('DOMContentLoaded', async()=>{
-    await refreshData();
-    renderLandingCarouselAndAnnouncement();
-    CLASSES.forEach(c=>{ let opt=document.createElement('option'); opt.value=c; opt.text=c; document.getElementById('appDesiredClass')?.appendChild(opt); });
-    document.getElementById('staffAdminBtn').onclick=()=>document.getElementById('loginModal').style.display='flex';
-    document.getElementById('parentBtn').onclick=()=>document.getElementById('parentModal').style.display='flex';
-    document.getElementById('adminSignupBtn').onclick=()=>document.getElementById('adminSignupModal').style.display='flex';
-    document.getElementById('publicApplyBtn').onclick=()=>document.getElementById('fullApplicationModal').style.display='flex';
-    document.getElementById('contactBtn').onclick=()=>document.getElementById('contactModal').style.display='flex';
-    document.getElementById('fullApplicationForm').onsubmit=async(e)=>{ e.preventDefault(); let fd=new FormData(e.target); let fullName = `${fd.get('first_name')} ${fd.get('surname')}`; let email = fd.get('parent_email') || 'applicant@example.com'; await supabaseClient.from('applications').insert([{ full_name: fullName, email: email, desired_class: fd.get('desired_class'), status:'pending' }]); showToast('Application submitted'); closeModal('fullApplicationModal'); };
-    document.getElementById('adminLoginForm').onsubmit=(e)=>{ e.preventDefault(); adminLogin(adminEmail.value, adminPassword.value).catch(err=>showToast(err.message,true)); };
-    document.getElementById('staffLoginForm').onsubmit=(e)=>{ e.preventDefault(); staffLogin(staffUsername.value, staffPassword.value).catch(err=>showToast(err.message,true)); };
-    document.getElementById('parentLoginForm').onsubmit=(e)=>{ e.preventDefault(); parentLogin(studentRegNo.value, parentPwd.value).catch(err=>showToast(err.message,true)); };
-    document.getElementById('adminSignupForm').onsubmit=async(e)=>{ e.preventDefault(); try{ await adminSignup(regCode.value, signupEmail.value, signupPassword.value, signupFullName.value, signupRole.value); }catch(err){ showToast(err.message,true); } };
-    document.getElementById('confirmAcceptBtn').onclick = async()=>{ if(window.pendingAcceptId){ await supabaseClient.from('applications').update({status:'accepted'}).eq('id',window.pendingAcceptId); await refreshData(); showToast("Application accepted"); closeModal('emailFeedbackModal'); applicationsViewEnhanced(); } };
-    document.getElementById('addStaffForm').onsubmit=async(e)=>{ e.preventDefault(); showLoading(true); try { await supabaseClient.from('teachers').insert([{ name: document.getElementById('staffName').value, email: document.getElementById('staffEmail').value, role: document.getElementById('staffRole').value, section: document.getElementById('staffSection').value, assigned_class: document.getElementById('staffAssignedClass').value, salary: parseInt(document.getElementById('staffSalary').value)||0, username: document.getElementById('newStaffUsername').value, password: document.getElementById('newStaffPassword').value }]); await refreshData(); closeModal('addStaffModal'); unifiedStaffList(); showToast("Staff added"); } catch(err) { showToast(err.message, true); } finally { showLoading(false); } };
-    document.getElementById('logoutBtn').onclick=()=>logoutUser();
-    document.getElementById('adminTab').onclick=()=>{ document.getElementById('adminLoginForm').style.display='block'; document.getElementById('staffLoginForm').style.display='none'; };
-    document.getElementById('staffTab').onclick=()=>{ document.getElementById('staffLoginForm').style.display='block'; document.getElementById('adminLoginForm').style.display='none'; };
-    document.getElementById('mobileMenuToggle').onclick=()=>{ document.getElementById('dynamicSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('active'); };
-    document.getElementById('sidebarOverlay').onclick=closeMobileSidebar;
-    document.getElementById('closeMobileSidebar').onclick=closeMobileSidebar;
-    setInterval(()=>{ let d=new Date(); document.getElementById('liveTime').innerText=d.toLocaleTimeString(); document.getElementById('liveDate').innerText=d.toLocaleDateString(); },1000);
-});
-</script>
-</body>
-</html>

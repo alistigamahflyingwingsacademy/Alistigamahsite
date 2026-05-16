@@ -223,22 +223,30 @@ async function showDashboard() {
         'Section student':sectionStudentsView, 'Section fees':sectionFeesView, 'Staff performance analysis':staffPerformanceAnalysisView,
         'Academic performance':academicPerformanceView, 'Sections analysis':sectionAnalysisView
     };
-    document.querySelectorAll('.nav-link').forEach(el => el.addEventListener('click', () => {
-        let fn = viewMap[el.dataset.view];
-        if (fn && typeof fn === 'function') fn();
-        else dashboardView();
-        closeMobileSidebar();
-    }));
-    // Attach logout and mobile sidebar listeners
-    document.getElementById('logoutBtn').addEventListener('click', logoutUser);
-    document.getElementById('closeMobileSidebar')?.addEventListener('click', closeMobileSidebar);
-    document.getElementById('mobileMenuToggle')?.addEventListener('click', () => {
-        document.getElementById('dynamicSidebar').classList.add('open');
-        document.getElementById('sidebarOverlay').classList.add('active');
-    });
+    // ... inside showDashboard(), after building the nav and attaching listeners
+
+document.querySelectorAll('.nav-link').forEach(el => el.addEventListener('click', () => {
+    let fn = viewMap[el.dataset.view];
+    if (fn && typeof fn === 'function') fn();
+    else if (currentUser.role === 'parent') parentDashboardView();
+    else dashboardView();
+    closeMobileSidebar();
+}));
+
+// Attach logout and mobile sidebar listeners
+document.getElementById('logoutBtn').addEventListener('click', logoutUser);
+document.getElementById('closeMobileSidebar')?.addEventListener('click', closeMobileSidebar);
+document.getElementById('mobileMenuToggle')?.addEventListener('click', () => {
+    document.getElementById('dynamicSidebar').classList.add('open');
+    document.getElementById('sidebarOverlay').classList.add('active');
+});
+
+// 👇 IMPORTANT: show correct dashboard based on role
+if (currentUser.role === 'parent') {
+    parentDashboardView();
+} else {
     dashboardView();
 }
-
 // ========== DASHBOARD VIEW ==========
 async function dashboardView() {
     const stats = {
@@ -709,4 +717,4 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 </script>
 </body>
-</html>
+                                                                                                                                                                                                                                                                                                                                                                                                                                        </html>

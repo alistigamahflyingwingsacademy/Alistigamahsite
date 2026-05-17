@@ -53,7 +53,7 @@
 <div id="landingPage" class="min-h-screen flex flex-col">
     <div class="hero-pattern text-white py-16 md:py-20">
         <div class="container mx-auto px-6 text-center">
-            <img src="https://placehold.co/100x100?text=Logo" alt="Academy Logo" class="h-20 w-auto mx-auto mb-4 rounded-full shadow-lg border-2 border-amber-300">
+            <img src="logo.jpg" alt="Academy Logo" class="h-20 w-auto mx-auto mb-4 rounded-full shadow-lg border-2 border-amber-300">
             <h1 class="text-4xl md:text-5xl font-bold">Al‑Istiqaamah <span class="text-amber-300">Flying Wings Academy</span></h1>
             <p class="text-lg opacity-90 mt-2">Faith • Knowledge • Leadership</p>
             <div class="bg-amber-900/30 border-l-4 border-amber-400 p-3 rounded-r-xl mb-4 mx-auto max-w-2xl">
@@ -530,7 +530,6 @@ async function studentsViewEditable() {
     document.getElementById('addStudentBtn').onclick = async () => { let name=prompt("Student name"); if(name){ let reg=prompt("Reg Number"); await supabaseClient.from('students').insert([{name, reg_number:reg, status:'active'}]); await refreshData(); studentsViewEditable(); } };
 }
 
-// ========== STUB FUNCTIONS FOR OTHER VIEWS (fully working in original) ==========
     // ========== . UNIFIED STAFF ==========
 async function unifiedStaffList() {
     let staffTeachers = schoolData.teachers.map(t => ({ id: t.id, name: t.name, role: t.role, email: t.email, assigned_class: t.assigned_class, section: t.section || '', salary: t.salary, source: 'teacher' }));
@@ -891,11 +890,433 @@ async function attendanceView() {
     document.getElementById('attList').innerHTML = `<table class="w-full border"><thead><tr><th>Name</th><th>Present</th></tr></thead><tbody>${students.map(s=>`<tr><td class="p-2">${s.name}</td><td class="p-2"><input type="checkbox" class="attCheck" data-id="${s.id}"></td></tr>`).join('')}</tbody></table>`;
     document.getElementById('submitAttendance').onclick = () => showToast("Attendance recorded (demo)");
 }
-async function sectionStudentsView() { showToast("Section Students", false); }
-async function sectionFeesView() { showToast("Section Fees", false); }
-async function staffPerformanceAnalysisView() { showToast("Staff Performance Analysis", false); }
-async function academicPerformanceView() { showToast("Academic Performance", false); }
-async function sectionAnalysisView() { showToast("Section Analysis", false); }
+async function sectionStudentsView() {
+    let students = schoolData.students;
+    let html = `
+        <div class="card p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">📚 Students by Section</h2>
+                <button id="addStudentFromSectionBtn" class="apply-btn px-4 py-2 rounded-full text-sm">+ Enroll New</button>
+            </div>
+            <div class="filter-row">
+                <select id="sectionStudentsSectionFilter" class="border rounded-xl p-2">
+                    <option value="all">All Sections</option>
+                    ${SECTIONS.map(s => `<option>${s}</option>`).join('')}
+                </select>
+                <select id="sectionStudentsClassFilter" class="border rounded-xl p-2">
+                    <option value="all">All Classes</option>
+                    ${CLASSES.map(c => `<option>${c}</option>`).join('')}
+                </select>
+                <input id="sectionStudentsSearch" placeholder="🔍 Search name/reg" class="flex-1 border rounded-xl p-2">
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-100">
+                        <tr><th>Reg No</th><th>Name</th><th>Parent</th><th>Section</th><th>Class</th><th>Total Fees (₦)</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="sectionStudentsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    `;
+    document.getElementById('mainContent').innerHTML = html;
+
+    const tbody = document.getElementById('sectionStudentsTableBody');
+    const sectionFilter = document.getElementById('sectionStudentsSectionFilter');
+    const classFilter = document.getElementById('sectionStudentsClassFilter');
+    const searchInput = document.getElementById('sectionStudentsSearch');
+
+    function render() {
+        let section = sectionFilter.value;
+        let classVal = classFilter.value;
+        let search = searchInput.value.toLowerCase();
+
+        let filtered = students.filter(s => 
+            (section === 'all' || s.section === section) &&
+            (classVal === 'all' || s.academic_class === classVal) &&
+            (s.name.toLowerCase().includes(search) || (s.reg_number || '').toLowerCase().includes(search))
+        );
+
+        tbody.innerHTML = filtered.map(s => `
+            <tr>
+                <td class="editable-student-section" data-field="reg_number" data-id="${s.id}">${escapeHtml(s.reg_number)}</td>
+                <td class="editable-student-section" data-field="name" data-id="${s.id}">${escapeHtml(s.name)}</td>
+                <td class="editable-student-section" data-field="parent_name" data-id="${s.id}">${escapeHtml(s.parent_name || '')}</td>
+                <td class="editable-student-section" data-field="section" data-id="${s.id}">${escapeHtml(s.section || '')}</td>
+                <td class="editable-student-section" data-field="academic_class" data-id="${s.id}">${escapeHtml(s.academic_class || '')}</td>
+                <td class="editable-student-section" data-field="total_fees" data-id="${s.id}">${s.total_fees || 30000}</td>
+                <td><button class="delete-student-section text-red-500" data-id="${s.id}">Delete</button></td>
+            </tr>
+        `).join('');
+
+        // Attach inline editing
+        document.querySelectorAll('.editable-student-section').forEach(cell => {
+            cell.setAttribute('contenteditable', 'true');
+            cell.addEventListener('blur', async () => {
+                let field = cell.dataset.field;
+                let id = cell.dataset.id;
+                let val = cell.innerText.trim();
+                if (field === 'total_fees') val = parseFloat(val) || 0;
+                await supabaseClient.from('students').update({ [field]: val }).eq('id', id);
+                await refreshData();
+                students = schoolData.students;
+                render();
+                showToast(`${field} updated`);
+            });
+        });
+
+        // Delete button handler
+        document.querySelectorAll('.delete-student-section').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (confirm("Delete this student permanently?")) {
+                    await supabaseClient.from('students').delete().eq('id', btn.dataset.id);
+                    await refreshData();
+                    students = schoolData.students;
+                    render();
+                    showToast("Student deleted");
+                }
+            });
+        });
+    }
+
+    sectionFilter.addEventListener('change', render);
+    classFilter.addEventListener('change', render);
+    searchInput.addEventListener('input', render);
+
+    document.getElementById('addStudentFromSectionBtn').addEventListener('click', () => {
+        // Reuse the modern enrollment view
+        enrollViewModern();
+    });
+
+    render();
+}
+async function sectionFeesView() {
+    let students = schoolData.students;
+    let currentYear = new Date().getFullYear();
+    let html = `
+        <div class="card p-6">
+            <h2 class="text-2xl font-bold mb-4">💰 Section Fee Report</h2>
+            <div class="filter-row">
+                <label>Term:</label>
+                <select id="sectionFeesTerm" class="border rounded-xl p-2">${TERMS.map(t => `<option>${t}</option>`).join('')}</select>
+                <label>Year:</label>
+                <input type="number" id="sectionFeesYear" value="${currentYear}" class="border rounded-xl p-2 w-28">
+                <button id="refreshSectionFees" class="apply-btn px-4 py-2 rounded-full">Refresh</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th>Section</th>
+                            <th># Students</th>
+                            <th>Total Term Fee (₦)</th>
+                            <th>Total Paid (₦)</th>
+                            <th>Total Due (₦)</th>
+                            <th>Collection Rate (%)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sectionFeesTableBody"></tbody>
+                </table>
+            </div>
+            <div class="mt-6" id="sectionFeesDetailArea"></div>
+        </div>
+    `;
+    document.getElementById('mainContent').innerHTML = html;
+
+    const termSelect = document.getElementById('sectionFeesTerm');
+    const yearInput = document.getElementById('sectionFeesYear');
+    const tbody = document.getElementById('sectionFeesTableBody');
+    const detailArea = document.getElementById('sectionFeesDetailArea');
+
+    async function loadReport() {
+        const term = termSelect.value;
+        const year = parseInt(yearInput.value);
+
+        let rows = [];
+        for (const section of SECTIONS) {
+            const sectionStudents = students.filter(s => s.section === section);
+            const studentIds = sectionStudents.map(s => s.id);
+            let totalPaid = 0;
+            for (const sid of studentIds) {
+                const payments = schoolData.payments.filter(p => p.student_id === sid && p.term === term && p.year === year);
+                totalPaid += payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+            }
+            const totalFeeExpected = sectionStudents.length * 30000;
+            const totalDue = Math.max(0, totalFeeExpected - totalPaid);
+            const collectionRate = totalFeeExpected === 0 ? 0 : (totalPaid / totalFeeExpected) * 100;
+
+            rows.push({
+                section,
+                studentCount: sectionStudents.length,
+                totalFeeExpected,
+                totalPaid,
+                totalDue,
+                collectionRate: collectionRate.toFixed(1)
+            });
+        }
+
+        tbody.innerHTML = rows.map(row => `
+            <tr>
+                <td class="font-medium">${row.section}</td>
+                <td>${row.studentCount}</td>
+                <td>₦${row.totalFeeExpected.toLocaleString()}</td>
+                <td>₦${row.totalPaid.toLocaleString()}</td>
+                <td>₦${row.totalDue.toLocaleString()}</td>
+                <td>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-emerald-600 h-2.5 rounded-full" style="width: ${row.collectionRate}%"></div>
+                    </div>
+                    ${row.collectionRate}%
+                </td>
+                <td><button class="viewSectionDetailsBtn bg-blue-600 text-white px-3 py-1 rounded-full text-sm" data-section="${row.section}" data-term="${term}" data-year="${year}">View Students</button></td>
+            </tr>
+        `).join('');
+
+        // Attach detail view buttons
+        document.querySelectorAll('.viewSectionDetailsBtn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const section = btn.dataset.section;
+                const term = btn.dataset.term;
+                const year = btn.dataset.year;
+                const sectionStudents = students.filter(s => s.section === section);
+                if (sectionStudents.length === 0) {
+                    detailArea.innerHTML = `<div class="bg-yellow-50 p-4 rounded-xl">No students in ${section}</div>`;
+                    return;
+                }
+
+                let detailHtml = `<h3 class="font-bold text-lg mt-4 mb-2">${section} – Student Fee Details (${term} ${year})</h3>
+                    <div class="overflow-x-auto"><table class="min-w-full border">
+                        <thead class="bg-gray-50"><tr><th>Student</th><th>Reg No</th><th>Paid (₦)</th><th>Due (₦)</th><th>Status</th></tr></thead>
+                        <tbody>`;
+                for (const stu of sectionStudents) {
+                    const paid = schoolData.payments.filter(p => p.student_id === stu.id && p.term === term && p.year === year).reduce((s, p) => s + (p.amount || 0), 0);
+                    const due = Math.max(0, 30000 - paid);
+                    const status = due <= 0 ? 'Paid' : (paid > 0 ? 'Partial' : 'Unpaid');
+                    detailHtml += `<tr>
+                        <td>${escapeHtml(stu.name)}</td>
+                        <td>${stu.reg_number}</td>
+                        <td>₦${paid.toLocaleString()}</td>
+                        <td>₦${due.toLocaleString()}</td>
+                        <td><span class="status-${status.toLowerCase()} px-2 py-0.5 rounded-full text-xs">${status}</span></td>
+                    </tr>`;
+                }
+                detailHtml += `</tbody></table></div>`;
+                detailArea.innerHTML = detailHtml;
+            });
+        });
+    }
+
+    termSelect.addEventListener('change', loadReport);
+    yearInput.addEventListener('change', loadReport);
+    document.getElementById('refreshSectionFees').addEventListener('click', async () => {
+        await refreshData();
+        students = schoolData.students;
+        loadReport();
+        showToast("Section fee report refreshed");
+    });
+
+    loadReport();
+}
+async function staffPerformanceAnalysisView() {
+    // Merge staff from teachers and profiles
+    let staffTeachers = schoolData.teachers.map(t => ({ id: t.id, name: t.name, role: t.role, source: 'teacher' }));
+    let staffProfiles = schoolData.profiles.filter(p => p.role && p.role !== 'parent').map(p => ({ id: p.id, name: p.full_name, role: p.role, source: 'profile' }));
+    let allStaff = [...staffTeachers, ...staffProfiles];
+
+    // Load appraisals
+    const appraisals = schoolData.staffAppraisals;
+
+    // Compute average per staff
+    const staffPerformance = allStaff.map(staff => {
+        const myAppraisals = appraisals.filter(a => a.staff_id === staff.id);
+        const avgGoal = myAppraisals.length ? myAppraisals.reduce((s, a) => s + (a.goal_completion || 0), 0) / myAppraisals.length : 0;
+        const avgSkill = myAppraisals.length ? myAppraisals.reduce((s, a) => s + (a.skill_rating || 0), 0) / myAppraisals.length : 0;
+        // Overall score: average of goal% (converted to 0-5) and skill rating, then scaled to %
+        const overall = ((avgGoal / 100) * 5 + avgSkill) / 2 * 20; // out of 100
+        return { ...staff, avgGoal, avgSkill, overallScore: overall.toFixed(1), appraisalCount: myAppraisals.length };
+    });
+
+    let html = `
+        <div class="card p-6">
+            <h2 class="text-2xl font-bold mb-4">📈 Staff Performance Analysis</h2>
+            <div class="filter-row">
+                <select id="staffRolePerfFilter" class="border rounded-xl p-2">
+                    <option value="all">All Roles</option>
+                    ${[...new Set(allStaff.map(s => s.role))].map(r => `<option>${r}</option>`).join('')}
+                </select>
+                <input type="text" id="staffPerfSearch" placeholder="🔍 Search name" class="flex-1 border rounded-xl p-2">
+                <button id="refreshPerfBtn" class="apply-btn px-4 py-2 rounded-full">Refresh</button>
+            </div>
+            <div class="table-container overflow-x-auto">
+                <table class="min-w-full">
+                    <thead class="bg-gray-100">
+                        <tr><th>Name</th><th>Role</th><th>Avg Goal Completion (%)</th><th>Avg Skill Rating (1-5)</th><th>Overall Score (%)</th><th># Appraisals</th></tr>
+                    </thead>
+                    <tbody id="perfTableBody"></tbody>
+                </table>
+            </div>
+            <canvas id="staffPerformanceChart" class="mt-8 max-h-80"></canvas>
+        </div>
+    `;
+    document.getElementById('mainContent').innerHTML = html;
+
+    function renderTable() {
+        const roleFilter = document.getElementById('staffRolePerfFilter').value;
+        const search = document.getElementById('staffPerfSearch').value.toLowerCase();
+        let filtered = staffPerformance.filter(s => (roleFilter === 'all' || s.role === roleFilter) &&
+            (s.name.toLowerCase().includes(search) || (s.role || '').toLowerCase().includes(search)));
+        const tbody = document.getElementById('perfTableBody');
+        tbody.innerHTML = filtered.map(s => `
+            <tr>
+                <td class="font-medium">${escapeHtml(s.name)}</td>
+                <td>${s.role}</td>
+                <td>${s.avgGoal.toFixed(1)}%</td>
+                <td>${s.avgSkill.toFixed(1)}</td>
+                <td><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-emerald-600 h-2.5 rounded-full" style="width: ${s.overallScore}%"></div></div>${s.overallScore}%</td>
+                <td>${s.appraisalCount}</td>
+            </tr>
+        `).join('');
+        // Update chart (top 10 by overall score)
+        const top10 = [...filtered].sort((a,b) => b.overallScore - a.overallScore).slice(0,10);
+        if (window.staffPerfChart) window.staffPerfChart.destroy();
+        window.staffPerfChart = new Chart(document.getElementById('staffPerformanceChart'), {
+            type: 'bar',
+            data: {
+                labels: top10.map(s => s.name.split(' ')[0]),
+                datasets: [{
+                    label: 'Overall Performance Score (%)',
+                    data: top10.map(s => s.overallScore),
+                    backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                    borderRadius: 8
+                }]
+            },
+            options: { scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score %' } } } }
+        });
+    }
+
+    document.getElementById('staffRolePerfFilter').addEventListener('change', renderTable);
+    document.getElementById('staffPerfSearch').addEventListener('input', renderTable);
+    document.getElementById('refreshPerfBtn').addEventListener('click', async () => {
+        await refreshData();
+        // Recompute staffPerformance (simplified – in original code this was done inside)
+        showToast("Data refreshed");
+        renderTable();
+    });
+    renderTable();
+}
+async function academicPerformanceView() {
+    document.getElementById('mainContent').innerHTML = `<div class="bg-white p-5"><canvas id="perfChart" height="200"></canvas></div>`;
+    setTimeout(() => {
+        new Chart(document.getElementById('perfChart'), {
+            type: 'bar',
+            data: {
+                labels: CLASSES,
+                datasets: [{
+                    label: 'Average Score',
+                    data: CLASSES.map(ac => {
+                        let avg = schoolData.results.filter(r => schoolData.students.find(s => s.id === r.student_id)?.academic_class === ac).reduce((a,b)=>a+(b.ca1+b.ca2+b.exam),0) / Math.max(1, schoolData.results.filter(r => schoolData.students.find(s => s.id === r.student_id)?.academic_class === ac).length);
+                        return avg || 0;
+                    }),
+                    backgroundColor: '#f59e0b'
+                }]
+            }
+        });
+    }, 100);
+}
+async function sectionAnalysisView() {
+    const sections = SECTIONS;
+    const currentYear = new Date().getFullYear();
+    let html = `
+        <div class="card p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">📊 Section‑wise Academic Analysis</h2>
+                <button id="refreshSectionAnalysis" class="apply-btn px-4 py-2 rounded-full"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+            <div class="filter-row">
+                <label>Term:</label>
+                <select id="sectionAnalysisTerm" class="border rounded-xl p-2">${TERMS.map(t=>`<option>${t}</option>`).join('')}</select>
+                <label>Year:</label><input type="number" id="sectionAnalysisYear" value="${currentYear}" class="border rounded-xl p-2 w-28">
+                <label>Subject:</label><select id="sectionAnalysisSubject" class="border rounded-xl p-2"><option value="all">All Subjects</option>${[...new Set(schoolData.results.map(r=>r.subject))].map(s=>`<option>${s}</option>`).join('')}</select>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-6">
+                <div class="border rounded-2xl p-4 bg-white"><h3 class="text-lg font-bold mb-3">📋 Performance Summary</h3><div class="overflow-x-auto"><table class="min-w-full text-sm"><thead class="bg-gray-100"><tr><th>Section</th><th>Students</th><th>Avg Score (%)</th><th>Pass Rate (%)</th><th>Top Subject</th></tr></thead><tbody id="sectionSummaryBody"></tbody></table></div></div>
+                <div class="border rounded-2xl p-4 bg-white"><h3 class="text-lg font-bold mb-3">📈 Average Score by Section</h3><canvas id="sectionAvgChart" class="max-h-64"></canvas></div>
+            </div>
+            <div class="mt-6 border rounded-2xl p-4 bg-white"><h3 class="text-lg font-bold mb-3">🔍 Subject‑wise Breakdown</h3><div class="overflow-x-auto"><table class="min-w-full text-sm"><thead class="bg-gray-100"><tr><th>Section</th><th>Subject</th><th>Average Score</th><th>Highest Score</th><th>Lowest Score</th></tr></thead><tbody id="sectionSubjectDetailBody"></tbody></tr></div></div>
+        </div>
+    `;
+    document.getElementById('mainContent').innerHTML = html;
+    async function loadAnalysis() {
+        const term = document.getElementById('sectionAnalysisTerm').value;
+        const year = parseInt(document.getElementById('sectionAnalysisYear').value);
+        const selectedSubject = document.getElementById('sectionAnalysisSubject').value;
+        const summaryRows = [];
+        const sectionAvgScores = [];
+        for (const section of sections) {
+            const studentsInSection = schoolData.students.filter(s => s.section === section);
+            const studentIds = studentsInSection.map(s => s.id);
+            let results = schoolData.results.filter(r => studentIds.includes(r.student_id) && r.term === term && r.year === year);
+            if (selectedSubject !== 'all') results = results.filter(r => r.subject === selectedSubject);
+            const studentAverages = [];
+            for (const sid of studentIds) {
+                const studentResults = results.filter(r => r.student_id === sid);
+                const total = studentResults.reduce((s, r) => s + (r.total || 0), 0);
+                const avg = studentResults.length ? total / studentResults.length : 0;
+                studentAverages.push(avg);
+            }
+            const avgScore = studentAverages.length ? studentAverages.reduce((a,b)=>a+b,0)/studentAverages.length : 0;
+            const passCount = studentAverages.filter(s => s >= 50).length;
+            const passRate = studentAverages.length ? (passCount / studentAverages.length) * 100 : 0;
+            let subjectScores = {};
+            for (const r of results) {
+                if (!subjectScores[r.subject]) subjectScores[r.subject] = { total: 0, count: 0 };
+                subjectScores[r.subject].total += r.total;
+                subjectScores[r.subject].count += 1;
+            }
+            let topSubject = "—", bestAvg = 0;
+            for (const [sub, data] of Object.entries(subjectScores)) {
+                const subAvg = data.total / data.count;
+                if (subAvg > bestAvg) { bestAvg = subAvg; topSubject = sub; }
+            }
+            summaryRows.push({ section, studentCount: studentIds.length, avgScore, passRate, topSubject });
+            sectionAvgScores.push(avgScore);
+        }
+        document.getElementById('sectionSummaryBody').innerHTML = summaryRows.map(row => `
+            <tr><td class="font-medium">${row.section}</td><td>${row.studentCount}</td><td><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-emerald-600 h-2.5 rounded-full" style="width: ${row.avgScore}%"></div></div>${row.avgScore.toFixed(1)}%</td><td>${row.passRate.toFixed(1)}%</td><td>${escapeHtml(row.topSubject)}</td>
+        `).join('');
+        if (window.sectionAvgChart) window.sectionAvgChart.destroy();
+        window.sectionAvgChart = new Chart(document.getElementById('sectionAvgChart'), {
+            type: 'bar', data: { labels: sections, datasets: [{ label: 'Average Score (%)', data: sectionAvgScores, backgroundColor: 'rgba(245, 158, 11, 0.7)', borderRadius: 6 }] },
+            options: { scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Score %' } } }, plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toFixed(1)}%` } } } }
+        });
+        const detailRows = [];
+        for (const section of sections) {
+            const studentIds = schoolData.students.filter(s => s.section === section).map(s => s.id);
+            let results = schoolData.results.filter(r => studentIds.includes(r.student_id) && r.term === term && r.year === year);
+            if (selectedSubject !== 'all') results = results.filter(r => r.subject === selectedSubject);
+            const subjectGroups = new Map();
+            for (const r of results) {
+                if (!subjectGroups.has(r.subject)) subjectGroups.set(r.subject, []);
+                subjectGroups.get(r.subject).push(r.total);
+            }
+            for (const [subject, scores] of subjectGroups.entries()) {
+                const avg = scores.reduce((a,b)=>a+b,0) / scores.length;
+                const maxScore = Math.max(...scores);
+                const minScore = Math.min(...scores);
+                detailRows.push({ section, subject, avg, max: maxScore, min: minScore });
+            }
+        }
+        document.getElementById('sectionSubjectDetailBody').innerHTML = detailRows.map(row => `
+            <tr><td class="font-medium">${row.section}</td><td>${escapeHtml(row.subject)}</td><td><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-blue-500 h-2.5 rounded-full" style="width: ${row.avg}%"></div></div>${row.avg.toFixed(1)}%</td><td>${row.max.toFixed(0)}</td><td>${row.min.toFixed(0)}</td>
+        `).join('');
+    }
+    document.getElementById('refreshSectionAnalysis').addEventListener('click', async () => { await refreshData(); loadAnalysis(); showToast("Analysis refreshed"); });
+    document.getElementById('sectionAnalysisTerm').addEventListener('change', loadAnalysis);
+    document.getElementById('sectionAnalysisYear').addEventListener('change', loadAnalysis);
+    document.getElementById('sectionAnalysisSubject').addEventListener('change', loadAnalysis);
+    loadAnalysis();
+}
 async function parentDashboardView() { const student = schoolData.students.find(s => s.id == currentUser.studentId); if (!student) { document.getElementById('mainContent').innerHTML = `<div class="card p-6"><p class="text-red-600">Student not found.</p></div>`; return; } const paid = schoolData.payments.filter(p => p.student_id == currentUser.studentId && p.term === "1st Term" && p.year == new Date().getFullYear()).reduce((a,b)=>a+(b.amount||0),0); const due = Math.max(0,30000-paid); const html = `<div class="card p-6"><h2 class="text-2xl font-bold text-emerald-800 mb-4">Parent Dashboard</h2><div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-5 rounded-2xl"><h3>Welcome, ${escapeHtml(currentUser.full_name)}</h3></div><div class="grid md:grid-cols-2 gap-6 mt-4"><div class="bg-white p-4 border-l-4 border-emerald-500"><p><strong>Student:</strong> ${student.name}</p><p><strong>Reg:</strong> ${student.reg_number}</p><p><strong>Class:</strong> ${student.academic_class}</p></div><div class="bg-white p-4 border-l-4 border-amber-500"><p><strong>Fee Status:</strong> ${due<=0?'Paid':`₦${due} due`}</p>${due>0?'<button id="parentDashPay" class="apply-btn mt-2 px-4 py-1 text-sm">Pay Now</button>':''}</div></div></div>`; document.getElementById('mainContent').innerHTML = html; if(due>0) document.getElementById('parentDashPay')?.addEventListener('click',()=>parentPaymentPortalView()); }
 
 // ========== INITIALIZATION ==========

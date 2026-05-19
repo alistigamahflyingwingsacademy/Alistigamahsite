@@ -25,7 +25,7 @@
         .nav-link:hover { background: rgba(255,255,255,0.12); border-left: 4px solid #f59e0b; }
         .apply-btn { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: bold; border: none; cursor: pointer; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; z-index: 9999 !important; }
-        .modal-content { background: white; padding: 1.5rem; border-radius: 1rem; max-width: 800px; width: 90%; max-height: 85vh; overflow-y: auto; position: relative; z-index: 10000; }
+        .modal-content { background: white; padding: 1.5rem; border-radius: 1rem; max-width: 1000px; width: 90%; max-height: 85vh; overflow-y: auto; position: relative; z-index: 10000; }
         .toast { position: fixed; bottom: 20px; right: 20px; background: #1f2937; color: white; padding: 10px 20px; border-radius: 8px; z-index: 10000; display: none; }
         .spinner { border: 4px solid rgba(0,0,0,0.1); border-top-color: #f59e0b; border-radius: 50%; width: 40px; height: 40px; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -43,6 +43,18 @@
         .grade-badge { background: #e2e8f0; padding: 2px 8px; border-radius: 20px; font-size: 0.8rem; }
         .enroll-card { transition: all 0.2s; background: white; border-radius: 1.5rem; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
         .enroll-card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .payroll-table td, .payroll-table th { border: 1px solid #e2e8f0; padding: 8px; }
+        .payroll-table input { width: 100%; border: none; background: transparent; text-align: right; }
+        .payroll-table input:focus { outline: none; background: #fef9c3; }
+        .app-card { transition: all 0.2s; background: white; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .app-card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        .report-card-container { background: white; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 1.5rem; }
+        .report-card-container table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+        .report-card-container th, .report-card-container td { border: 1px solid #cbd5e1; padding: 8px; text-align: center; }
+        .report-card-container th { background: #f1f5f9; font-weight: bold; }
+        .quality-select { width: 100%; padding: 4px; border-radius: 6px; }
+        .regulations-list { list-style-type: decimal; padding-left: 1.5rem; }
+        .regulations-list li { margin-bottom: 0.75rem; line-height: 1.5; }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -65,6 +77,7 @@
                 <button id="adminSignupBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-full font-bold"><i class="fas fa-user-shield mr-2"></i>Admin Signup</button>
                 <button id="publicApplyBtn" class="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded-full font-bold"><i class="fas fa-file-alt mr-2"></i>Apply for Admission</button>
                 <button id="contactBtn" class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-2 rounded-full font-bold"><i class="fas fa-envelope mr-2"></i>Contact Us</button>
+                <button id="checkStatusBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full font-bold"><i class="fas fa-search mr-2"></i>Check Application Status</button>
             </div>
         </div>
     </div>
@@ -82,23 +95,35 @@
         <button id="nextSlide" class="carousel-btn absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-2xl p-2 rounded-full w-10 h-10 z-20"><i class="fas fa-chevron-right"></i></button>
     </div>
     <div class="container mx-auto px-6 py-12">
+        <!-- Vision & Mission -->
         <div class="grid md:grid-cols-2 gap-6">
             <div class="bg-white p-6 rounded-2xl shadow border-t-8 border-emerald-600"><i class="fas fa-eye text-emerald-600 text-3xl"></i><h2 class="text-2xl font-bold mt-2">Vision</h2><p>To cultivate a community of believers and learners who embody faith, knowledge, and inspiration — beacons of guidance, excellence, and service.</p></div>
             <div class="bg-white p-6 rounded-2xl shadow border-t-8 border-amber-500"><i class="fas fa-bullhorn text-amber-500 text-3xl"></i><h2 class="text-2xl font-bold mt-2">Mission</h2><p>Enriched learning environment promoting academic achievement, leadership, Islamic values, nurturing learners who live by Qur’an and Sunnah.</p></div>
         </div>
+        <!-- Core Objectives -->
         <div class="bg-gray-100 py-12 text-center mt-8 rounded-2xl"><div class="container mx-auto px-6"><h2 class="text-3xl font-bold">📌 Core Objectives</h2><div class="grid md:grid-cols-3 gap-5 mt-6"><div class="bg-white p-5 rounded-xl shadow"><i class="fas fa-quran text-emerald-600 text-2xl"></i><p class="mt-2">Qur'anic & Prophetic knowledge</p></div><div class="bg-white p-5 rounded-xl shadow"><i class="fas fa-book-open text-emerald-600 text-2xl"></i><p class="mt-2">Joyful memorization</p></div><div class="bg-white p-5 rounded-xl shadow"><i class="fas fa-crown text-emerald-600 text-2xl"></i><p class="mt-2">Principled leadership</p></div></div></div></div>
+        <!-- Rules and Regulations -->
+        <div class="mt-12 bg-white rounded-2xl shadow-lg overflow-hidden"><div class="bg-amber-50 px-6 py-4 border-b"><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-gavel text-amber-600 mr-2"></i>Rules and Regulations</h2></div><div class="p-6"><ul class="regulations-list space-y-3"><li>Adherence to regular payment of fees and forms dues.</li><li>Parents/Guardians should be vigilant to their children/wards, concerning punctuality.</li><li>Obtain the school Uniform for the section as prescribed in the attachment.</li><li>No applicant would be allowed to attend classes without being duly registered.</li><li>Cell-Phones and lunch money is not allowed, rather food and the like should be provided before stepping into the school premises. The applicant may subscribe to the school kitchen.</li><li>No student should leave the school before closing without a prior genuine reason from the parent/guardian to the concerned staff.</li></ul><div class="mt-6 bg-gray-50 p-4 rounded-xl border-l-4 border-amber-500 text-sm text-gray-700"><p><strong>NB:</strong></p><ul class="list-disc pl-5 mt-1 space-y-1"><li>School uniform should be obtained from the school.</li><li>Class placement is based on performance and age.</li><li>Any issue that has not been captured within the jurisdiction of the school, Islamic injunction would be applied.</li><li>Returning this form means accepting of the above mentioned rules and regulations.</li></ul></div></div></div>
     </div>
     <footer class="bg-slate-900 text-white text-center py-4 mt-auto"><p>© 2026 Al‑Istiqaamah Flying Wings Academy | No. 10 Federal Government Layout, Samaru, Zaria | <i class="fas fa-microchip"></i> Powered by Arrahmahtelecommunications</p></footer>
 </div>
 
-<!-- MODALS (all required) -->
+<!-- MODALS -->
 <div id="loginModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('loginModal')">&times;</span><h2 class="text-2xl font-bold mb-4">Access Portal</h2><div class="flex gap-3 mb-4"><button id="adminTab" class="flex-1 py-2 bg-amber-500 rounded-full text-white">Admin</button><button id="staffTab" class="flex-1 py-2 bg-gray-200 rounded-full">Staff</button></div><form id="adminLoginForm"><input id="adminEmail" placeholder="Email" class="border p-3 w-full mb-3 rounded-xl"><input id="adminPassword" placeholder="Password" type="password" class="border p-3 w-full mb-4 rounded-xl"><button type="submit" class="apply-btn w-full py-3 rounded-xl font-semibold">Login</button></form><form id="staffLoginForm" style="display:none"><input id="staffUsername" placeholder="Staff ID" class="border p-3 w-full mb-3 rounded-xl"><input id="staffPassword" placeholder="Password" type="password" class="border p-3 w-full mb-4 rounded-xl"><button type="submit" class="apply-btn w-full py-3 rounded-xl">Login</button></form></div></div>
 <div id="parentModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('parentModal')">&times;</span><h2 class="text-2xl font-bold mb-4">Parent Login</h2><form id="parentLoginForm"><input id="studentRegNo" placeholder="Student Reg Number" class="border p-3 w-full mb-3 rounded-xl"><input id="parentPwd" placeholder="Password (default: al123)" type="password" class="border p-3 w-full mb-4 rounded-xl"><button type="submit" class="apply-btn w-full py-3 rounded-xl">Login</button></form></div></div>
 <div id="adminSignupModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('adminSignupModal')">&times;</span><h2 class="text-2xl font-bold mb-3">Admin Signup</h2><form id="adminSignupForm"><input id="regCode" placeholder="Registration Code" class="border p-3 w-full mb-2 rounded-xl"><input id="signupEmail" placeholder="Email" class="border p-3 w-full mb-2 rounded-xl"><input id="signupPassword" placeholder="Password" type="password" class="border p-3 w-full mb-2 rounded-xl"><input id="signupFullName" placeholder="Full Name" class="border p-3 w-full mb-2 rounded-xl"><select id="signupRole" class="border p-3 w-full mb-4 rounded-xl"><option value="dg_ceo">DG/CEO</option><option value="daf">DAF</option><option value="management_committee">Management Committee</option><option value="do">DO</option><option value="der">DER</option><option value="dprpa">DPRPA</option><option value="headteacher">Headteacher</option><option value="teacher">Teacher</option></select><button type="submit" class="apply-btn w-full py-3 rounded-xl">Create Account</button></form></div></div>
 <div id="emailFeedbackModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('emailFeedbackModal')">&times;</span><h3 class="text-xl font-bold">Send Acceptance</h3><textarea id="feedbackMessage" rows="3" class="border w-full p-3 rounded-xl my-2"></textarea><button id="confirmAcceptBtn" class="apply-btn w-full py-2 rounded-xl">Confirm & Send</button></div></div>
 <div id="contactModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('contactModal')">&times;</span><h3 class="text-2xl font-bold mb-4">Contact Us</h3><p><i class="fas fa-phone-alt"></i> 08072550691, 07025553245, 08084816590</p><p><i class="fas fa-envelope"></i> alistiqaamahflyingwingsacademy@gmail.com</p><p><i class="fas fa-map-marker-alt"></i> No. 10 Federal Government Layout, Samaru, Zaria</p></div></div>
-<div id="fullApplicationModal" class="modal"><div class="modal-content relative" style="max-width: 900px;"><span class="close-modal-x" onclick="closeModal('fullApplicationModal')">&times;</span><h3 class="text-2xl font-bold text-center mb-2">إستمارة الالتحاق بالمدرسة</h3><h4 class="text-xl font-bold text-center mb-4">AL-ISTIQAAMAH FLYING WINGS ACADEMY APPLICATION FORM</h4><form id="fullApplicationForm" class="space-y-3"><div class="form-section font-bold text-lg">A. APPLICANT INFORMATION</div><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><input name="surname" placeholder="Surname" required class="border p-2 rounded"><input name="first_name" placeholder="First Name" required class="border p-2 rounded"><input name="other_names" placeholder="Other Names" class="border p-2 rounded"><select name="gender" class="border p-2 rounded"><option>Gender</option><option>Male</option><option>Female</option></select><input name="dob" type="date" placeholder="Date of Birth" class="border p-2 rounded"><input name="age" type="number" placeholder="Age" class="border p-2 rounded"><input name="place_birth" placeholder="Place of Birth" class="border p-2 rounded"><input name="nationality" placeholder="Nationality" class="border p-2 rounded"><input name="state_origin" placeholder="State of Origin" class="border p-2 rounded"><input name="lga" placeholder="Local Government" class="border p-2 rounded"><select name="religion" class="border p-2 rounded"><option>Religion</option><option>Islam</option><option>Christianity</option></select><input name="home_address" placeholder="Home Address" class="border p-2 rounded"><input name="child_id" placeholder="Child ID" class="border p-2 rounded"></div><div class="form-section font-bold text-lg">B. CLASS / ACADEMIC INFORMATION</div><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><select name="desired_class" class="border p-2 rounded" id="appDesiredClass"></select><input name="term_session" placeholder="Term & Session" class="border p-2 rounded"><input name="previous_school" placeholder="Previous School" class="border p-2 rounded"><input name="last_class_completed" placeholder="Last Class Completed" class="border p-2 rounded"><textarea name="reason_leaving" placeholder="Reason for Leaving" rows="2" class="border p-2 rounded"></textarea><input name="languages_spoken" placeholder="Languages Spoken" class="border p-2 rounded"><textarea name="special_needs" placeholder="Special Education Needs" rows="2" class="border p-2 rounded"></textarea></div><div class="form-section font-bold text-lg">C. HEALTH INFORMATION</div><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><input name="blood_group" placeholder="Blood Group/Genotype" class="border p-2 rounded"><input name="allergies" placeholder="Known Allergies" class="border p-2 rounded"><input name="physical_challenge" placeholder="Physical Challenge" class="border p-2 rounded"><input name="chronic_illness" placeholder="Chronic Illness" class="border p-2 rounded"><textarea name="emergency_health" placeholder="Emergency Health Info" rows="2" class="border p-2 rounded"></textarea><input name="immunization" placeholder="Immunization Status" class="border p-2 rounded"></div><div class="form-section font-bold text-lg">D. PARENT / GUARDIAN INFORMATION</div><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><input name="father_name" placeholder="Father's Full Name" class="border p-2 rounded"><input name="mother_name" placeholder="Mother's Full Name" class="border p-2 rounded"><input name="guardian_name" placeholder="Guardian's Name" class="border p-2 rounded"><input name="guardian_relation" placeholder="Relationship to Child" class="border p-2 rounded"><input name="parent_occupation" placeholder="Occupation" class="border p-2 rounded"><input name="parent_residence" placeholder="Residential Address" class="border p-2 rounded"><input name="parent_office" placeholder="Office Address" class="border p-2 rounded"><input name="parent_phone" placeholder="Phone Number(s)" class="border p-2 rounded"><input name="parent_email" placeholder="Email Address" class="border p-2 rounded"></div><div class="form-section font-bold text-lg">E. SPONSOR / FINANCIAL INFORMATION</div><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><input name="sponsor_name" placeholder="Name of Sponsor" class="border p-2 rounded"><input name="sponsor_relation" placeholder="Relationship to Child" class="border p-2 rounded"><input name="sponsor_address" placeholder="Contact Address" class="border p-2 rounded"><input name="sponsor_phone" placeholder="Phone Number" class="border p-2 rounded"><input name="fee_responsible" placeholder="Person Responsible for Fees" class="border p-2 rounded"></div><div class="form-section font-bold text-lg">F. RELIGIOUS INFORMATION</div><textarea name="religious_notes" placeholder="Additional religious information" rows="2" class="border p-2 rounded"></textarea><button type="submit" class="apply-btn w-full py-3 rounded text-lg font-bold mt-4">Submit Application</button></form></div></div>
+<div id="fullApplicationModal" class="modal"><div class="modal-content relative" style="max-width: 1100px;"><span class="close-modal-x" onclick="closeModal('fullApplicationModal')">&times;</span><h3 class="text-2xl font-bold text-center mb-2">أكادمية الاستقامة أجنحة التحليق</h3><h4 class="text-xl font-bold text-center mb-1">AL-ISTIQAAMAH FLYING WINGS ACADEMY</h4><p class="text-center text-sm mb-4">No. 10 Federal Government Layout, Samaru, Zaria | 08067990749, 08084816590 | alistiqaamah.fwa@gmail.com</p><form id="fullApplicationForm" class="space-y-5" enctype="multipart/form-data"><!-- Full form fields – all sections A-H + J with file uploads --><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">A. APPLICANT INFORMATION / البيانات المتقدم/ة</h3><div class="grid md:grid-cols-2 gap-3"><input name="surname" placeholder="Surname / اللقب" class="border p-2 rounded" required><input name="first_name" placeholder="First Name / الأسم الأول" class="border p-2 rounded" required><input name="other_names" placeholder="Other Names / الأسم الثاني" class="border p-2 rounded"><select name="gender" class="border p-2 rounded"><option>Gender / الجنس</option><option>Male</option><option>Female</option></select><input name="dob" type="date" placeholder="Date of Birth / تاريخ الميلاد" class="border p-2 rounded"><input name="age" type="number" placeholder="Age / العمر" class="border p-2 rounded"><input name="place_birth" placeholder="Place of Birth / مكان الميلاد" class="border p-2 rounded"><input name="nationality" placeholder="Nationality / الجنسية" class="border p-2 rounded"><input name="state_origin" placeholder="State of Origin / الولاية الأصلية" class="border p-2 rounded"><input name="lga" placeholder="Local Government / منطقة الحكم المحلي" class="border p-2 rounded"><select name="religion" class="border p-2 rounded"><option>Religion / الديانة</option><option>Islam</option><option>Christianity</option></select><input name="home_address" placeholder="Home Address / عنوان السكن" class="border p-2 rounded"><input name="child_id" placeholder="Child Identification Number / الرقم الوطني للطفل" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">B. CLASS / ACADEMIC INFORMATION</h3><div class="grid md:grid-cols-2 gap-3"><select name="desired_class" class="border p-2 rounded" id="appDesiredClass"></select><input name="term_session" placeholder="Term & Academic Session / الفصل الدراسي والسنوات" class="border p-2 rounded"><input name="previous_school" placeholder="Previous School Attended / المدرسة السابقة" class="border p-2 rounded"><input name="last_class_completed" placeholder="Last Class Completed / آخر صف دراسي أنجز" class="border p-2 rounded"><textarea name="reason_leaving" placeholder="Reason for Leaving / سبب ترك المدرسة السابقة" rows="2" class="border p-2 rounded"></textarea><input name="languages_spoken" placeholder="Languages Spoken / النجاحات التي يتحدثها" class="border p-2 rounded"><textarea name="special_needs" placeholder="Special Education Needs / احتياجات تعليمية خاصة" rows="2" class="border p-2 rounded"></textarea></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">C. HEALTH INFORMATION / البيانات الصحية</h3><div class="grid md:grid-cols-2 gap-3"><input name="blood_group" placeholder="Blood Group/Genotype / فصيلة الدم/التركيب الوراثي" class="border p-2 rounded"><input name="allergies" placeholder="Known Allergies / الحساسية (ان وجدت)" class="border p-2 rounded"><input name="physical_challenge" placeholder="Physical Challenge / إعاقات جسدية (ان وجدت)" class="border p-2 rounded"><input name="chronic_illness" placeholder="Chronic Illness / أمراض مزمنة (ان وجدت)" class="border p-2 rounded"><textarea name="emergency_health" placeholder="Emergency Health Info / معلومات طبية طارئة" rows="2" class="border p-2 rounded"></textarea><input name="immunization" placeholder="Immunization Status / حالة التطعيم" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">D. PARENT/GUARDIAN INFORMATION / بيانات الولاد/الوصي</h3><div class="grid md:grid-cols-2 gap-3"><input name="father_name" placeholder="Father's Full Name / اسم الأب كاملًا" class="border p-2 rounded"><input name="mother_name" placeholder="Mother's Full Name / اسم الأم كاملًا" class="border p-2 rounded"><input name="guardian_name" placeholder="Guardian's Name (if any) / اسم الوصي" class="border p-2 rounded"><input name="guardian_relation" placeholder="Relationship to Child / صلة القرابة" class="border p-2 rounded"><input name="parent_occupation" placeholder="Occupation / المهنة" class="border p-2 rounded"><input name="parent_residence" placeholder="Residential Address / عنوان السكن" class="border p-2 rounded"><input name="parent_office" placeholder="Office Address / عنوان الوظيفة" class="border p-2 rounded"><input name="parent_phone" placeholder="Phone Number(s) / رقم الهاتف" class="border p-2 rounded"><input name="parent_email" placeholder="Email Address / البريد الإلكتروني" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">E. SPONSOR/FINANCIAL INFORMATION / بيانات الكفل/الرسوم الدراسية</h3><div class="grid md:grid-cols-2 gap-3"><input name="sponsor_name" placeholder="Name of Sponsor / اسم الكفل" class="border p-2 rounded"><input name="sponsor_relation" placeholder="Relationship to Child / صلة القرابة بالطالب" class="border p-2 rounded"><input name="sponsor_address" placeholder="Contact Address / عنوان الاتصال" class="border p-2 rounded"><input name="sponsor_phone" placeholder="Phone Number / رقم الهاتف" class="border p-2 rounded"><input name="fee_responsible" placeholder="Person Responsible for Fees / الجهة المسؤولة عن الرسوم" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">F. RELIGIOUS INFORMATION (ISLAMIC) / البيانات الدينية</h3><div class="grid md:grid-cols-2 gap-3"><input name="muslim_name" placeholder="Muslim Name / الاسم الإسلامي" class="border p-2 rounded"><input name="quran_reading" placeholder="Qur'an Reading Ability / مستوى قراءة القرآن" class="border p-2 rounded"><input name="memorization_level" placeholder="Level of Qur'an Memorization / مقدار حفظ القرآن" class="border p-2 rounded"><input name="previous_madrasah" placeholder="Previous Madrasah Attended / المدرسة القرآنية السابقة" class="border p-2 rounded"><textarea name="religious_needs" placeholder="Religious Observance Needs / احتياجات دينية خاصة" rows="2" class="border p-2 rounded"></textarea></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">G. TRANSPORT & HOSTEL INFORMATION / بيانات النقل والسكن</h3><div class="grid md:grid-cols-2 gap-3"><input name="transport_mode" placeholder="Mode of Transportation / وسيلة المواصلات" class="border p-2 rounded"><select name="boarding_status" class="border p-2 rounded"><option>Boarding or Day / داخلي خارجي</option><option>Day</option><option>Boarding</option></select><input name="bus_pickup" placeholder="Bus Pick-up & Drop-off Point / مكان الصعود والنزول" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">H. DECLARATION & UNDERTAKING / الإقرار والتعهد</h3><p class="text-sm mb-2">اقرأ بأن جميع المعلومات الواردة أعلاه صحيحة، واتعهد بالالتزام بجميع قوانين وأنظمة المدرسة.</p><div class="grid md:grid-cols-2 gap-3"><input name="declaration_name" placeholder="Name of Parent/Guardian / اسم ولي الأمر / الوصي" class="border p-2 rounded" required><input name="declaration_signature" placeholder="Signature / التوقيع" class="border p-2 rounded"><input name="declaration_date" type="date" placeholder="Date / التاريخ" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">J. REQUIRED ATTACHMENTS / المرافقات المطلوبة</h3><div class="grid md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium">Birth Certificate / Declaration of Age</label><input type="file" name="attachment_birth_cert" accept="image/*,application/pdf" class="border p-2 rounded w-full"></div><div><label class="block text-sm font-medium">Previous School Report / Testimonial</label><input type="file" name="attachment_previous_report" accept="image/*,application/pdf" class="border p-2 rounded w-full"></div><div><label class="block text-sm font-medium">Transfer Certificate</label><input type="file" name="attachment_transfer_cert" accept="image/*,application/pdf" class="border p-2 rounded w-full"></div><div><label class="block text-sm font-medium">Medical Report</label><input type="file" name="attachment_medical_report" accept="image/*,application/pdf" class="border p-2 rounded w-full"></div><div><label class="block text-sm font-medium">Immunization Card</label><input type="file" name="attachment_immunization_card" accept="image/*,application/pdf" class="border p-2 rounded w-full"></div><div><label class="block text-sm font-medium">Two Recent Passport Photographs</label><input type="file" name="attachment_passport_photos" accept="image/*" class="border p-2 rounded w-full"></div></div></div><button type="submit" class="apply-btn w-full py-3 rounded text-lg font-bold mt-4">Submit Application / تقديم الطلب</button></form></div></div>
+
 <div id="addStaffModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('addStaffModal')">&times;</span><h2 class="text-xl font-bold mb-3">➕ Add New Staff</h2><form id="addStaffForm"><input id="staffName" placeholder="Full Name" required class="border p-3 w-full mb-2 rounded-xl"><input id="staffEmail" placeholder="Email" class="border p-3 w-full mb-2 rounded-xl"><select id="staffRole" class="border p-3 w-full mb-2 rounded-xl"><option value="teacher">Teacher</option><option value="headteacher">Headteacher</option><option value="daf">DAF</option><option value="do">DO</option><option value="der">DER</option><option value="dprpa">DPRPA</option><option value="dg_ceo">DG/CEO</option></select><input id="staffSection" placeholder="Section" class="border p-3 w-full mb-2 rounded-xl"><input id="staffAssignedClass" placeholder="Assigned Class" class="border p-3 w-full mb-2 rounded-xl"><input id="staffSalary" type="number" placeholder="Salary (₦)" class="border p-3 w-full mb-2 rounded-xl"><input id="newStaffUsername" placeholder="Staff ID (username)" required class="border p-3 w-full mb-2 rounded-xl"><input id="newStaffPassword" placeholder="Password" type="password" value="pass123" class="border p-3 w-full mb-3 rounded-xl"><button type="submit" class="apply-btn w-full py-3 rounded-xl">Create Staff</button></form></div></div>
+<div id="amountModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('amountModal')">&times;</span><h3 class="text-xl font-bold mb-3">Enter Payment Amount</h3><input type="number" id="paymentAmount" class="border p-3 w-full rounded-xl mb-4" placeholder="Amount in ₦"><button id="confirmAmountBtn" class="apply-btn w-full py-2 rounded-xl">Confirm Payment</button></div></div>
+<div id="appraisalModal" class="modal"><div class="modal-content relative" style="max-width: 600px;"><span class="close-modal-x" onclick="closeModal('appraisalModal')">&times;</span><h3 class="text-xl font-bold mb-3">Staff Appraisal</h3><form id="appraisalForm"><select id="appraisalStaffSelect" class="border p-2 w-full mb-2 rounded" required><option>Select Staff</option></select><label class="block font-medium mt-2">Overall Rating (1-5):</label><input type="number" id="appraisalRating" min="1" max="5" class="border p-2 w-full rounded mb-2" required><label class="block font-medium">Comments / Feedback:</label><textarea id="appraisalComment" rows="3" class="border p-2 w-full rounded mb-3"></textarea><button type="submit" class="apply-btn w-full py-2 rounded">Submit Appraisal</button></form></div></div>
+<div id="acceptDetailsModal" class="modal"><div class="modal-content relative" style="max-width: 600px;"><span class="close-modal-x" onclick="closeModal('acceptDetailsModal')">&times;</span><h3 class="text-xl font-bold mb-3">Accept Application – Official Use Only</h3><form id="acceptDetailsForm"><input type="hidden" id="acceptAppId"><label class="block font-medium">Entrance Test Score:</label><input type="text" id="acceptEntranceScore" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Interview Remarks:</label><textarea id="acceptInterviewRemarks" rows="2" class="border p-2 w-full rounded mb-2"></textarea><label class="block font-medium">Class Admitted Into:</label><input type="text" id="acceptAdmittedClass" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Admission Number:</label><input type="text" id="acceptAdmissionNumber" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Date of Admission:</label><input type="date" id="acceptAdmissionDate" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Authorized Signature (Name):</label><input type="text" id="acceptSignature" class="border p-2 w-full rounded mb-2"><button type="submit" class="apply-btn w-full py-2 rounded">Accept & Save</button></form></div></div>
+<div id="statusCheckModal" class="modal"><div class="modal-content relative" style="max-width: 500px;"><span class="close-modal-x" onclick="closeModal('statusCheckModal')">&times;</span><h3 class="text-xl font-bold mb-3">Check Application Status</h3><input type="email" id="statusEmail" placeholder="Enter your email address" class="border p-3 w-full rounded-xl mb-4"><button id="checkStatusSubmit" class="apply-btn w-full py-2 rounded-xl">Check Status</button><div id="statusResult" class="mt-4 text-center"></div></div></div>
+
+<!-- New modal for adding staff to payroll -->
+<div id="addStaffToPayrollModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('addStaffToPayrollModal')">&times;</span><h3 class="text-xl font-bold mb-3">Add Staff to Payroll</h3><form id="addToPayrollForm"><label class="block font-medium">Select Staff:</label><select id="payrollStaffSelect" class="border p-2 w-full rounded mb-3" required><option value="">-- Select Staff --</option></select><label class="block font-medium">Basic Salary (₦):</label><input type="number" id="payrollStaffSalary" class="border p-2 w-full rounded mb-3" placeholder="Salary amount"><label class="block font-medium">Allowances (₦):</label><input type="number" id="payrollStaffAllowances" class="border p-2 w-full rounded mb-3" placeholder="Allowances" value="0"><label class="block font-medium">Deductions (₦):</label><input type="number" id="payrollStaffDeductions" class="border p-2 w-full rounded mb-3" placeholder="Deductions" value="0"><label class="block font-medium">Account Details:</label><input type="text" id="payrollStaffAccount" class="border p-2 w-full rounded mb-3" placeholder="Bank account details"><button type="submit" class="apply-btn w-full py-2 rounded">Add to Payroll</button></form></div></div>
 
 <!-- DASHBOARD CONTAINER -->
 <div id="appContainer" class="hidden flex flex-col h-screen fixed inset-0 z-40 bg-gray-50">
@@ -117,9 +142,9 @@
 </div>
 
 <script>
-// ========== SUPABASE CONFIG ==========
-const SUPABASE_URL = 'https://kabqdeulwpfftbtwwouw.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_OIE7KFQ3quev7pQgKsvFXg_ralf9SMM';
+// ========== SUPABASE CONFIG (Replace with your own) ==========
+const SUPABASE_URL = 'https://viazwogpdcoipltfgbau.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_vJ3cI2LeGswKyJ7zqMHiKw_xLDcASGo';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const PAYSTACK_PUBLIC_KEY = 'pk_test_d4f8b2c1a3e5f6b7c8d9e0f1a2b3c4d5e6f7a8b9';
 const CLASSES = ["Pre-Nursery","Nursery 1","Nursery 2","Nursery 3","Primary 1","Primary 2","Primary 3","Primary 4","Primary 5","Primary 6","JSS 1","JSS 2","JSS 3","SS 1","SS 2","SS 3"];
@@ -129,9 +154,11 @@ const QUALITIES = ["Class Attendance","Neatness in Appearance","Politeness","Hon
 const QUALITIES_ARABIC = { "Class Attendance":"حضور الفصل","Neatness in Appearance":"نظافة المشرف","Politeness":"الطفول","Honesty":"الصدق والإحالة","Relationship with Others":"العلاقة مع الأخرين","Self Control":"الاستغلال على النفس","Helping Others":"المساعدة في المجتمع","Sense of Responsibility":"حساسية الإنجاز","Initiative/Creativity":"التمكين والإبداع","Emotional Stability":"التوتر والتماسك","Physical Health":"الصحة المادية","Perseverance":"مشاريع" };
 
 let currentUser = null;
-let schoolData = { students: [], teachers: [], profiles: [], applications: [], results: [], payments: [], bankTransfers: [], staffAppraisals: [], slides: [], announcements: [], resultExtras: [], payrollRecords: [], dgAppraisals: [], studentAppraisals: [], attendance: [] };
-let idleTimeout, slideInterval;
+let schoolData = { students: [], teachers: [], profiles: [], applications: [], results: [], payments: [], bankTransfers: [], staffAppraisals: [], slides: [], announcements: [], resultExtras: [], payrollRecords: [], dgAppraisals: [], studentAppraisals: [] };
+let idleTimeout;
+let pendingPaymentAction = null;
 
+// ========== UTILITIES ==========
 function showToast(msg, isErr=false) { let t=document.getElementById('toast'); t.textContent=msg; t.style.backgroundColor=isErr?'#dc2626':'#10b981'; t.style.display='block'; setTimeout(()=>t.style.display='none',4000); }
 function showLoading(show) { document.getElementById('globalLoader').style.display=show?'flex':'none'; }
 function escapeHtml(str) { return String(str??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
@@ -141,23 +168,22 @@ function closeMobileSidebar() { document.getElementById('dynamicSidebar').classL
 async function refreshData() {
     showLoading(true);
     try {
-        const [sRes, tRes, pRes, aRes, rRes, payRes, btRes, saRes, slRes, annRes, rexRes, payrollRes, dgRes, stuAppRes, attRes] = await Promise.all([
+        const [sRes, tRes, pRes, aRes, rRes, payRes, btRes, saRes, slRes, annRes, rexRes, payrollRes, dgRes, stuAppRes] = await Promise.all([
             supabaseClient.from('students').select('*'), supabaseClient.from('teachers').select('*'), supabaseClient.from('profiles').select('*'),
             supabaseClient.from('applications').select('*'), supabaseClient.from('results').select('*'), supabaseClient.from('payments').select('*'),
             supabaseClient.from('bank_transfers').select('*'), supabaseClient.from('staff_appraisals').select('*'), supabaseClient.from('slides').select('*'),
             supabaseClient.from('site_announcement').select('*').limit(1), supabaseClient.from('result_extras').select('*'),
-            supabaseClient.from('payroll_records').select('*'), supabaseClient.from('dg_appraisals').select('*'), supabaseClient.from('student_appraisals').select('*'),
-            supabaseClient.from('attendance').select('*')
+            supabaseClient.from('payroll_records').select('*'), supabaseClient.from('dg_appraisals').select('*'), supabaseClient.from('student_appraisals').select('*')
         ]);
-        schoolData = { students: sRes.data||[], teachers: tRes.data||[], profiles: pRes.data||[], applications: aRes.data||[], results: rRes.data||[], payments: payRes.data||[], bankTransfers: btRes.data||[], staffAppraisals: saRes.data||[], slides: slRes.data||[], announcements: annRes.data||[], resultExtras: rexRes.data||[], payrollRecords: payrollRes.data||[], dgAppraisals: dgRes.data||[], studentAppraisals: stuAppRes.data||[], attendance: attRes.data||[] };
-    } catch(e) { console.error(e); showToast("Data sync error: "+e.message, true); } finally { showLoading(false); }
+        schoolData = { students: sRes.data||[], teachers: tRes.data||[], profiles: pRes.data||[], applications: aRes.data||[], results: rRes.data||[], payments: payRes.data||[], bankTransfers: btRes.data||[], staffAppraisals: saRes.data||[], slides: slRes.data||[], announcements: annRes.data||[], resultExtras: rexRes.data||[], payrollRecords: payrollRes.data||[], dgAppraisals: dgRes.data||[], studentAppraisals: stuAppRes.data||[] };
+    } catch(e) { console.error(e); } finally { showLoading(false); }
 }
 
 function resetIdleTimer() { if (!currentUser) return; if (idleTimeout) clearTimeout(idleTimeout); idleTimeout = setTimeout(() => { if (currentUser) { showToast("Auto-logout due to inactivity", false); logoutUser(); } }, 60 * 1000); }
 function attachActivityListeners() { ['mousedown','mousemove','keypress','scroll','touchstart'].forEach(ev => { document.removeEventListener(ev, resetIdleTimer); document.addEventListener(ev, resetIdleTimer); }); }
 
 function logoutUser() {
-    if(slideInterval) clearInterval(slideInterval);
+    if(window.slideInterval) clearInterval(window.slideInterval);
     currentUser = null;
     document.getElementById('appContainer').classList.add('hidden');
     document.getElementById('landingPage').style.display = 'block';
@@ -169,7 +195,7 @@ function logoutUser() {
 async function renderLandingCarouselAndAnnouncement() {
     const ann = schoolData.announcements[0]?.content || 'Welcome to Flying Wings – Excellence in Islamic Education';
     document.getElementById('announcementBarWrapper').innerHTML = `<div class="bg-amber-100 border-l-4 border-amber-500 p-3 rounded-r-xl">📢 ${escapeHtml(ann)}</div>`;
-    let slides = schoolData.slides.length ? schoolData.slides : [{ image_url: 'https://picsum.photos/1200/500?random=1', caption: 'Empowering Minds & Souls' }];
+    let slides = schoolData.slides.length ? schoolData.slides : [{ image_url: 'https://via.placeholder.com/1200x500?text=Flying+Wings+Academy', caption: 'Empowering Minds & Souls' }];
     let idx = 0;
     const container = document.getElementById('slidesContainer');
     const dotsContainer = document.getElementById('dotsContainer');
@@ -181,110 +207,112 @@ async function renderLandingCarouselAndAnnouncement() {
         }
     }
     renderSlide();
-    if(slides.length > 1) { if(slideInterval) clearInterval(slideInterval); slideInterval = setInterval(() => { idx = (idx+1)%slides.length; renderSlide(); }, 5000); }
+    if(slides.length > 1) { if(window.slideInterval) clearInterval(window.slideInterval); window.slideInterval = setInterval(() => { idx = (idx+1)%slides.length; renderSlide(); }, 5000); }
     document.getElementById('prevSlide')?.addEventListener('click', () => { idx = (idx-1+slides.length)%slides.length; renderSlide(); });
     document.getElementById('nextSlide')?.addEventListener('click', () => { idx = (idx+1)%slides.length; renderSlide(); });
 }
 
-// ========== AUTHENTICATION ==========
-async function adminLogin(email, pwd) { let {data,error}=await supabaseClient.auth.signInWithPassword({email,password:pwd}); if(error) throw error; let {data:profile}=await supabaseClient.from('profiles').select('*').eq('id',data.user.id).single(); if(!profile) throw new Error('No profile'); currentUser={id:profile.id, full_name:profile.full_name, role:profile.role}; await refreshData(); showDashboard(); closeModal('loginModal'); showToast(`Welcome ${currentUser.full_name}`); attachActivityListeners(); }
-async function staffLogin(username, pwd) { let {data:staff,error}=await supabaseClient.from('teachers').select('*').eq('username',username).single(); if(error||!staff) throw new Error('Staff not found'); if(staff.password!==pwd) throw new Error('Wrong password'); currentUser={id:staff.id, full_name:staff.name, role:staff.role||'teacher', assigned_class:staff.assigned_class}; await refreshData(); showDashboard(); closeModal('loginModal'); showToast(`Welcome ${currentUser.full_name}`); attachActivityListeners(); }
-async function parentLogin(regNo, pwd) { if(pwd!=='al123') throw new Error('Invalid password'); let student=schoolData.students.find(s=>s.reg_number===regNo); if(!student) throw new Error('Student not found'); currentUser={role:'parent', full_name:`Parent of ${student.name}`, studentId:student.id}; await refreshData(); showDashboard(); closeModal('parentModal'); showToast(`Logged in as parent`); attachActivityListeners(); }
-async function adminSignup(code,email,pwd,name,role){ if(code!=='ALIFLY2026') throw new Error('Invalid code'); let {data,error}=await supabaseClient.auth.signUp({email,password:pwd}); if(error) throw error; await supabaseClient.from('profiles').insert([{id:data.user.id, full_name:name, role}]); showToast('Account created! Please verify email.'); closeModal('adminSignupModal'); }
+// ========== AUTHENTICATION (with auto-profile creation) ==========
+async function adminLogin(email, pwd) {
+    let { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pwd });
+    if (error) throw error;
+    let { data: profile, error: profileError } = await supabaseClient.from('profiles').select('*').eq('id', data.user.id).single();
+    if (profileError || !profile) {
+        const fallbackName = email.split('@')[0];
+        const { data: newProfile, error: insertError } = await supabaseClient.from('profiles').insert([{ id: data.user.id, full_name: fallbackName, role: 'teacher' }]).select().single();
+        if (insertError) throw new Error('Could not create profile: ' + insertError.message);
+        profile = newProfile;
+    }
+    if (!profile.role || !roleMenus[profile.role]) {
+        await supabaseClient.from('profiles').update({ role: 'teacher' }).eq('id', data.user.id);
+        profile.role = 'teacher';
+    }
+    currentUser = { id: profile.id, full_name: profile.full_name, role: profile.role };
+    await refreshData();
+    showDashboard();
+    closeModal('loginModal');
+    showToast(`Welcome ${currentUser.full_name}`);
+    attachActivityListeners();
+}
+async function staffLogin(username, pwd) {
+    let { data: staff, error } = await supabaseClient.from('teachers').select('*').eq('username', username).single();
+    if (error || !staff) throw new Error('Staff not found');
+    if (staff.password !== pwd) throw new Error('Wrong password');
+    currentUser = { id: staff.id, full_name: staff.name, role: staff.role || 'teacher', assigned_class: staff.assigned_class };
+    await refreshData();
+    showDashboard();
+    closeModal('loginModal');
+    showToast(`Welcome ${currentUser.full_name}`);
+    attachActivityListeners();
+}
+async function parentLogin(regNo, pwd) {
+    if (pwd !== 'al123') throw new Error('Invalid password');
+    let student = schoolData.students.find(s => s.reg_number === regNo);
+    if (!student) throw new Error('Student not found');
+    currentUser = { role: 'parent', full_name: `Parent of ${student.name}`, studentId: student.id };
+    await refreshData();
+    showDashboard();
+    closeModal('parentModal');
+    showToast(`Logged in as parent`);
+    attachActivityListeners();
+}
+async function adminSignup(code, email, pwd, name, role) {
+    if (code !== 'ALIFLY2026') throw new Error('Invalid code');
+    let { data, error } = await supabaseClient.auth.signUp({ email, password: pwd });
+    if (error) throw error;
+    const { error: insertError } = await supabaseClient.from('profiles').insert([{ id: data.user.id, full_name: name, role: role }]);
+    if (insertError) throw insertError;
+    showToast('Account created! Please verify email and login.');
+    closeModal('adminSignupModal');
+}
 
 // ========== DASHBOARD & MENU ==========
+const roleMenus = {
+    dg_ceo: ['Dashboard','Students','Enroll','Results','Fees','Unified Staff','Payroll','Apps','Download Records','Announce','Slides','View Appraisals','Performance Appraisal','Director Roles','Appraise Directors'],
+    daf: ['Dashboard','Students','Enroll','Results','Fees','Unified Staff','Payroll','Apps','Download Records','Announce','Slides','Staff Appraisal'],
+    management_committee: ['Dashboard','Students','Enroll','Results','Fees','Unified Staff','Download Records','Announce','Slides','View Appraisals','Appraise Directors'],
+    parent: ['Child reports','Fee payment','Payment history'],
+    teacher: ['My class','Grade student','Attendance','Results'],
+    headteacher: ['Section student','Section fees','Enroll','Results','Students','Fees'],
+    do: ['Dashboard','Enroll','Fees','Students','Unified Staff','Staff performance analysis','Staff Appraisal','Announce','Slides'],
+    der: ['Dashboard','Enroll','Students','Unified Staff','Academic performance','Sections analysis','Staff Appraisal','Announce','Slides'],
+    dprpa: ['Dashboard','Enroll','Students','Academic performance','Section analysis','Download Records','Staff Appraisal','Announce','Slides']
+};
+
 async function showDashboard() {
-    document.getElementById('landingPage').style.display='none';
+    document.getElementById('landingPage').style.display = 'none';
     document.getElementById('appContainer').classList.remove('hidden');
     document.getElementById('topUserName').innerText = currentUser.full_name;
     document.getElementById('topUserRole').innerText = currentUser.role.toUpperCase();
-    let roleMenus = {
-        dg_ceo: ['Dashboard','Students','Enroll','Results','Fees','Unified Staff','Payroll','Apps','Download Records','Announce','Slides','Staff Appraisal','Performance Appraisal','Director Roles','Appraise Directors'],
-        daf: ['Dashboard','Students','Enroll','Results','Fees','Unified Staff','Payroll','Apps','Download Records','Announce','Slides','Director Roles'],
-        management_committee: ['Dashboard','Students','Enroll','Results','Fees','Unified Staff','Apps','Download Records','Announce','Slides','Director Roles','Appraise Directors'],
-        parent: ['Dashboard','Child reports','Fee payment','Result','Payment history'],
-        teacher: ['My class','Grade student','Attendance','Results'],
-        headteacher: ['Section student','Section fees','Enroll','Results','Students','Fees'],
-        do: ['Dashboard','Enroll','Fees','Students','Unified Staff','Staff performance analysis','Director Roles','Announce','Slides'],
-        der: ['Dashboard','Enroll','Students','Unified Staff','Academic performance','Sections analysis','Director Roles','Announce','Slides'],
-        dprpa: ['Dashboard','Enroll','Students','Academic performance','Section analysis','Download Records','Director Roles','Announce','Slides']
-    };
     let menu = roleMenus[currentUser.role] || roleMenus.dg_ceo;
     let navHtml = menu.map(label => `<div class="nav-link flex items-center gap-3 px-4 py-2 rounded-xl text-slate-200 hover:bg-white/10 transition" data-view="${label}"><i class="fas ${label==='Dashboard'?'fa-tachometer-alt':label==='Students'?'fa-users':label==='Fees'?'fa-coins':label==='Payroll'?'fa-money-bill':label==='Result'?'fa-chart-line':'fa-circle'} w-6"></i><span class="nav-text">${label}</span></div>`).join('');
     document.getElementById('dynamicNav').innerHTML = navHtml;
     const viewMap = {
-        'Dashboard': currentUser.role === 'parent' ? parentDashboardView : dashboardView,
-        'Students':studentsViewEditable, 'Enroll':enrollViewModern, 'Results':enhancedResultView, 'Fees':feeManagementEnhanced,
+        'Dashboard':dashboardView, 'Students':studentsViewEditable, 'Enroll':enrollViewModern, 'Results':enhancedResultView, 'Fees':feeManagementEnhanced,
         'Unified Staff':unifiedStaffList, 'Payroll':payrollModule, 'Apps':applicationsViewEnhanced, 'Download Records':downloadRecordsView, 'Announce':announceView,
-        'Slides':slidesManageView, 'Staff Appraisal':staffAppraisalView, 'Performance Appraisal':performanceAppraisalView, 'Director Roles':directorRolesView,
-        'Appraise Directors':directorAppraisalView, 'Child reports':parentChildReportsView, 'Fee payment':parentPaymentPortalView, 'Result':parentResultView,
-        'Payment history':parentPaymentHistoryView, 'My class':myClassView, 'Grade student':teacherResultEntry, 'Attendance':attendanceView,
+        'Slides':slidesManageView, 'Staff Appraisal':staffAppraisalView, 'View Appraisals':viewAppraisalsView, 'Performance Appraisal':performanceAppraisalView,
+        'Director Roles':directorRolesView, 'Appraise Directors':directorAppraisalView, 'Child reports':parentChildReportsView, 'Fee payment':parentPaymentPortalView,
+        'Result':parentResultView, 'Payment history':parentPaymentHistoryView, 'My class':myClassView, 'Grade student':teacherResultEntry, 'Attendance':attendanceView,
         'Section student':sectionStudentsView, 'Section fees':sectionFeesView, 'Staff performance analysis':staffPerformanceAnalysisView,
         'Academic performance':academicPerformanceView, 'Sections analysis':sectionAnalysisView
     };
     document.querySelectorAll('.nav-link').forEach(el => el.addEventListener('click', () => {
         let fn = viewMap[el.dataset.view];
         if (fn && typeof fn === 'function') fn();
+        else if (currentUser.role === 'parent') parentChildReportsView();
         else dashboardView();
         closeMobileSidebar();
     }));
-    dashboardView();
+    if (currentUser.role === 'parent') {
+        parentChildReportsView();
+    } else {
+        dashboardView();
+    }
 }
 
-// ---------- DASHBOARD VIEW ----------
-async function dashboardView() {
-    const stats = {
-        students: schoolData.students.length,
-        teachers: schoolData.teachers.length + schoolData.profiles.filter(p=>p.role && p.role!=='parent').length,
-        totalFeesCollected: schoolData.payments.reduce((s,p)=>s+(p.amount||0),0),
-        pendingApps: schoolData.applications.filter(a=>a.status!=='accepted').length
-    };
-    const recentStudents = [...schoolData.students].slice(-5);
-    const html = `
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
-            <div class="bg-white p-5 rounded-2xl shadow border-l-8 border-emerald-500"><p class="text-gray-500">Total Students</p><p class="text-3xl font-bold">${stats.students}</p></div>
-            <div class="bg-white p-5 rounded-2xl shadow border-l-8 border-amber-500"><p class="text-gray-500">Staff Members</p><p class="text-3xl font-bold">${stats.teachers}</p></div>
-            <div class="bg-white p-5 rounded-2xl shadow border-l-8 border-blue-500"><p class="text-gray-500">Fees Collected (₦)</p><p class="text-3xl font-bold">₦${stats.totalFeesCollected.toLocaleString()}</p></div>
-            <div class="bg-white p-5 rounded-2xl shadow border-l-8 border-purple-500"><p class="text-gray-500">Pending Apps</p><p class="text-3xl font-bold">${stats.pendingApps}</p></div>
-        </div>
-        <div class="grid md:grid-cols-2 gap-6">
-            <div class="bg-white p-5 rounded-2xl shadow"><h3 class="font-bold text-lg mb-3">📋 Recent Enrollments</h3><ul class="space-y-2">${recentStudents.map(s=>`<li>${escapeHtml(s.name)} - ${s.reg_number}</li>`).join('')}</ul></div>
-            <div class="bg-white p-5 rounded-2xl shadow"><canvas id="feeChart" height="200"></canvas></div>
-        </div>
-    `;
-    document.getElementById('mainContent').innerHTML = html;
-    setTimeout(() => {
-        const ctx = document.getElementById('feeChart')?.getContext('2d');
-        if(ctx) new Chart(ctx, { type: 'bar', data: { labels: TERMS, datasets: [{ label: 'Fees Collected (₦)', data: TERMS.map(t=> schoolData.payments.filter(p=>p.term===t).reduce((a,b)=>a+(b.amount||0),0)), backgroundColor: '#f59e0b' }] } });
-    }, 100);
-}
-
-// ========== ENROLLMENT MODERN ==========
+// ========== ENROLLMENT UI ==========
 async function enrollViewModern() {
-    const html = `
-        <div class="max-w-2xl mx-auto">
-            <div class="enroll-card p-6 md:p-8">
-                <div class="flex items-center gap-3 mb-6 border-b pb-4">
-                    <i class="fas fa-user-plus text-3xl text-emerald-600"></i>
-                    <h2 class="text-2xl font-bold text-gray-800">Enroll New Student</h2>
-                </div>
-                <form id="modernEnrollForm" class="space-y-5">
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label><input type="text" id="enrollName" required class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-emerald-500"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Registration Number *</label><input type="text" id="enrollRegNo" required class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-emerald-500"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Parent/Guardian Name</label><input type="text" id="enrollParent" class="w-full border rounded-xl p-3"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Parent Email</label><input type="email" id="enrollParentEmail" class="w-full border rounded-xl p-3"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Section</label><select id="enrollSection" class="w-full border rounded-xl p-3">${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Academic Class</label><select id="enrollClass" class="w-full border rounded-xl p-3">${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select></div>
-                    </div>
-                    <div class="pt-4">
-                        <button type="submit" class="apply-btn w-full py-3 rounded-xl text-lg font-semibold transition transform hover:scale-[1.01]"><i class="fas fa-save mr-2"></i>Register Student</button>
-                    </div>
-                </form>
-                <div class="mt-6 text-center text-sm text-gray-500">After enrollment, student can be assigned to classes and fee records will be created automatically.</div>
-            </div>
-        </div>
-    `;
+    const html = `<div class="max-w-2xl mx-auto"><div class="enroll-card p-6 md:p-8"><div class="flex items-center gap-3 mb-6 border-b pb-4"><i class="fas fa-user-plus text-3xl text-emerald-600"></i><h2 class="text-2xl font-bold text-gray-800">Enroll New Student</h2></div><form id="modernEnrollForm" class="space-y-5"><div class="grid md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label><input type="text" id="enrollName" required class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-emerald-500"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Registration Number *</label><input type="text" id="enrollRegNo" required class="w-full border rounded-xl p-3 focus:ring-2 focus:ring-emerald-500"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Parent/Guardian Name</label><input type="text" id="enrollParent" class="w-full border rounded-xl p-3"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Parent Email</label><input type="email" id="enrollParentEmail" class="w-full border rounded-xl p-3"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Section</label><select id="enrollSection" class="w-full border rounded-xl p-3">${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Academic Class</label><select id="enrollClass" class="w-full border rounded-xl p-3">${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select></div></div><div class="pt-4"><button type="submit" class="apply-btn w-full py-3 rounded-xl text-lg font-semibold transition transform hover:scale-[1.01]"><i class="fas fa-save mr-2"></i>Register Student</button></div></form></div></div>`;
     document.getElementById('mainContent').innerHTML = html;
     document.getElementById('modernEnrollForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -298,7 +326,7 @@ async function enrollViewModern() {
                 parent_email: document.getElementById('enrollParentEmail').value,
                 section: document.getElementById('enrollSection').value,
                 academic_class: document.getElementById('enrollClass').value,
-                status: 'active', total_fees: 30000
+                status: 'active', term_fee: 30000
             }]);
             await refreshData();
             showToast(`Student ${name} enrolled successfully`);
@@ -307,156 +335,43 @@ async function enrollViewModern() {
     });
 }
 
-// ========== FEE MANAGEMENT ENHANCED ==========
-async function feeManagementEnhanced() {
-    let students = schoolData.students, currentYear = new Date().getFullYear();
-    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">💰 Fee Management by Term</h2><div class="filter-row"><input id="feeYear" type="number" value="${currentYear}" class="w-28"><select id="feeTermSelect">${TERMS.map(t=>`<option>${t}</option>`).join('')}</select><select id="feeSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select><select id="feeClassFilter"><option value="all">All Classes</option>${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select><input id="feeSearch" placeholder="🔍 Search student" class="flex-1"></div><div class="overflow-x-auto"><table class="min-w-full"><thead><tr><th>Student</th><th>Term Fee</th><th>Paid</th><th>Due</th><th>Status</th><th>Pay Online</th><th>Bank Proof</th><th>Admin Confirm</th></tr></thead><tbody id="feeTermBody"></tbody></table></div><div id="pendingBankArea" class="mt-5"></div></div>`;
+// ========== STUDENTS TABLE (editable) ==========
+async function studentsViewEditable() {
+    let students = schoolData.students;
+    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📚 Students</h2><div class="filter-row"><select id="studentSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select><select id="studentClassFilter"><option value="all">All Classes</option>${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select><input id="studentSearch" placeholder="🔍 Search name/reg" class="flex-1"></div><div class="overflow-x-auto"><table class="min-w-full"><thead><tr><th>Reg No</th><th>Name</th><th>Parent</th><th>Section</th><th>Class</th><th>Term Fee (₦)</th><th>Actions</th></tr></thead><tbody id="studentEditBody"></tbody></table></div><button id="addStudentBtn" class="apply-btn mt-5 px-5 py-2 rounded-full">+ Enroll Student</button></div>`;
     document.getElementById('mainContent').innerHTML = html;
-    async function render() {
-        let year = document.getElementById('feeYear').value, term = document.getElementById('feeTermSelect').value, section = document.getElementById('feeSectionFilter').value, classVal = document.getElementById('feeClassFilter').value, search = document.getElementById('feeSearch').value.toLowerCase();
+    function render() {
+        let section = document.getElementById('studentSectionFilter').value, classVal = document.getElementById('studentClassFilter').value, search = document.getElementById('studentSearch').value.toLowerCase();
         let filtered = students.filter(s => (section==='all' || s.section===section) && (classVal==='all' || s.academic_class===classVal) && (s.name.toLowerCase().includes(search) || (s.reg_number||'').toLowerCase().includes(search)));
-        let tbody = document.getElementById('feeTermBody');
-        tbody.innerHTML = filtered.map(s => {
-            let paid = schoolData.payments.filter(p=>p.student_id===s.id && p.term===term && p.year==year).reduce((a,b)=>a+(b.amount||0),0);
-            let due = Math.max(0,30000-paid);
-            let status = due<=0?'Paid':paid>0?'Partial':'Unpaid';
-            let pendingTransfer = schoolData.bankTransfers.find(bt => bt.student_id == s.id && bt.term === term && bt.year == year && bt.status === 'pending');
-            let proofUrl = pendingTransfer ? pendingTransfer.proof_url : null;
-            let viewProofButton = proofUrl ? `<a href="${proofUrl}" target="_blank" class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm inline-block">📎 View Proof</a>` : '<span class="text-gray-400 text-sm">No proof</span>';
-            return `<tr><td class="font-medium">${escapeHtml(s.name)}</td><td>₦30,000</td><td>₦${paid.toLocaleString()}</td><td>₦${due.toLocaleString()}</td><td><span class="status-${status.toLowerCase()}">${status}</span></td>
-            <td><button class="paystack-term bg-green-600 text-white px-3 py-1 rounded-full text-sm" data-id="${s.id}" data-email="${s.parent_email||s.reg_number+'@school.com'}" data-due="${due}" data-term="${term}" data-year="${year}">Pay Now</button></td>
-            <td>${viewProofButton}</td>
-            <td><button class="admin-confirm-term bg-amber-600 text-white px-3 py-1 rounded-full text-sm" data-id="${s.id}" data-amount="${due}" data-term="${term}" data-year="${year}">Confirm</button></td>`; }).join('');
-        attachEvents(year, term);
+        document.getElementById('studentEditBody').innerHTML = filtered.map(s => `<tr><td class="editable-student" data-field="reg_number" data-id="${s.id}">${escapeHtml(s.reg_number)}</td><td class="editable-student" data-field="name" data-id="${s.id}">${escapeHtml(s.name)}</td><td class="editable-student" data-field="parent_name" data-id="${s.id}">${escapeHtml(s.parent_name||'')}</td><td class="editable-student" data-field="section" data-id="${s.id}">${escapeHtml(s.section||'')}</td><td class="editable-student" data-field="academic_class" data-id="${s.id}">${escapeHtml(s.academic_class||'')}</td><td class="editable-student" data-field="term_fee" data-id="${s.id}">${s.term_fee || 30000}</td><td><button class="delete-student text-red-500" data-id="${s.id}">Delete</button></td>`).join('');
+        attachEvents();
     }
-    function attachEvents(year, term) {
-        document.querySelectorAll('.paystack-term').forEach(btn => btn.addEventListener('click', () => {
-            let due = parseFloat(btn.dataset.due); if(due<=0) return showToast("No outstanding fee");
-            let handler = PaystackPop.setup({ key: PAYSTACK_PUBLIC_KEY, email: btn.dataset.email, amount: due*100, callback: async (r) => {
-                await supabaseClient.from('payments').insert([{ student_id: btn.dataset.id, amount: due, term, year, payment_method: 'paystack_online', payment_reference: r.reference, payment_status: 'success' }]);
-                await refreshData(); feeManagementEnhanced(); showToast(`Payment of ₦${due} successful`);
-            } }); handler.openIframe();
-        }));
-        document.querySelectorAll('.admin-confirm-term').forEach(btn => btn.addEventListener('click', async () => {
-            let amount = parseFloat(btn.dataset.amount); if(amount<=0) return showToast("No due to confirm");
-            await supabaseClient.from('payments').insert([{ student_id: btn.dataset.id, amount, term, year, payment_method: 'cash_admin', payment_reference: 'ADMIN'+Date.now(), payment_status: 'success' }]);
-            let pendingTransfer = schoolData.bankTransfers.find(bt => bt.student_id == btn.dataset.id && bt.term === term && bt.year == year && bt.status === 'pending');
-            if(pendingTransfer) await supabaseClient.from('bank_transfers').update({status:'verified'}).eq('id', pendingTransfer.id);
-            await refreshData(); feeManagementEnhanced(); showToast(`Confirmed ₦${amount} payment`);
-        }));
-        let pending = schoolData.bankTransfers.filter(t => t.status === 'pending' && t.term === term && t.year == year);
-        let pendingDiv = document.getElementById('pendingBankArea');
-        if(pending.length) pendingDiv.innerHTML = `<h3 class="font-bold mb-2">⏳ Pending Bank Transfers</h3><div class="space-y-2">${pending.map(t=>{ let stu=schoolData.students.find(s=>s.id==t.student_id); return `<div class="flex justify-between items-center bg-yellow-50 p-3 rounded-xl"><span>${stu?.name} - ₦${t.amount}</span><a href="${t.proof_url}" target="_blank" class="text-blue-600 underline">View Proof</a><button class="verify-bank-term bg-green-700 text-white px-3 py-1 rounded-full text-sm" data-id="${t.id}">✅ Verify & Confirm</button></div>`; }).join('')}</div>`; else pendingDiv.innerHTML = '<p class="text-gray-500">No pending bank transfers.</p>';
-        document.querySelectorAll('.verify-bank-term').forEach(v=>v.addEventListener('click',async()=>{
-            let tid=v.dataset.id; await supabaseClient.from('bank_transfers').update({status:'verified'}).eq('id',tid);
-            let trans=schoolData.bankTransfers.find(t=>t.id==tid);
-            if(trans) await supabaseClient.from('payments').insert([{ student_id: trans.student_id, amount: trans.amount, term: trans.term, year: trans.year, payment_method: 'bank_transfer', payment_reference: 'BANK'+tid, payment_status: 'success' }]);
-            await refreshData(); feeManagementEnhanced(); showToast("Bank transfer verified & payment recorded");
-        }));
+    function attachEvents() {
+        document.querySelectorAll('.editable-student').forEach(cell => {
+            cell.setAttribute('contenteditable','true');
+            cell.addEventListener('blur', async () => {
+                let field=cell.dataset.field, id=cell.dataset.id, val=cell.innerText.trim();
+                if(field==='term_fee') val=parseFloat(val)||0;
+                await supabaseClient.from('students').update({[field]:val}).eq('id',id);
+                await refreshData(); studentsViewEditable();
+                showToast(`${field} saved`);
+            });
+        });
+        document.querySelectorAll('.delete-student').forEach(btn => btn.addEventListener('click', async () => { if(confirm("Delete permanently?")){ await supabaseClient.from('students').delete().eq('id',btn.dataset.id); await refreshData(); studentsViewEditable(); } }));
     }
     render();
-    document.getElementById('feeYear').addEventListener('change', render);
-    document.getElementById('feeTermSelect').addEventListener('change', render);
-    document.getElementById('feeSectionFilter').addEventListener('change', render);
-    document.getElementById('feeClassFilter').addEventListener('change', render);
-    document.getElementById('feeSearch').addEventListener('input', render);
+    document.getElementById('studentSectionFilter').addEventListener('change', render);
+    document.getElementById('studentClassFilter').addEventListener('change', render);
+    document.getElementById('studentSearch').addEventListener('input', render);
+    document.getElementById('addStudentBtn').onclick = () => enrollViewModern();
 }
 
-// ========== PARENT PAYMENT PORTAL ==========
-async function parentPaymentPortalView() {
-    let studentId = currentUser.studentId, student = schoolData.students.find(s => s.id == studentId);
-    if(!student) { showToast("Student not found", true); return; }
-    let currentYear = new Date().getFullYear(), term = "1st Term";
-    let paid = schoolData.payments.filter(p => p.student_id == studentId && p.term === term && p.year == currentYear).reduce((a,b)=>a+(b.amount||0),0);
-    let due = Math.max(0, 30000 - paid);
-    let pendingTransfer = schoolData.bankTransfers.find(bt => bt.student_id == studentId && bt.term === term && bt.year == currentYear && bt.status === 'pending');
-    let proofUrl = pendingTransfer ? pendingTransfer.proof_url : null;
-    let html = `<div class="card p-6 max-w-2xl mx-auto">
-        <h2 class="text-2xl font-bold text-emerald-800 mb-4">Fee Payment Portal</h2>
-        <div class="bg-gray-50 p-5 rounded-2xl mb-6">
-            <p><strong>Student:</strong> ${escapeHtml(student.name)} (${student.reg_number})</p>
-            <p><strong>Class:</strong> ${student.academic_class || 'N/A'}</p>
-            <p><strong>Term:</strong> ${term} ${currentYear}</p>
-            <hr class="my-3"><p><strong>Total Term Fee:</strong> ₦30,000</p>
-            <p><strong>Paid:</strong> ₦${paid.toLocaleString()}</p><p><strong>Outstanding Balance:</strong> ₦${due.toLocaleString()}</p>
-            <p><span class="status-${due<=0?'paid':paid>0?'partial':'unpaid'}">${due<=0?'Paid':paid>0?'Partial':'Unpaid'}</span></p>
-        </div>
-        ${due>0 ? `
-        <div class="mb-6 border rounded-xl p-4 bg-white"><h3 class="font-bold text-lg mb-2">💳 Pay Online with Card</h3><button id="parentPayNowBtn" class="apply-btn px-6 py-2 rounded-full">Pay ₦${due.toLocaleString()} Now</button></div>
-        <div class="border rounded-xl p-4 bg-white"><h3 class="font-bold text-lg mb-2">🏦 Upload Bank Transfer Proof</h3><p class="text-sm text-gray-600 mb-2">Make a transfer and upload receipt. Admin will verify.</p>
-        ${pendingTransfer ? `<div class="mb-3"><a href="${proofUrl}" target="_blank" class="text-blue-600 underline">View uploaded proof</a><br><span class="text-yellow-700">Status: Pending</span></div>` : ''}
-        <input type="file" id="parentBankProof" accept="image/*" class="mb-2"><button id="submitParentProofBtn" class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">Upload Proof</button></div>
-        ` : `<div class="bg-green-100 text-green-800 p-4 rounded-xl text-center">No outstanding fees. Thank you!</div>`}
-    </div>`;
-    document.getElementById('mainContent').innerHTML = html;
-    if(due>0) {
-        document.getElementById('parentPayNowBtn')?.addEventListener('click', () => {
-            let handler = PaystackPop.setup({ key: PAYSTACK_PUBLIC_KEY, email: student.parent_email || `${student.reg_number}@school.com`, amount: due * 100, callback: async (response) => {
-                await supabaseClient.from('payments').insert([{ student_id: studentId, amount: due, term, year: currentYear, payment_method: 'paystack_online', payment_reference: response.reference, payment_status: 'success' }]);
-                await refreshData(); parentPaymentPortalView(); showToast(`Payment of ₦${due} successful`);
-            } }); handler.openIframe();
-        });
-        document.getElementById('submitParentProofBtn')?.addEventListener('click', async () => {
-            let file = document.getElementById('parentBankProof').files[0];
-            if(!file) { showToast("Please select an image file", true); return; }
-            showLoading(true);
-            try {
-                let path = `parent-proofs/${Date.now()}_${file.name}`;
-                await supabaseClient.storage.from('school-bank-proofs').upload(path, file);
-                let { data:{ publicUrl } } = supabaseClient.storage.from('school-bank-proofs').getPublicUrl(path);
-                if(pendingTransfer) await supabaseClient.from('bank_transfers').update({ proof_url: publicUrl }).eq('id', pendingTransfer.id);
-                else await supabaseClient.from('bank_transfers').insert([{ student_id: studentId, proof_url: publicUrl, status: 'pending', amount: 30000, term, year: currentYear }]);
-                await refreshData(); showToast("Bank proof uploaded. Admin will verify."); parentPaymentPortalView();
-            } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
-        });
-    }
-}
-
-// ========== TEACHER RESULT ENTRY ==========
-async function teacherResultEntry() {
-    let students = schoolData.students, currentYear = new Date().getFullYear();
-    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📝 Enter Subject Grades</h2><div class="filter-row"><select id="teacherTerm">${TERMS.map(t=>`<option>${t}</option>`).join('')}</select><input id="teacherYear" type="number" value="${currentYear}" class="w-28"><select id="teacherSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select><select id="teacherClassFilter"><option value="all">All Classes</option>${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select><input id="teacherSearch" placeholder="🔍 Search student" class="flex-1"></div>
-    <select id="teacherStudentSelect" class="border p-3 w-full mb-4 rounded-xl"><option>Select Student</option></select>
-    <div class="bg-gray-50 p-4 rounded-2xl"><div class="flex flex-wrap gap-2"><input id="newSubject" placeholder="Subject" class="flex-1"><input id="ca1Val" placeholder="CA1 (0-20)" type="number" class="w-24"><input id="ca2Val" placeholder="CA2 (0-20)" type="number" class="w-24"><input id="examVal" placeholder="Exam (0-60)" type="number" class="w-24"><button id="addSubjectGradeBtn" class="apply-btn px-4">+ Add</button></div><div id="existingSubjectsList" class="mt-4"></div></div></div>`;
-    document.getElementById('mainContent').innerHTML = html;
-    function filterStudents() {
-        let section = document.getElementById('teacherSectionFilter').value, classVal = document.getElementById('teacherClassFilter').value, search = document.getElementById('teacherSearch').value.toLowerCase();
-        let filtered = students.filter(s => (section==='all' || s.section===section) && (classVal==='all' || s.academic_class===classVal) && (s.name.toLowerCase().includes(search) || (s.reg_number||'').toLowerCase().includes(search)));
-        let select = document.getElementById('teacherStudentSelect');
-        select.innerHTML = '<option>Select Student</option>' + filtered.map(s=>`<option value="${s.id}">${s.name} (${s.reg_number})</option>`).join('');
-        if(select.value !== 'Select Student') loadSubjects(select.value);
-    }
-    async function loadSubjects(sid) { if(!sid || sid==='Select Student') return;
-        let term = document.getElementById('teacherTerm').value, year = document.getElementById('teacherYear').value;
-        let existing = schoolData.results.filter(r => r.student_id == sid && r.term === term && r.year == year);
-        document.getElementById('existingSubjectsList').innerHTML = existing.map(r => `<div class="flex justify-between items-center bg-white p-2 rounded-xl shadow-sm mt-2"><span class="font-medium">${escapeHtml(r.subject)}</span><span>CA1:${r.ca1} CA2:${r.ca2} Exam:${r.exam} Total:${r.total}</span><button class="delete-subject-btn text-red-500" data-id="${r.id}">✕</button></div>`).join('');
-        document.querySelectorAll('.delete-subject-btn').forEach(btn => btn.addEventListener('click', async () => { await supabaseClient.from('results').delete().eq('id', btn.dataset.id); await refreshData(); loadSubjects(sid); showToast("Subject deleted"); }));
-    }
-    document.getElementById('addSubjectGradeBtn').onclick = async () => {
-        let sid = document.getElementById('teacherStudentSelect').value; if(sid==='Select Student') return showToast("Select student", true);
-        let subject = document.getElementById('newSubject').value.trim(); if(!subject) return showToast("Subject required", true);
-        let ca1 = parseInt(document.getElementById('ca1Val').value)||0, ca2 = parseInt(document.getElementById('ca2Val').value)||0, exam = parseInt(document.getElementById('examVal').value)||0;
-        if(ca1<0||ca1>20||ca2<0||ca2>20||exam<0||exam>60) return showToast("Invalid marks (CA:0-20, Exam:0-60)", true);
-        let term = document.getElementById('teacherTerm').value, year = document.getElementById('teacherYear').value;
-        await supabaseClient.from('results').insert([{ student_id: sid, term, year, subject, ca1, ca2, exam, total: ca1+ca2+exam }]);
-        await refreshData(); showToast(`Grade for ${subject} added`); loadSubjects(sid);
-        document.getElementById('newSubject').value = ''; document.getElementById('ca1Val').value = ''; document.getElementById('ca2Val').value = ''; document.getElementById('examVal').value = '';
-    };
-    document.getElementById('teacherStudentSelect').addEventListener('change', (e) => loadSubjects(e.target.value));
-    document.getElementById('teacherTerm').addEventListener('change', () => loadSubjects(document.getElementById('teacherStudentSelect').value));
-    document.getElementById('teacherYear').addEventListener('change', () => loadSubjects(document.getElementById('teacherStudentSelect').value));
-    document.getElementById('teacherSectionFilter').addEventListener('change', filterStudents);
-    document.getElementById('teacherClassFilter').addEventListener('change', filterStudents);
-    document.getElementById('teacherSearch').addEventListener('input', filterStudents);
-    filterStudents();
-}
-
-// ========== ENHANCED RESULT VIEW (simplified but fully functional) ==========
+// ========== ENHANCED RESULTS WITH RANKING ==========
 async function enhancedResultView(adminMode=true) {
     let students = schoolData.students, currentYear = new Date().getFullYear();
     let studentId = adminMode ? (document.getElementById('resultStudentSelect')?.value || students[0]?.id) : (currentUser?.studentId);
     if(!studentId && students.length) studentId = students[0]?.id;
-    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📋 Student Report Card</h2>`;
+    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📋 Student Report Card / كشف الدرجات</h2>`;
     if(adminMode) html += `<div class="filter-row"><select id="resultSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select><select id="resultClassFilter"><option value="all">All Classes</option>${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select><input id="resultSearch" placeholder="🔍 Search student" class="flex-1"></div><select id="resultStudentSelect" class="border p-3 w-full mb-4 rounded-xl"></select>`;
     html += `<div id="termTabs" class="flex gap-2 mb-5"></div><div id="reportCardContainer"></div><button id="printReportBtn" class="apply-btn mt-5 px-6 py-2 rounded-full"><i class="fas fa-print mr-2"></i>Print Report</button></div>`;
     document.getElementById('mainContent').innerHTML = html;
@@ -485,75 +400,433 @@ async function enhancedResultView(adminMode=true) {
         if(!student) return;
         let term = currentTerm, year = currentYear;
         let subjectsResults = schoolData.results.filter(r => r.student_id == sid && r.term === term && r.year == year);
+        let extra = schoolData.resultExtras.find(e => e.student_id == sid && e.term === term && e.year == year) || { qualities: {}, days_present: 0, remarks: '' };
         let totalMarks = subjectsResults.reduce((s,sub)=>s+(sub.total||0),0);
         let avg = subjectsResults.length ? (totalMarks/subjectsResults.length).toFixed(1) : 0;
-        let cardHtml = `<div class="bg-white border rounded-2xl p-6 shadow-sm"><h3 class="text-xl font-bold text-center text-emerald-800">Al‑Istiqaamah Flying Wings Academy</h3><p class="text-center text-gray-500">${term} | ${year}</p><div class="grid grid-cols-2 gap-3 mt-4"><div><strong>Name:</strong> ${escapeHtml(student.name)}</div><div><strong>Reg No:</strong> ${student.reg_number}</div><div><strong>Class:</strong> ${student.academic_class}</div></div>
-        <h4 class="font-bold mt-5">📚 Subjects Performance</h4><div class="overflow-x-auto"><table class="w-full border mt-2"><thead><tr><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>Grade</th><th>Remark</th></tr></thead><tbody>${subjectsResults.map(sub=>{ let total=(sub.ca1||0)+(sub.ca2||0)+(sub.exam||0); let grade=total>=80?'A':total>=70?'B':total>=60?'C':total>=50?'D':'F'; let remark=grade=='A'?'Excellent':grade=='B'?'Good':grade=='C'?'Average':'Needs Improvement'; return `<tr><td class="font-medium">${escapeHtml(sub.subject)}</td><td>${sub.ca1||0}</td><td>${sub.ca2||0}</td><td>${sub.exam||0}</td><td class="font-bold">${total}</td><td><span class="grade-badge">${grade}</span></td><td>${remark}</td></tr>`; }).join('')}</tbody></table></div></div>
-        <div class="mt-5 text-center"><p class="font-bold">Average: ${avg}%</p></div><div class="flex justify-between mt-6 text-sm text-gray-500"><span>Teacher's Signature: ______________</span><span>Headteacher's Signature: ______________</span></div></div>`;
+        let gradeStatus = avg>=80?'Excellent':avg>=70?'Very Good':avg>=60?'Good':avg>=50?'Fair':'Needs Improvement';
+
+        let classStudents = schoolData.students.filter(s => s.academic_class === student.academic_class);
+        let classAverages = [];
+        for(let s of classStudents) {
+            let sResults = schoolData.results.filter(r => r.student_id == s.id && r.term === term && r.year == year);
+            let sTotal = sResults.reduce((sum,sub)=>sum+(sub.total||0),0);
+            let sAvg = sResults.length ? sTotal / sResults.length : 0;
+            classAverages.push({ id: s.id, avg: sAvg });
+        }
+        classAverages.sort((a,b)=>b.avg - a.avg);
+        let overallRank = classAverages.findIndex(c => c.id == sid) + 1;
+        let totalStudents = classAverages.length;
+
+        let subjectRanks = {};
+        for(let sub of subjectsResults) {
+            let allScores = [];
+            for(let s of classStudents) {
+                let sSub = schoolData.results.find(r => r.student_id == s.id && r.term === term && r.year == year && r.subject === sub.subject);
+                let score = sSub ? (sSub.total || 0) : 0;
+                allScores.push({ id: s.id, score: score });
+            }
+            allScores.sort((a,b)=>b.score - a.score);
+            let rank = allScores.findIndex(sc => sc.id == sid) + 1;
+            subjectRanks[sub.subject] = rank;
+        }
+
+        let cardHtml = `<div class="report-card-container"><div class="text-center border-b pb-2 mb-3"><h3 class="text-xl font-bold">Al‑Istiqaamah Flying Wings Academy</h3><p class="text-gray-600">${term} | ${year}</p></div><div class="grid grid-cols-2 gap-2 mb-4"><div><strong>Name:</strong> ${escapeHtml(student.name)}</div><div><strong>Reg No:</strong> ${student.reg_number}</div><div><strong>Class:</strong> ${student.academic_class}</div><div><strong>Days Present:</strong> <span class="editable-attendance" data-field="days_present" data-student="${sid}" data-term="${term}" data-year="${year}">${extra.days_present||0}</span></div><div><strong>Overall Position:</strong> ${overallRank} / ${totalStudents}</div></div><h4 class="font-bold mt-3">📚 Performance in subjects / الإنجاز في الدروس</h4><table class="w-full border mt-2"><thead><tr><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>Grade</th><th>Position</th><th>Remark</th></tr></thead><tbody>${subjectsResults.map(sub=>{ let total=(sub.ca1||0)+(sub.ca2||0)+(sub.exam||0); let grade=total>=80?'A':total>=70?'B':total>=60?'C':total>=50?'D':'F'; let remark=grade=='A'?'Excellent':grade=='B'?'Good':grade=='C'?'Average':'Needs Improvement'; let subRank = subjectRanks[sub.subject] || '—'; return `<tr><td class="font-medium">${escapeHtml(sub.subject)}</td><td>${sub.ca1||0}</td><td>${sub.ca2||0}</td><td>${sub.exam||0}</td><td class="font-bold">${total}</td><td>${grade}</td><td>${subRank}</td><td>${remark}</td>`; }).join('')}</tbody></table><h4 class="font-bold mt-4">🌟 Personal & Social Qualities / الصفات الشخصية والاجتماعية</h4><table class="w-full border mt-2"><thead><tr><th>Quality</th><th>الرجاء</th><th>Grade</th></tr></thead><tbody>${QUALITIES.map(q=>`<tr><td>${q}</td><td>${QUALITIES_ARABIC[q]}</td><td><select class="quality-select" data-quality="${q}" data-student="${sid}" data-term="${term}" data-year="${year}">${['Excellent','Very Good','Good','Fair','Poor'].map(g=>`<option ${g=== (extra.qualities?.[q] || 'Good') ? 'selected' : ''}>${g}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table><p class="mt-3"><strong>Remarks / ملاحظات:</strong> <span class="editable-remarks" data-field="remarks" data-student="${sid}" data-term="${term}" data-year="${year}">${escapeHtml(extra.remarks||'')}</span></p><div class="mt-4 text-center"><p class="font-bold">Average: ${avg}% (${gradeStatus})</p></div><div class="flex justify-between mt-5 text-sm"><span>Teacher's Signature: ______________</span><span>Headteacher's Signature: ______________</span></div></div>`;
         document.getElementById('reportCardContainer').innerHTML = cardHtml;
+        attachResultEditable(sid);
+    }
+    function attachResultEditable(sid) {
+        document.querySelectorAll('.editable-attendance').forEach(cell=>{ cell.setAttribute('contenteditable','true'); cell.addEventListener('blur',async()=>{ let sid2=cell.dataset.student, term=cell.dataset.term, year=cell.dataset.year, days=parseInt(cell.innerText)||0; let existing = schoolData.resultExtras.find(e=>e.student_id==sid2 && e.term==term && e.year==year); if(existing) await supabaseClient.from('result_extras').update({days_present:days}).eq('id',existing.id); else await supabaseClient.from('result_extras').insert([{student_id:sid2, term, year, days_present:days}]); await refreshData(); renderReportCard(sid2); }); });
+        document.querySelectorAll('.editable-remarks').forEach(cell=>{ cell.setAttribute('contenteditable','true'); cell.addEventListener('blur',async()=>{ let sid2=cell.dataset.student, term=cell.dataset.term, year=cell.dataset.year, remarks=cell.innerText; let existing = schoolData.resultExtras.find(e=>e.student_id==sid2 && e.term==term && e.year==year); if(existing) await supabaseClient.from('result_extras').update({remarks}).eq('id',existing.id); else await supabaseClient.from('result_extras').insert([{student_id:sid2, term, year, remarks}]); await refreshData(); renderReportCard(sid2); }); });
+        document.querySelectorAll('.quality-select').forEach(sel=>{ sel.addEventListener('change',async()=>{ let sid2=sel.dataset.student, term=sel.dataset.term, year=sel.dataset.year, quality=sel.dataset.quality, grade=sel.value; let existing = schoolData.resultExtras.find(e=>e.student_id==sid2 && e.term==term && e.year==year); let qualities = existing?.qualities || {}; qualities[quality] = grade; if(existing) await supabaseClient.from('result_extras').update({qualities}).eq('id',existing.id); else await supabaseClient.from('result_extras').insert([{student_id:sid2, term, year, qualities}]); await refreshData(); renderReportCard(sid2); }); });
     }
     renderTermTabs("1st Term");
     if(adminMode) filterStudents(); else if(studentId) renderReportCard(studentId);
     document.getElementById('printReportBtn').onclick = () => window.print();
 }
 
-// ========== STUDENTS EDITABLE VIEW ==========
-async function studentsViewEditable() {
-    let students = schoolData.students;
-    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📚 Students</h2><div class="filter-row"><select id="studentSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select><select id="studentClassFilter"><option value="all">All Classes</option>${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select><input id="studentSearch" placeholder="🔍 Search name/reg" class="flex-1"></div>
-    <div class="table-container overflow-x-auto"><table class="min-w-full"><thead><tr><th>Reg No</th><th>Name</th><th>Parent</th><th>Section</th><th>Class</th><th>Total Fees (₦)</th><th>Actions</th></tr></thead><tbody id="studentEditBody"></tbody></table></div><button id="addStudentBtn" class="apply-btn mt-5 px-5 py-2 rounded-full">+ Enroll Student</button></div>`;
+// ========== FEE MANAGEMENT (fully operational) ==========
+async function feeManagementEnhanced() {
+    let students = schoolData.students, currentYear = new Date().getFullYear();
+    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">💰 Fee Management by Term</h2><div class="filter-row"><input id="feeYear" type="number" value="${currentYear}" class="w-28"><select id="feeTermSelect">${TERMS.map(t=>`<option>${t}</option>`).join('')}</select><select id="feeSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select><select id="feeClassFilter"><option value="all">All Classes</option>${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select><input id="feeSearch" placeholder="🔍 Search student" class="flex-1"></div><div class="overflow-x-auto"><table class="min-w-full"><thead><tr><th>Student</th><th>Term Fee</th><th>Paid</th><th>Due</th><th>Status</th><th>Pay Online</th><th>Bank Proof</th><th>Admin Confirm</th><th>Edit Fee</th></tr></thead><tbody id="feeTermBody"></tbody></table></div><div id="pendingBankArea" class="mt-5"></div></div>`;
     document.getElementById('mainContent').innerHTML = html;
-    const tbody = document.getElementById('studentEditBody');
-    function render() {
-        let section = document.getElementById('studentSectionFilter').value, classVal = document.getElementById('studentClassFilter').value, search = document.getElementById('studentSearch').value.toLowerCase();
+    async function render() {
+        let year = document.getElementById('feeYear').value, term = document.getElementById('feeTermSelect').value, section = document.getElementById('feeSectionFilter').value, classVal = document.getElementById('feeClassFilter').value, search = document.getElementById('feeSearch').value.toLowerCase();
         let filtered = students.filter(s => (section==='all' || s.section===section) && (classVal==='all' || s.academic_class===classVal) && (s.name.toLowerCase().includes(search) || (s.reg_number||'').toLowerCase().includes(search)));
-        tbody.innerHTML = filtered.map(s => `<tr><td class="editable-student" data-field="reg_number" data-id="${s.id}">${escapeHtml(s.reg_number)}</td><td class="editable-student" data-field="name" data-id="${s.id}">${escapeHtml(s.name)}</td><td class="editable-student" data-field="parent_name" data-id="${s.id}">${escapeHtml(s.parent_name||'')}</td><td class="editable-student" data-field="section" data-id="${s.id}">${escapeHtml(s.section||'')}</td><td class="editable-student" data-field="academic_class" data-id="${s.id}">${escapeHtml(s.academic_class||'')}</td><td class="editable-student" data-field="total_fees" data-id="${s.id}">${s.total_fees||30000}</td><td><button class="delete-student text-red-500" data-id="${s.id}">Delete</button></td></tr>`).join('');
-        attachEvents();
+        let tbody = document.getElementById('feeTermBody');
+        tbody.innerHTML = filtered.map(s => {
+            let termFee = s.term_fee || 30000;
+            let paid = schoolData.payments.filter(p=>p.student_id===s.id && p.term===term && p.year==year).reduce((a,b)=>a+(b.amount||0),0);
+            let due = Math.max(0, termFee - paid);
+            let status = due<=0?'Paid':paid>0?'Partial':'Unpaid';
+            let pendingTransfer = schoolData.bankTransfers.find(bt => bt.student_id == s.id && bt.term === term && bt.year == year && bt.status === 'pending');
+            let proofUrl = pendingTransfer ? pendingTransfer.proof_url : null;
+            let viewProofButton = proofUrl ? `<a href="${proofUrl}" target="_blank" class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm inline-block">📎 View Proof</a>` : '<span class="text-gray-400 text-sm">No proof</span>';
+            return `<tr><td class="font-medium">${escapeHtml(s.name)}</td><td>₦${termFee.toLocaleString()}</td><td>₦${paid.toLocaleString()}</td><td>₦${due.toLocaleString()}</td><td><span class="status-${status.toLowerCase()}">${status}</span></td><td><button class="paystack-term bg-green-600 text-white px-3 py-1 rounded-full text-sm" data-id="${s.id}" data-email="${s.parent_email||s.reg_number+'@school.com'}" data-due="${due}" data-term="${term}" data-year="${year}">Pay Now</button></td><td>${viewProofButton}</td><td><button class="admin-confirm-term bg-amber-600 text-white px-3 py-1 rounded-full text-sm" data-id="${s.id}" data-due="${due}" data-term="${term}" data-year="${year}">Confirm</button></td><td><button class="edit-term-fee bg-purple-600 text-white px-3 py-1 rounded-full text-sm" data-id="${s.id}">Edit Fee</button></td></tr>`;
+        }).join('');
+        attachEvents(year, term);
     }
-    function attachEvents() {
-        document.querySelectorAll('.editable-student').forEach(cell => {
-            cell.setAttribute('contenteditable','true');
-            cell.addEventListener('blur', async () => {
-                let field=cell.dataset.field, id=cell.dataset.id, val=cell.innerText.trim();
-                if(field==='total_fees') val=parseFloat(val)||0;
-                await supabaseClient.from('students').update({[field]:val}).eq('id',id);
-                await refreshData(); studentsViewEditable();
-                showToast(`${field} saved`);
-            });
-        });
-        document.querySelectorAll('.delete-student').forEach(btn => btn.addEventListener('click', async () => { if(confirm("Delete permanently?")){ await supabaseClient.from('students').delete().eq('id',btn.dataset.id); await refreshData(); studentsViewEditable(); } }));
+    function attachEvents(year, term) {
+        document.querySelectorAll('.paystack-term').forEach(btn => btn.addEventListener('click', () => {
+            let due = parseFloat(btn.dataset.due); if(due<=0) return showToast("No outstanding fee");
+            let handler = PaystackPop.setup({ key: PAYSTACK_PUBLIC_KEY, email: btn.dataset.email, amount: due*100, callback: async (r) => {
+                await supabaseClient.from('payments').insert([{ student_id: btn.dataset.id, amount: due, term, year, payment_method: 'paystack_online', payment_reference: r.reference, payment_status: 'success' }]);
+                await refreshData(); feeManagementEnhanced(); showToast(`Payment of ₦${due} successful`);
+            } }); handler.openIframe();
+        }));
+        document.querySelectorAll('.admin-confirm-term').forEach(btn => btn.addEventListener('click', () => {
+            let studentId = btn.dataset.id;
+            let due = parseFloat(btn.dataset.due);
+            if(due <= 0) { showToast("No due to confirm", true); return; }
+            pendingPaymentAction = { studentId, term, year, type: 'admin' };
+            document.getElementById('paymentAmount').value = due;
+            document.getElementById('amountModal').style.display = 'flex';
+        }));
+        document.querySelectorAll('.edit-term-fee').forEach(btn => btn.addEventListener('click', async () => {
+            let studentId = btn.dataset.id;
+            let student = schoolData.students.find(s => s.id == studentId);
+            let newFee = prompt("Enter new term fee (₦):", student.term_fee || 30000);
+            if(newFee && !isNaN(parseFloat(newFee))) {
+                await supabaseClient.from('students').update({ term_fee: parseFloat(newFee) }).eq('id', studentId);
+                await refreshData(); feeManagementEnhanced();
+                showToast("Term fee updated");
+            }
+        }));
+        let pending = schoolData.bankTransfers.filter(t => t.status === 'pending' && t.term === term && t.year == year);
+        let pendingDiv = document.getElementById('pendingBankArea');
+        if(pending.length) pendingDiv.innerHTML = `<h3 class="font-bold mb-2">⏳ Pending Bank Transfers</h3><div class="space-y-2">${pending.map(t=>{ let stu=schoolData.students.find(s=>s.id==t.student_id); return `<div class="flex justify-between items-center bg-yellow-50 p-3 rounded-xl"><span>${stu?.name} - ₦${t.amount}</span><a href="${t.proof_url}" target="_blank" class="text-blue-600 underline">View Proof</a><button class="verify-bank-term bg-green-700 text-white px-3 py-1 rounded-full text-sm" data-id="${t.id}" data-student="${t.student_id}" data-term="${t.term}" data-year="${t.year}" data-amount="${t.amount}">✅ Verify & Confirm</button></div>`; }).join('')}</div>`; else pendingDiv.innerHTML = '<p class="text-gray-500">No pending bank transfers.</p>';
+        document.querySelectorAll('.verify-bank-term').forEach(v=>v.addEventListener('click',()=>{
+            let transferId = v.dataset.id;
+            let studentId = v.dataset.student;
+            let termVal = v.dataset.term;
+            let yearVal = v.dataset.year;
+            let currentAmount = parseFloat(v.dataset.amount);
+            pendingPaymentAction = { studentId, term: termVal, year: yearVal, type: 'bank', transferId, currentAmount };
+            document.getElementById('paymentAmount').value = currentAmount;
+            document.getElementById('amountModal').style.display = 'flex';
+        }));
     }
     render();
-    document.getElementById('studentSectionFilter').addEventListener('change', render);
-    document.getElementById('studentClassFilter').addEventListener('change', render);
-    document.getElementById('studentSearch').addEventListener('input', render);
-    document.getElementById('addStudentBtn').onclick = async () => { let name=prompt("Student name"); if(name){ let reg=prompt("Reg Number"); await supabaseClient.from('students').insert([{name, reg_number:reg, status:'active'}]); await refreshData(); studentsViewEditable(); } };
+    document.getElementById('feeYear').addEventListener('change', render);
+    document.getElementById('feeTermSelect').addEventListener('change', render);
+    document.getElementById('feeSectionFilter').addEventListener('change', render);
+    document.getElementById('feeClassFilter').addEventListener('change', render);
+    document.getElementById('feeSearch').addEventListener('input', render);
 }
 
-    // ========== . UNIFIED STAFF ==========
+document.getElementById('confirmAmountBtn')?.addEventListener('click', async () => {
+    let amount = parseFloat(document.getElementById('paymentAmount').value);
+    if(isNaN(amount) || amount <= 0) { showToast("Please enter a valid amount", true); return; }
+    if(!pendingPaymentAction) return;
+    closeModal('amountModal');
+    showLoading(true);
+    try {
+        if(pendingPaymentAction.type === 'admin') {
+            await supabaseClient.from('payments').insert([{ student_id: pendingPaymentAction.studentId, amount: amount, term: pendingPaymentAction.term, year: pendingPaymentAction.year, payment_method: 'cash_admin', payment_reference: 'ADMIN'+Date.now(), payment_status: 'success' }]);
+            showToast(`Confirmed payment of ₦${amount}`);
+        } else if(pendingPaymentAction.type === 'bank') {
+            await supabaseClient.from('bank_transfers').update({ status: 'verified' }).eq('id', pendingPaymentAction.transferId);
+            await supabaseClient.from('payments').insert([{ student_id: pendingPaymentAction.studentId, amount: amount, term: pendingPaymentAction.term, year: pendingPaymentAction.year, payment_method: 'bank_transfer', payment_reference: 'BANK'+pendingPaymentAction.transferId, payment_status: 'success' }]);
+            showToast(`Bank transfer verified and ₦${amount} recorded`);
+        }
+        await refreshData();
+        feeManagementEnhanced();
+    } catch(err) { showToast(err.message, true); } finally { showLoading(false); pendingPaymentAction = null; }
+});
+
+// ========== PARENT PAYMENT PORTAL ==========
+async function parentPaymentPortalView() {
+    let studentId = currentUser.studentId, student = schoolData.students.find(s => s.id == studentId);
+    if(!student) { showToast("Student not found", true); return; }
+    let currentYear = new Date().getFullYear(), term = "1st Term";
+    let termFee = student.term_fee || 30000;
+    let paid = schoolData.payments.filter(p => p.student_id == studentId && p.term === term && p.year == currentYear).reduce((a,b)=>a+(b.amount||0),0);
+    let due = Math.max(0, termFee - paid);
+    let pendingTransfer = schoolData.bankTransfers.find(bt => bt.student_id == studentId && bt.term === term && bt.year == currentYear && bt.status === 'pending');
+    let proofUploaded = pendingTransfer ? true : false;
+    let proofUrl = pendingTransfer ? pendingTransfer.proof_url : null;
+    let html = `<div class="card p-6 max-w-2xl mx-auto">
+        <h2 class="text-2xl font-bold text-emerald-800 mb-4">Fee Payment Portal</h2>
+        <div class="bg-gray-50 p-5 rounded-2xl mb-6">
+            <p><strong>Student:</strong> ${escapeHtml(student.name)} (${student.reg_number})</p>
+            <p><strong>Class:</strong> ${student.academic_class || 'N/A'}</p>
+            <p><strong>Term:</strong> ${term} ${currentYear}</p>
+            <hr class="my-3">
+            <p><strong>Term Fee:</strong> ₦${termFee.toLocaleString()}</p>
+            <p><strong>Paid:</strong> ₦${paid.toLocaleString()}</p>
+            <p><strong>Outstanding Balance:</strong> ₦${due.toLocaleString()}</p>
+            <p><span class="status-${due<=0?'paid':paid>0?'partial':'unpaid'}">${due<=0?'Paid':paid>0?'Partial':'Unpaid'}</span></p>
+        </div>
+        ${due>0 ? `
+        <div class="mb-6 border rounded-xl p-4 bg-white">
+            <h3 class="font-bold text-lg mb-2">💳 Pay Online with Card</h3>
+            <button id="parentPayNowBtn" class="apply-btn px-6 py-2 rounded-full">Pay ₦${due.toLocaleString()} Now</button>
+        </div>
+        <div class="border rounded-xl p-4 bg-white">
+            <h3 class="font-bold text-lg mb-2">🏦 Upload Bank Transfer Proof</h3>
+            <p class="text-sm text-gray-600 mb-2">Make a transfer to the school bank account and upload the receipt here. Admin will verify.</p>
+            ${proofUploaded ? `<div class="mb-3"><a href="${proofUrl}" target="_blank" class="text-blue-600 underline">View uploaded proof</a><br><span class="text-yellow-700">Status: Pending verification</span></div>` : ''}
+            <input type="file" id="parentBankProof" accept="image/*" class="mb-2">
+            <button id="submitParentProofBtn" class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">Upload Proof</button>
+        </div>
+        ` : `<div class="bg-green-100 text-green-800 p-4 rounded-xl text-center">No outstanding fees. Thank you!</div>`}
+    </div>`;
+    document.getElementById('mainContent').innerHTML = html;
+    if(due>0) {
+        document.getElementById('parentPayNowBtn')?.addEventListener('click', () => {
+            let handler = PaystackPop.setup({ key: PAYSTACK_PUBLIC_KEY, email: student.parent_email || `${student.reg_number}@school.com`, amount: due * 100, callback: async (response) => {
+                await supabaseClient.from('payments').insert([{ student_id: studentId, amount: due, term, year: currentYear, payment_method: 'paystack_online', payment_reference: response.reference, payment_status: 'success' }]);
+                await refreshData(); parentPaymentPortalView(); showToast(`Payment of ₦${due} successful`);
+            } }); handler.openIframe();
+        });
+        document.getElementById('submitParentProofBtn')?.addEventListener('click', async () => {
+            let file = document.getElementById('parentBankProof').files[0];
+            if(!file) { showToast("Please select an image file", true); return; }
+            showLoading(true);
+            try {
+                let path = `parent-proofs/${Date.now()}_${file.name}`;
+                await supabaseClient.storage.from('school-bank-proofs').upload(path, file);
+                let { data:{ publicUrl } } = supabaseClient.storage.from('school-bank-proofs').getPublicUrl(path);
+                if(pendingTransfer) {
+                    await supabaseClient.from('bank_transfers').update({ proof_url: publicUrl }).eq('id', pendingTransfer.id);
+                } else {
+                    await supabaseClient.from('bank_transfers').insert([{ student_id: studentId, proof_url: publicUrl, status: 'pending', amount: termFee, term, year: currentYear }]);
+                }
+                await refreshData();
+                showToast("Bank proof uploaded. Admin will verify.");
+                parentPaymentPortalView();
+            } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
+        });
+    }
+}
+
+// ========== STAFF APPRAISAL (Directors) ==========
+async function staffAppraisalView() {
+    if(!['daf','do','der','dprpa'].includes(currentUser.role)) { showToast("Access denied. Only directors can appraise staff.", true); return; }
+    let allStaff = [...schoolData.teachers];
+    let staffList = allStaff.filter(s => !['daf','do','der','dprpa','dg_ceo','management_committee'].includes(s.role));
+    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📝 Staff Appraisal</h2><div class="filter-row"><select id="appraisalStaffFilter" class="border p-2 rounded"><option value="all">All Staff</option>${staffList.map(s=>`<option value="${s.id}">${s.name} (${s.role})</option>`).join('')}</select><button id="newAppraisalBtn" class="apply-btn px-4 py-2 rounded-full">+ New Appraisal</button></div><div id="appraisalsList" class="mt-4 space-y-3"></div></div>`;
+    document.getElementById('mainContent').innerHTML = html;
+    async function loadAppraisals() {
+        let filter = document.getElementById('appraisalStaffFilter').value;
+        let appraisals = schoolData.staffAppraisals.filter(a => filter==='all' || a.staff_id == filter);
+        let container = document.getElementById('appraisalsList');
+        if(appraisals.length === 0) { container.innerHTML = '<p class="text-gray-500">No appraisals found.</p>'; return; }
+        container.innerHTML = appraisals.map(a => { let staff = schoolData.teachers.find(t=>t.id == a.staff_id); let appraiser = schoolData.profiles.find(p=>p.id == a.appraiser_id); return `<div class="border rounded-xl p-4 bg-white shadow-sm"><div class="flex justify-between"><span class="font-bold">${escapeHtml(staff?.name||'Unknown')} (${staff?.role||'N/A'})</span><span class="text-sm text-gray-500">${new Date(a.created_at).toLocaleDateString()}</span></div><div>Appraised by: ${escapeHtml(appraiser?.full_name||'Unknown')} (${a.appraiser_role})</div><div>Rating: ${a.rating}/5</div><div>Comments: ${escapeHtml(a.comment||'')}</div></div>`; }).join('');
+    }
+    document.getElementById('appraisalStaffFilter').addEventListener('change', loadAppraisals);
+    document.getElementById('newAppraisalBtn').addEventListener('click', () => { let select = document.getElementById('appraisalStaffSelect'); select.innerHTML = staffList.map(s=>`<option value="${s.id}">${s.name} (${s.role})</option>`).join(''); document.getElementById('appraisalModal').style.display = 'flex'; });
+    loadAppraisals();
+}
+
+document.getElementById('appraisalForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let staffId = document.getElementById('appraisalStaffSelect').value;
+    let rating = parseInt(document.getElementById('appraisalRating').value);
+    let comment = document.getElementById('appraisalComment').value;
+    if(!staffId || rating<1 || rating>5) { showToast("Please select staff and rating (1-5)", true); return; }
+    showLoading(true);
+    try {
+        await supabaseClient.from('staff_appraisals').insert([{ staff_id: staffId, appraiser_id: currentUser.id, appraiser_role: currentUser.role, rating: rating, comment: comment, created_at: new Date() }]);
+        await refreshData(); showToast("Appraisal submitted"); closeModal('appraisalModal'); staffAppraisalView();
+    } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
+});
+
+// ========== VIEW APPRAISALS (DG/Management) ==========
+async function viewAppraisalsView() {
+    if(!['dg_ceo','management_committee'].includes(currentUser.role)) { showToast("Access denied", true); return; }
+    let allStaff = schoolData.teachers;
+    let appraisals = schoolData.staffAppraisals;
+    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">👁️ Staff Appraisals Overview</h2><div class="filter-row"><select id="viewStaffFilter" class="border p-2 rounded"><option value="all">All Staff</option>${allStaff.map(s=>`<option value="${s.id}">${s.name} (${s.role})</option>`).join('')}</select><select id="viewAppraiserFilter" class="border p-2 rounded"><option value="all">All Appraisers</option><option>daf</option><option>do</option><option>der</option><option>dprpa</option></select><button id="refreshAppraisalsView" class="apply-btn px-4 py-2 rounded-full">Refresh</button></div><div id="appraisalsGridView" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4"></div></div>`;
+    document.getElementById('mainContent').innerHTML = html;
+    function render() {
+        let staffFilter = document.getElementById('viewStaffFilter').value;
+        let appraiserFilter = document.getElementById('viewAppraiserFilter').value;
+        let filtered = appraisals.filter(a => (staffFilter==='all' || a.staff_id == staffFilter) && (appraiserFilter==='all' || a.appraiser_role === appraiserFilter));
+        let grid = document.getElementById('appraisalsGridView');
+        if(filtered.length === 0) { grid.innerHTML = '<p class="text-gray-500">No appraisals found.</p>'; return; }
+        grid.innerHTML = filtered.map(a => { let staff = schoolData.teachers.find(t=>t.id == a.staff_id); return `<div class="border rounded-xl p-4 bg-white shadow"><div class="flex justify-between"><span class="font-bold">${escapeHtml(staff?.name||'Unknown')} (${staff?.role||'N/A'})</span><span class="text-sm text-gray-500">${new Date(a.created_at).toLocaleDateString()}</span></div><div>Appraised by: ${a.appraiser_role}</div><div>Rating: ${a.rating}/5</div><div>Comments: ${escapeHtml(a.comment||'')}</div></div>`; }).join('');
+    }
+    document.getElementById('viewStaffFilter').addEventListener('change', render);
+    document.getElementById('viewAppraiserFilter').addEventListener('change', render);
+    document.getElementById('refreshAppraisalsView').addEventListener('click', async () => { await refreshData(); render(); });
+    render();
+}
+
+// ========== APPLICATIONS MANAGEMENT ==========
+async function applicationsViewEnhanced() {
+    let apps = schoolData.applications;
+    let html = `<div class="card p-6"><div class="flex flex-wrap justify-between items-center gap-4 mb-6"><h2 class="text-2xl font-bold">📋 Applications Management</h2><div class="flex gap-2"><button id="refreshAppsBtn" class="apply-btn px-4 py-2 rounded-full"><i class="fas fa-sync-alt"></i> Refresh</button></div></div><div class="filter-row"><input id="appSearch" placeholder="🔍 Search by name or email" class="flex-1 border rounded-xl p-2"><select id="appStatusFilter" class="border rounded-xl p-2"><option value="all">All Status</option><option>pending</option><option>accepted</option><option>rejected</option></select><button id="exportAppsCsv" class="bg-emerald-600 text-white px-4 py-2 rounded-full">Export CSV</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-4" id="appsGrid"></div></div>`;
+    document.getElementById('mainContent').innerHTML = html;
+    function renderApps() {
+        let search = document.getElementById('appSearch').value.toLowerCase();
+        let status = document.getElementById('appStatusFilter').value;
+        let filtered = apps.filter(a => (a.full_name?.toLowerCase().includes(search) || (a.email||'').toLowerCase().includes(search)) && (status==='all' || a.status === status));
+        let grid = document.getElementById('appsGrid');
+        if(filtered.length === 0) { grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">No applications found.</div>'; return; }
+        grid.innerHTML = filtered.map(app => `<div class="app-card border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition"><div class="p-4 bg-gradient-to-r from-gray-50 to-white border-b"><div class="flex justify-between items-start"><h3 class="font-bold text-lg">${escapeHtml(app.full_name||'N/A')}</h3><span class="status-badge px-3 py-1 rounded-full text-xs font-semibold ${app.status==='accepted'?'bg-green-100 text-green-800':app.status==='rejected'?'bg-red-100 text-red-800':'bg-yellow-100 text-yellow-800'}">${app.status || 'pending'}</span></div><p class="text-sm text-gray-600 mt-1"><i class="fas fa-envelope mr-1"></i> ${escapeHtml(app.email||'—')}</p><p class="text-sm text-gray-600"><i class="fas fa-graduation-cap mr-1"></i> ${escapeHtml(app.desired_class||'—')}</p></div><div class="p-4 flex flex-wrap gap-2 justify-between items-center"><button class="view-app-details text-blue-600 hover:text-blue-800 text-sm" data-id="${app.id}"><i class="fas fa-eye mr-1"></i> View Details</button><div class="flex gap-2">${app.status !== 'accepted' ? `<button class="accept-app-with-details bg-green-600 text-white px-3 py-1 rounded-full text-xs" data-id="${app.id}">Accept</button>` : ''}${app.status !== 'rejected' ? `<button class="reject-app bg-red-600 text-white px-3 py-1 rounded-full text-xs" data-id="${app.id}">Reject</button>` : ''}<button class="delete-app bg-gray-500 text-white px-3 py-1 rounded-full text-xs" data-id="${app.id}">Delete</button></div></div></div>`).join('');
+        attachAppEvents();
+    }
+    function attachAppEvents() {
+        document.querySelectorAll('.view-app-details').forEach(btn => btn.addEventListener('click', async () => {
+            let appId = btn.dataset.id;
+            let app = schoolData.applications.find(a => a.id == appId);
+            if(!app) return;
+            let fd = app.form_data || {};
+            let official = app.official_data || {};
+            let modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[10000] p-4 overflow-auto';
+            modal.innerHTML = `<div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative"><div class="sticky top-0 bg-white p-4 border-b flex justify-between items-center"><h3 class="text-xl font-bold">Application Details</h3><span class="close-modal-x text-2xl cursor-pointer">&times;</span></div><div class="p-6 space-y-5" id="modalDetailContent"></div></div>`;
+            document.body.appendChild(modal);
+            let contentDiv = modal.querySelector('#modalDetailContent');
+            let sections = [
+                { title: "👤 Applicant Information", fields: ['surname','first_name','other_names','gender','dob','age','place_birth','nationality','state_origin','lga','religion','home_address','child_id'] },
+                { title: "📚 Class & Academic", fields: ['desired_class','term_session','previous_school','last_class_completed','reason_leaving','languages_spoken','special_needs'] },
+                { title: "🏥 Health Information", fields: ['blood_group','allergies','physical_challenge','chronic_illness','emergency_health','immunization'] },
+                { title: "👪 Parent/Guardian", fields: ['father_name','mother_name','guardian_name','guardian_relation','parent_occupation','parent_residence','parent_office','parent_phone','parent_email'] },
+                { title: "💰 Sponsor/Financial", fields: ['sponsor_name','sponsor_relation','sponsor_address','sponsor_phone','fee_responsible'] },
+                { title: "🕌 Religious Information", fields: ['muslim_name','quran_reading','memorization_level','previous_madrasah','religious_needs'] },
+                { title: "🚌 Transport & Hostel", fields: ['transport_mode','boarding_status','bus_pickup'] },
+                { title: "📄 Declaration", fields: ['declaration_name','declaration_signature','declaration_date'] }
+            ];
+            let htmlContent = '';
+            for(let sec of sections) {
+                let hasAny = sec.fields.some(f => fd[f]);
+                if(!hasAny) continue;
+                htmlContent += `<div class="border rounded-xl p-4 bg-gray-50"><h4 class="font-bold text-lg mb-2">${sec.title}</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">`;
+                for(let f of sec.fields) {
+                    if(fd[f]) htmlContent += `<div><span class="font-semibold">${f.replace(/_/g,' ')}:</span> ${escapeHtml(String(fd[f]))}</div>`;
+                }
+                htmlContent += `</div></div>`;
+            }
+            if(fd.attachments && Object.keys(fd.attachments).length) {
+                htmlContent += `<div class="border rounded-xl p-4 bg-gray-50"><h4 class="font-bold text-lg mb-2">📎 Uploaded Documents</h4><div class="space-y-2">`;
+                for(let [key, url] of Object.entries(fd.attachments)) { let label = key.replace('attachment_','').replace(/_/g,' '); htmlContent += `<div><a href="${url}" target="_blank" class="text-blue-600 underline"><i class="fas fa-file-alt mr-1"></i>${label}</a></div>`; }
+                htmlContent += `</div></div>`;
+            }
+            if(Object.keys(official).length) {
+                htmlContent += `<div class="border rounded-xl p-4 bg-gray-100"><h4 class="font-bold text-lg mb-2">🏷️ Official Use Only (Admin)</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">`;
+                for(let [k,v] of Object.entries(official)) htmlContent += `<div><span class="font-semibold">${k.replace(/_/g,' ')}:</span> ${escapeHtml(String(v))}</div>`;
+                htmlContent += `</div></div>`;
+            }
+            contentDiv.innerHTML = htmlContent || '<p class="text-gray-500">No additional data submitted.</p>';
+            modal.querySelector('.close-modal-x').onclick = () => modal.remove();
+            modal.addEventListener('click', (e) => { if(e.target === modal) modal.remove(); });
+        }));
+        document.querySelectorAll('.accept-app-with-details').forEach(btn => btn.addEventListener('click', () => { document.getElementById('acceptAppId').value = btn.dataset.id; document.getElementById('acceptDetailsModal').style.display = 'flex'; }));
+        document.querySelectorAll('.reject-app').forEach(btn => btn.addEventListener('click', async () => { if(confirm("Reject this application?")){ await supabaseClient.from('applications').update({status:'rejected'}).eq('id', btn.dataset.id); await refreshData(); applicationsViewEnhanced(); showToast("Application rejected"); } }));
+        document.querySelectorAll('.delete-app').forEach(btn => btn.addEventListener('click', async () => { if(confirm("Permanently delete this application?")){ await supabaseClient.from('applications').delete().eq('id', btn.dataset.id); await refreshData(); applicationsViewEnhanced(); showToast("Application deleted"); } }));
+    }
+    document.getElementById('appSearch').addEventListener('input', renderApps);
+    document.getElementById('appStatusFilter').addEventListener('change', renderApps);
+    document.getElementById('refreshAppsBtn').addEventListener('click', async () => { await refreshData(); renderApps(); });
+    document.getElementById('exportAppsCsv').addEventListener('click', () => { let csvRows = [["ID","Full Name","Email","Desired Class","Status","Created At"]]; apps.forEach(a => { csvRows.push([a.id, a.full_name, a.email, a.desired_class, a.status, a.created_at]); }); let csv = csvRows.map(row => row.join(",")).join("\n"); let blob = new Blob([csv], {type: 'text/csv'}); let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'applications.csv'; a.click(); });
+    renderApps();
+}
+
+document.getElementById('acceptDetailsForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let appId = document.getElementById('acceptAppId').value;
+    let officialData = {
+        entrance_score: document.getElementById('acceptEntranceScore').value,
+        interview_remarks: document.getElementById('acceptInterviewRemarks').value,
+        admitted_class: document.getElementById('acceptAdmittedClass').value,
+        admission_number: document.getElementById('acceptAdmissionNumber').value,
+        admission_date: document.getElementById('acceptAdmissionDate').value,
+        authorized_signature: document.getElementById('acceptSignature').value,
+        status: 'accepted'
+    };
+    showLoading(true);
+    try {
+        let app = schoolData.applications.find(a => a.id == appId);
+        let existingOfficial = app.official_data || {};
+        await supabaseClient.from('applications').update({ status: 'accepted', official_data: { ...existingOfficial, ...officialData } }).eq('id', appId);
+        await refreshData();
+        showToast("Application accepted with official details");
+        closeModal('acceptDetailsModal');
+        applicationsViewEnhanced();
+    } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
+});
+
+// ========== APPLICATION FORM SUBMISSION ==========
+document.getElementById('fullApplicationForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showLoading(true);
+    let form = e.target;
+    let formDataObj = {};
+    let fileAttachments = {};
+    for(let el of form.elements) {
+        if(el.name && el.type !== 'file') formDataObj[el.name] = el.value;
+    }
+    let fileInputs = form.querySelectorAll('input[type="file"]');
+    for(let inp of fileInputs) {
+        if(inp.files.length > 0) {
+            let file = inp.files[0];
+            let ext = file.name.split('.').pop();
+            let fileName = `${Date.now()}_${inp.name}.${ext}`;
+            let { data, error } = await supabaseClient.storage.from('application-attachments').upload(fileName, file);
+            if(error) { showToast("Error uploading " + inp.name, true); continue; }
+            let { data: { publicUrl } } = supabaseClient.storage.from('application-attachments').getPublicUrl(fileName);
+            fileAttachments[inp.name] = publicUrl;
+        }
+    }
+    formDataObj.attachments = fileAttachments;
+    let fullName = `${formDataObj.first_name || ''} ${formDataObj.surname || ''}`.trim();
+    if (!fullName) fullName = "Applicant";
+    let email = formDataObj.parent_email || 'applicant@example.com';
+    let desiredClass = formDataObj.desired_class || '';
+    try {
+        await supabaseClient.from('applications').insert([{ full_name: fullName, email: email, desired_class: desiredClass, status: 'pending', form_data: formDataObj }]);
+        showToast('Application submitted successfully!');
+        closeModal('fullApplicationModal');
+        form.reset();
+    } catch (err) { showToast(err.message, true); } finally { showLoading(false); }
+});
+
+// ========== APPLICATION STATUS CHECK ==========
+document.getElementById('checkStatusBtn')?.addEventListener('click', () => document.getElementById('statusCheckModal').style.display = 'flex');
+document.getElementById('checkStatusSubmit')?.addEventListener('click', async () => {
+    let email = document.getElementById('statusEmail').value.trim();
+    if(!email) { showToast("Please enter your email", true); return; }
+    showLoading(true);
+    try {
+        let { data, error } = await supabaseClient.from('applications').select('*').eq('email', email);
+        if(error) throw error;
+        let resultDiv = document.getElementById('statusResult');
+        if(!data || data.length === 0) { resultDiv.innerHTML = '<p class="text-red-600">No application found with this email.</p>'; return; }
+        let app = data[0];
+        let statusColor = app.status === 'accepted' ? 'text-green-600' : (app.status === 'rejected' ? 'text-red-600' : 'text-yellow-600');
+        let statusText = app.status ? app.status.toUpperCase() : 'PENDING';
+        let html = `<p class="font-bold">Application Status: <span class="${statusColor}">${statusText}</span></p>`;
+        if(app.status === 'accepted') {
+            let official = app.official_data || {};
+            html += `<div class="mt-3 text-left border-t pt-3"><p><strong>Admission Details:</strong></p><p>Class: ${official.admitted_class || '—'}</p><p>Admission Number: ${official.admission_number || '—'}</p><p>Date of Admission: ${official.admission_date || '—'}</p><p>Entrance Score: ${official.entrance_score || '—'}</p></div>`;
+        }
+        resultDiv.innerHTML = html;
+    } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
+});
+
+// ========== UNIFIED STAFF LIST ==========
 async function unifiedStaffList() {
     let staffTeachers = schoolData.teachers.map(t => ({ id: t.id, name: t.name, role: t.role, email: t.email, assigned_class: t.assigned_class, section: t.section || '', salary: t.salary, source: 'teacher' }));
     let staffProfiles = schoolData.profiles.filter(p => p.role && p.role !== 'parent').map(p => ({ id: p.id, name: p.full_name, role: p.role, email: p.email, assigned_class: '', section: p.section || '', salary: 0, source: 'profile' }));
     let allStaff = [...staffTeachers, ...staffProfiles];
-    let html = `<div class="card p-6"><div class="flex justify-between items-center flex-wrap gap-3 mb-5"><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-users text-amber-600 mr-2"></i>Staff Directory</h2><button id="openAddStaffBtn" class="apply-btn px-5 py-2 rounded-full"><i class="fas fa-plus mr-1"></i> Add Staff</button></div>
-    <div class="filter-row"><input id="staffSearch" placeholder="🔍 Search name/email" class="flex-1"><select id="staffRoleFilter" class=""><option value="all">All Roles</option><option>dg_ceo</option><option>daf</option><option>management_committee</option><option>do</option><option>der</option><option>dprpa</option><option>headteacher</option><option>teacher</option></select><select id="staffSectionFilter" class=""><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select></div>
-    <div class="table-container overflow-x-auto"><table class="min-w-full"><thead><tr><th>Name</th><th>Role</th><th>Email</th><th>Assigned Class</th><th>Section</th><th>Salary</th></tr></thead><tbody id="staffUnifiedBody"></tbody></table></div></div>`;
+    let html = `<div class="card p-6"><div class="flex justify-between items-center flex-wrap gap-3 mb-5"><h2 class="text-2xl font-bold"><i class="fas fa-users text-amber-600 mr-2"></i>Staff Directory</h2><button id="openAddStaffBtn" class="apply-btn px-5 py-2 rounded-full"><i class="fas fa-plus mr-1"></i> Add Staff</button></div><div class="filter-row"><input id="staffSearch" placeholder="🔍 Search name/email" class="flex-1"><select id="staffRoleFilter"><option value="all">All Roles</option><option>dg_ceo</option><option>daf</option><option>management_committee</option><option>do</option><option>der</option><option>dprpa</option><option>headteacher</option><option>teacher</option></select><select id="staffSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select></div><div class="overflow-x-auto"><table class="min-w-full"><thead><tr><th>Name</th><th>Role</th><th>Email</th><th>Assigned Class</th><th>Section</th><th>Salary</th></tr></thead><tbody id="staffUnifiedBody"></tbody></table></div></div>`;
     document.getElementById('mainContent').innerHTML = html;
     document.getElementById('openAddStaffBtn').onclick = () => document.getElementById('addStaffModal').style.display = 'flex';
     function render() {
         let search = document.getElementById('staffSearch').value.toLowerCase();
         let roleFilter = document.getElementById('staffRoleFilter').value;
         let sectionFilter = document.getElementById('staffSectionFilter').value;
-        let filtered = allStaff.filter(s => (s.name.toLowerCase().includes(search) || (s.email||'').toLowerCase().includes(search)) && (roleFilter==='all' || s.role===roleFilter) && (sectionFilter==='all' || (s.section||'').includes(sectionFilter)));
-        document.getElementById('staffUnifiedBody').innerHTML = filtered.map(s => `<tr><td class="editable-staff-field" data-field="name" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.name)}</td><td class="font-semibold text-amber-700">${s.role}</td><td class="editable-staff-field" data-field="email" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.email)}</td><td class="editable-staff-field" id="${s.id}" data-source="${s.source}">${escapeHtml(s.assigned_class||'—')}</td><td class="editable-staff-field" data-field="section" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.section||'—')}</td><td class="editable-staff-field" data-field="salary" data-id="${s.id}" data-source="${s.source}">${s.salary ? '₦'+s.salary.toLocaleString() : '0'}</td>`).join('');
-        attachStaffEditable();
+        let filtered = allStaff.filter(s => (s.name.toLowerCase().includes(search) || (s.email||'').toLowerCase().includes(search)) && (roleFilter==='all' || s.role===roleFilter) && (sectionFilter==='all' || (s.section||'').toLowerCase().includes(sectionFilter.toLowerCase())));
+        document.getElementById('staffUnifiedBody').innerHTML = filtered.map(s => `<tr><td class="editable-staff" data-field="name" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.name)}</td><td class="font-semibold text-amber-700">${s.role}</td><td class="editable-staff" data-field="email" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.email)}</td><td class="editable-staff" data-field="assigned_class" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.assigned_class||'—')}</td><td class="editable-staff" data-field="section" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.section||'—')}</td><td class="editable-staff" data-field="salary" data-id="${s.id}" data-source="${s.source}">${s.salary ? '₦'+s.salary.toLocaleString() : '0'}</td></tr>`).join('');
+        attachEditable();
     }
-    function attachStaffEditable() {
-        document.querySelectorAll('.editable-staff-field').forEach(cell => {
-            cell.setAttribute('contenteditable','true'); cell.style.cursor='pointer';
+    function attachEditable() {
+        document.querySelectorAll('.editable-staff').forEach(cell => {
+            cell.setAttribute('contenteditable','true');
             cell.addEventListener('blur', async () => {
-                let id = cell.dataset.id, source = cell.dataset.source, field = cell.dataset.field, val = cell.innerText.trim();
-                if(field === 'salary') val = parseInt(val.replace(/[^0-9]/g,'')) || 0;
+                let id=cell.dataset.id, source=cell.dataset.source, field=cell.dataset.field, val=cell.innerText.trim();
+                if(field==='salary') val=parseInt(val.replace(/[^0-9]/g,''))||0;
                 let table = source === 'teacher' ? 'teachers' : 'profiles';
                 await supabaseClient.from(table).update({ [field]: val }).eq('id', id);
                 await refreshData(); unifiedStaffList();
@@ -566,62 +839,80 @@ async function unifiedStaffList() {
     document.getElementById('staffRoleFilter').addEventListener('change', render);
     document.getElementById('staffSectionFilter').addEventListener('change', render);
 }
-document.getElementById('addStaffForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault(); showLoading(true);
-    try {
-        await supabaseClient.from('teachers').insert([{
-            name: document.getElementById('staffName').value, email: document.getElementById('staffEmail').value,
-            role: document.getElementById('staffRole').value, section: document.getElementById('staffSection').value,
-            assigned_class: document.getElementById('staffAssignedClass').value, salary: parseInt(document.getElementById('staffSalary').value)||0,
-            username: document.getElementById('staffUsername').value, password: document.getElementById('staffPassword').value
-        }]);
-        await refreshData(); closeModal('addStaffModal'); unifiedStaffList(); showToast("Staff added");
-    } catch(err) { showToast(err.message, true); }
-    finally { showLoading(false); }
-});
-// ========== . PAYROLL MODULE ==========
+
+// ========== PAYROLL MODULE (with Add Staff to Payroll button) ==========
 async function payrollModule() {
-    let staffTeachers = schoolData.teachers.map(t=>({id:t.id,name:t.name,section:t.section||''}));
-    let staffProfiles = schoolData.profiles.filter(p=>p.role && p.role !== 'parent').map(p=>({id:p.id,name:p.full_name,section:p.section||''}));
-    let allStaff = [...staffTeachers,...staffProfiles];
+    let staffTeachers = schoolData.teachers.map(t=>({id:t.id,name:t.name,section:t.section||'', salary: t.salary || 0}));
+    let staffProfiles = schoolData.profiles.filter(p=>p.role && p.role !== 'parent').map(p=>({id:p.id,name:p.full_name,section:p.section||'', salary:0}));
+    let allStaff = [...staffTeachers, ...staffProfiles];
     let currentMonth = new Date().toLocaleString('default',{month:'long'}), currentYear = new Date().getFullYear();
     let monthOptions = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">💰 Payroll Management</h2><div class="filter-row"><select id="payrollMonth">${monthOptions.map(m=>`<option ${m===currentMonth?'selected':''}>${m}</option>`).join('')}</select><input id="payrollYear" type="number" value="${currentYear}" class="w-28"><select id="payrollSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select><button id="generatePayrollBtn" class="apply-btn">Refresh</button></div>
-    <div class="table-container overflow-x-auto"><table class="min-w-full"><thead><tr><th>S/N</th><th>Employee Name</th><th>Basic Salary (₦)</th><th>Allowances (₦)</th><th>Gross Pay (₦)</th><th>Deductions (₦)</th><th>Net Pay (₦)</th><th>Account Details</th></tr></thead><tbody id="payrollTbody"></tbody><tfoot id="payrollTotals" class="bg-gray-50 font-bold"></tfoot></table></div></div>`;
+    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">💰 Payroll Management / كشف الرواتب</h2>
+    <div class="filter-row"><select id="payrollMonth">${monthOptions.map(m=>`<option ${m===currentMonth?'selected':''}>${m}</option>`).join('')}</select>
+    <input id="payrollYear" type="number" value="${currentYear}" class="w-28"><select id="payrollSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select>
+    <button id="generatePayrollBtn" class="apply-btn">Refresh</button><button id="exportPayrollCsv" class="apply-btn bg-emerald-600">Export CSV</button>
+    <button id="syncStaffToPayroll" class="apply-btn bg-blue-600">Sync Staff to Payroll</button>
+    <button id="addStaffToPayrollBtn" class="apply-btn bg-purple-600">+ Add Staff to Payroll</button></div>
+    <div class="overflow-x-auto"><table class="min-w-full payroll-table border"><thead class="bg-gray-100"><tr><th>S/N</th><th>Employee Name</th><th>Basic Salary (₦)</th><th>Allowances (₦)</th><th>Gross Pay (₦)</th><th>Deductions (₦)</th><th>Net Pay (₦)</th><th>Account Details</th></tr></thead><tbody id="payrollTbody"></tbody><tfoot id="payrollTotals" class="bg-gray-50 font-bold"></tfoot></table></div></div>`;
     document.getElementById('mainContent').innerHTML = html;
+    
+    async function ensureAllStaffHavePayrollRecords(month, year, staffList) {
+        let existing = schoolData.payrollRecords.filter(r => r.month === month && r.year === year);
+        let newRecords = [];
+        for(let staff of staffList) {
+            let exists = existing.find(r => r.staff_id == staff.id);
+            if(!exists) {
+                newRecords.push({
+                    staff_id: staff.id,
+                    employee_name: staff.name,
+                    month, year,
+                    basic_salary: staff.salary || 0,
+                    allowances: 0,
+                    deductions: 0,
+                    account_details: '',
+                    gross_pay: staff.salary || 0,
+                    net_pay: staff.salary || 0
+                });
+            }
+        }
+        if(newRecords.length > 0) {
+            await supabaseClient.from('payroll_records').insert(newRecords);
+            await refreshData();
+            showToast(`Added ${newRecords.length} staff to payroll for ${month} ${year}`);
+        }
+    }
+    
     async function loadPayroll() {
         let month = document.getElementById('payrollMonth').value, year = parseInt(document.getElementById('payrollYear').value), sectionFilter = document.getElementById('payrollSectionFilter').value;
-        let filtered = allStaff.filter(s => sectionFilter==='all' || s.section===sectionFilter);
-        let existing = schoolData.payrollRecords.filter(r => r.month === month && r.year === year);
+        let filteredStaff = allStaff.filter(s => sectionFilter==='all' || s.section===sectionFilter);
+        await ensureAllStaffHavePayrollRecords(month, year, filteredStaff);
+        await refreshData();
+        let updatedRecords = schoolData.payrollRecords.filter(r => r.month === month && r.year === year);
         let records = [];
-        for(let staff of filtered) {
-            let rec = existing.find(r => r.staff_id === staff.id);
-            if(!rec) {
-                let {data} = await supabaseClient.from('payroll_records').insert([{staff_id:staff.id, employee_name:staff.name, month, year, basic_salary:0, allowances:0, deductions:0, account_details:'', gross_pay:0, net_pay:0}]).select();
-                if(data) rec = data[0];
-            }
+        for(let staff of filteredStaff) {
+            let rec = updatedRecords.find(r => r.staff_id === staff.id);
             if(rec) records.push(rec);
         }
         records.forEach(r => { r.gross_pay = (r.basic_salary||0) + (r.allowances||0); r.net_pay = r.gross_pay - (r.deductions||0); });
         let tbody = document.getElementById('payrollTbody');
-        tbody.innerHTML = records.map((r,i)=>`<tr><td class="text-center">${i+1}</td><td class="font-medium">${escapeHtml(r.employee_name)}</td><td class="editable-payroll" data-field="basic_salary" data-id="${r.id}">${r.basic_salary?.toLocaleString()||'0'}</td><td class="editable-payroll" data-field="allowances" data-id="${r.id}">${r.allowances?.toLocaleString()||'0'}</td><td class="font-bold text-emerald-700">${r.gross_pay?.toLocaleString()||'0'}</td><td class="editable-payroll" data-field="deductions" data-id="${r.id}">${r.deductions?.toLocaleString()||'0'}</td><td class="font-bold text-blue-700">${r.net_pay?.toLocaleString()||'0'}</td><td class="editable-payroll" data-field="account_details" data-id="${r.id}">${escapeHtml(r.account_details||'')}</td>`).join('');
+        tbody.innerHTML = records.map((r,i)=>`<tr><td class="text-center">${i+1}</td><td class="font-medium">${escapeHtml(r.employee_name)}</td><td><input type="text" class="payroll-basic" data-id="${r.id}" value="${r.basic_salary||0}" style="width:100px;"></td><td><input type="text" class="payroll-allowance" data-id="${r.id}" value="${r.allowances||0}" style="width:100px;"></td><td class="gross-pay-${r.id} font-bold text-emerald-700">${(r.gross_pay||0).toLocaleString()}</td><td><input type="text" class="payroll-deduction" data-id="${r.id}" value="${r.deductions||0}" style="width:100px;"></td><td class="net-pay-${r.id} font-bold text-blue-700">${(r.net_pay||0).toLocaleString()}</td><td><input type="text" class="payroll-account" data-id="${r.id}" value="${escapeHtml(r.account_details||'')}" style="width:150px;"></td></tr>`).join('');
         let totals = {basic:0,allow:0,gross:0,ded:0,net:0};
         records.forEach(r=>{ totals.basic+=r.basic_salary||0; totals.allow+=r.allowances||0; totals.gross+=r.gross_pay||0; totals.ded+=r.deductions||0; totals.net+=r.net_pay||0; });
-        document.getElementById('payrollTotals').innerHTML = `<tr><td colspan="2" class="text-right font-bold">TOTAL</td><td>₦${totals.basic.toLocaleString()}</td><td>₦${totals.allow.toLocaleString()}</td><td>₦${totals.gross.toLocaleString()}</td><td>₦${totals.ded.toLocaleString()}</td><td>₦${totals.net.toLocaleString()}</td><td></td>`;
+        document.getElementById('payrollTotals').innerHTML = `<tr><td colspan="2" class="text-right font-bold">TOTAL</td><td class="font-bold">₦${totals.basic.toLocaleString()}</td><td class="font-bold">₦${totals.allow.toLocaleString()}</td><td class="font-bold">₦${totals.gross.toLocaleString()}</td><td class="font-bold">₦${totals.ded.toLocaleString()}</td><td class="font-bold">₦${totals.net.toLocaleString()}</td><td></td></tr>`;
         attachPayrollEditable();
     }
     function attachPayrollEditable() {
-        document.querySelectorAll('.editable-payroll').forEach(cell => {
-            cell.setAttribute('contenteditable','true');
-            cell.addEventListener('blur', async () => {
-                let id = cell.dataset.id, field = cell.dataset.field, rawVal = cell.innerText.trim().replace(/[^0-9]/g,'');
-                let val = field === 'account_details' ? cell.innerText.trim() : (parseInt(rawVal) || 0);
+        document.querySelectorAll('.payroll-basic, .payroll-allowance, .payroll-deduction, .payroll-account').forEach(inp => {
+            inp.addEventListener('blur', async () => {
+                let id = inp.dataset.id;
+                let field = inp.classList.contains('payroll-basic') ? 'basic_salary' : (inp.classList.contains('payroll-allowance') ? 'allowances' : (inp.classList.contains('payroll-deduction') ? 'deductions' : 'account_details'));
+                let val = (field === 'account_details') ? inp.value : (parseFloat(inp.value) || 0);
                 let updateObj = { [field]: val };
                 if(field === 'basic_salary' || field === 'allowances' || field === 'deductions') {
-                    let rec = schoolData.payrollRecords.find(r => r.id == id);
-                    let basic = field === 'basic_salary' ? val : (rec?.basic_salary||0);
-                    let allow = field === 'allowances' ? val : (rec?.allowances||0);
-                    let ded = field === 'deductions' ? val : (rec?.deductions||0);
+                    let record = schoolData.payrollRecords.find(r => r.id == id);
+                    let basic = field === 'basic_salary' ? val : (record?.basic_salary||0);
+                    let allow = field === 'allowances' ? val : (record?.allowances||0);
+                    let ded = field === 'deductions' ? val : (record?.deductions||0);
                     updateObj.gross_pay = basic + allow;
                     updateObj.net_pay = updateObj.gross_pay - ded;
                 }
@@ -635,30 +926,115 @@ async function payrollModule() {
     document.getElementById('payrollSectionFilter').addEventListener('change', loadPayroll);
     document.getElementById('payrollMonth').addEventListener('change', loadPayroll);
     document.getElementById('payrollYear').addEventListener('change', loadPayroll);
+    document.getElementById('exportPayrollCsv').addEventListener('click', () => {
+        let rows = []; document.querySelectorAll('#payrollTbody tr').forEach(row => { let cols = []; row.querySelectorAll('td').forEach(cell => cols.push(cell.innerText)); rows.push(cols); });
+        let csv = rows.map(row => row.join(',')).join('\n'); let blob = new Blob([csv], {type: 'text/csv'}); let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'payroll.csv'; a.click();
+    });
+    document.getElementById('syncStaffToPayroll').addEventListener('click', async () => {
+        let month = document.getElementById('payrollMonth').value, year = parseInt(document.getElementById('payrollYear').value);
+        await ensureAllStaffHavePayrollRecords(month, year, allStaff);
+        loadPayroll();
+    });
+    document.getElementById('addStaffToPayrollBtn').addEventListener('click', async () => {
+        let month = document.getElementById('payrollMonth').value;
+        let year = parseInt(document.getElementById('payrollYear').value);
+        let existingStaffIds = schoolData.payrollRecords.filter(r => r.month === month && r.year === year).map(r => r.staff_id);
+        let availableStaff = allStaff.filter(s => !existingStaffIds.includes(s.id));
+        if(availableStaff.length === 0) { showToast("All staff are already in payroll for this month/year"); return; }
+        let select = document.getElementById('payrollStaffSelect');
+        select.innerHTML = '<option value="">-- Select Staff --</option>' + availableStaff.map(s => `<option value="${s.id}" data-salary="${s.salary}">${escapeHtml(s.name)} (${s.section||'No section'})</option>`).join('');
+        document.getElementById('payrollStaffSalary').value = '';
+        document.getElementById('payrollStaffAllowances').value = '0';
+        document.getElementById('payrollStaffDeductions').value = '0';
+        document.getElementById('payrollStaffAccount').value = '';
+        document.getElementById('addStaffToPayrollModal').style.display = 'flex';
+        select.onchange = () => {
+            let selectedOption = select.options[select.selectedIndex];
+            let salary = selectedOption.getAttribute('data-salary') || 0;
+            document.getElementById('payrollStaffSalary').value = salary;
+        };
+    });
     loadPayroll();
 }
-// ========== . APPLICATIONS VIEW ==========
-async function applicationsViewEnhanced() { 
-    let apps = schoolData.applications; 
-    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📋 Applications</h2><div class="filter-row"><input id="appSearch" placeholder="🔍 Search name/email" class="flex-1"><select id="appStatusFilter"><option value="all">All Status</option><option>pending</option><option>accepted</option></select></div><div class="table-container"><table class="min-w-full"><thead><tr><th>Name</th><th>Class</th><th>Email</th><th>Status</th><th>Action</th></tr></thead><tbody id="appTableBody"></tbody></table></div></div>`;
-    document.getElementById('mainContent').innerHTML = html;
-    function renderApps() { 
-        let search = document.getElementById('appSearch').value.toLowerCase(), status = document.getElementById('appStatusFilter').value; 
-        let filtered = apps.filter(a => (a.full_name?.toLowerCase().includes(search)||(a.email||'').toLowerCase().includes(search)) && (status==='all'||a.status===status));
-        document.getElementById('appTableBody').innerHTML = filtered.map(a=>`<tr><td>${escapeHtml(a.full_name||'')}</td><td>${a.desired_class||''}</td><td>${a.email||''}</td><td>${a.status||'pending'}</td><td><button class="accept-app bg-indigo-600 text-white px-3 py-1 rounded-full text-sm" data-id="${a.id}">Accept</button></td>`).join('');
-        document.querySelectorAll('.accept-app').forEach(btn=>btn.addEventListener('click',()=>{ window.pendingAcceptId=btn.dataset.id; document.getElementById('emailFeedbackModal').style.display='flex'; }));
-    }
-    document.getElementById('appSearch').addEventListener('input', renderApps); 
-    document.getElementById('appStatusFilter').addEventListener('change', renderApps); 
-    renderApps(); 
-}
-document.getElementById('confirmAcceptBtn')?.addEventListener('click', async()=>{ if(window.pendingAcceptId){ await supabaseClient.from('applications').update({status:'accepted'}).eq('id',window.pendingAcceptId); await refreshData(); showToast("Application accepted"); closeModal('emailFeedbackModal'); applicationsViewEnhanced(); } });
 
+document.getElementById('addToPayrollForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let staffId = document.getElementById('payrollStaffSelect').value;
+    if(!staffId) { showToast("Please select a staff member", true); return; }
+    let month = document.getElementById('payrollMonth').value;
+    let year = parseInt(document.getElementById('payrollYear').value);
+    let basicSalary = parseFloat(document.getElementById('payrollStaffSalary').value) || 0;
+    let allowances = parseFloat(document.getElementById('payrollStaffAllowances').value) || 0;
+    let deductions = parseFloat(document.getElementById('payrollStaffDeductions').value) || 0;
+    let account = document.getElementById('payrollStaffAccount').value;
+    let grossPay = basicSalary + allowances;
+    let netPay = grossPay - deductions;
+    showLoading(true);
+    try {
+        let staff = schoolData.teachers.find(t => t.id == staffId) || schoolData.profiles.find(p => p.id == staffId);
+        let staffName = staff ? staff.name || staff.full_name : "Unknown";
+        await supabaseClient.from('payroll_records').insert([{
+            staff_id: staffId,
+            employee_name: staffName,
+            month, year,
+            basic_salary: basicSalary,
+            allowances: allowances,
+            deductions: deductions,
+            account_details: account,
+            gross_pay: grossPay,
+            net_pay: netPay
+        }]);
+        await refreshData();
+        showToast(`Staff added to payroll for ${month} ${year}`);
+        closeModal('addStaffToPayrollModal');
+        payrollModule();
+    } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
+});
+
+// ========== ENHANCED ADD STAFF (auto-add to payroll for current month) ==========
+document.getElementById('addStaffForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showLoading(true);
+    try {
+        const { data: newStaff, error } = await supabaseClient.from('teachers').insert([{
+            name: document.getElementById('staffName').value,
+            email: document.getElementById('staffEmail').value,
+            role: document.getElementById('staffRole').value,
+            section: document.getElementById('staffSection').value,
+            assigned_class: document.getElementById('staffAssignedClass').value,
+            salary: parseInt(document.getElementById('staffSalary').value)||0,
+            username: document.getElementById('newStaffUsername').value,
+            password: document.getElementById('newStaffPassword').value
+        }]).select();
+        if(error) throw error;
+        if(newStaff && newStaff[0]) {
+            let currentMonth = new Date().toLocaleString('default',{month:'long'});
+            let currentYear = new Date().getFullYear();
+            await supabaseClient.from('payroll_records').insert([{
+                staff_id: newStaff[0].id,
+                employee_name: newStaff[0].name,
+                month: currentMonth,
+                year: currentYear,
+                basic_salary: newStaff[0].salary || 0,
+                allowances: 0,
+                deductions: 0,
+                account_details: '',
+                gross_pay: newStaff[0].salary || 0,
+                net_pay: newStaff[0].salary || 0
+            }]);
+            showToast("Staff added and payroll record created for " + currentMonth);
+        }
+        await refreshData();
+        closeModal('addStaffModal');
+        unifiedStaffList();
+    } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
+});
+
+// ========== OTHER STUBS ==========
 async function downloadRecordsView() { document.getElementById('mainContent').innerHTML = `<div class="card p-6"><button class="apply-btn px-6 py-2 rounded-full" onclick="window.downloadCSV(schoolData.students,'students.csv')">Export Students CSV</button> <button class="apply-btn px-6 py-2 rounded-full ml-3" onclick="window.downloadCSV(schoolData.teachers,'staff.csv')">Export Staff CSV</button></div>`; window.downloadCSV=(data,fn)=>{ let blob = new Blob([JSON.stringify(data)],{type:'text/csv'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fn; a.click(); }; }
 async function announceView() { let ann = schoolData.announcements[0]?.content || ''; document.getElementById('mainContent').innerHTML = `<div class="card p-6"><textarea id="annText" class="border w-full p-3 rounded-xl h-32">${escapeHtml(ann)}</textarea><button class="apply-btn mt-4 px-6 py-2 rounded-full" onclick="window.updateAnnounce()">Update Announcement</button></div>`; window.updateAnnounce=async()=>{ await supabaseClient.from('site_announcement').upsert({id:1, content:document.getElementById('annText').value}); await refreshData(); showToast("Announcement updated"); }; }
 async function slidesManageView() { let slides = schoolData.slides; let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">Slideshow Manager</h2><input type="file" id="slideFile" accept="image/*" class="mb-3"><input id="slideCaption" placeholder="Caption" class="border p-3 w-full rounded-xl mb-3"><button id="uploadSlide" class="apply-btn px-6 py-2 rounded-full">Upload</button><div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">${slides.map(s=>`<div class="bg-white rounded-xl shadow p-2"><img src="${s.image_url}" class="h-32 w-full object-cover rounded-lg"><p class="text-sm mt-1">${escapeHtml(s.caption||'')}</p><button onclick="window.deleteSlide('${s.id}')" class="text-red-500 text-sm mt-1">Delete</button></div>`).join('')}</div></div>`;
     document.getElementById('mainContent').innerHTML = html; document.getElementById('uploadSlide').onclick = async()=>{ let file=document.getElementById('slideFile').files[0]; if(!file) return; let path=`slides/${Date.now()}_${file.name}`; await supabaseClient.storage.from('school-slides').upload(path,file); let {data:{publicUrl}}=supabaseClient.storage.from('school-slides').getPublicUrl(path); await supabaseClient.from('slides').insert([{image_url:publicUrl, caption:document.getElementById('slideCaption').value}]); await refreshData(); slidesManageView(); }; window.deleteSlide=async(id)=>{ await supabaseClient.from('slides').delete().eq('id',id); await refreshData(); slidesManageView(); }; }
-async function staffAppraisalView() { if(currentUser.role !== 'dg_ceo') { showToast("Only DG/CEO", true); return; } let staffList = schoolData.teachers; let html = `<div class="bg-white p-5"><h2>Staff Appraisal</h2><select id="staffAppraisalFilter" class="border w-full"><option value="all">All Staff</option>${staffList.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select><div id="staffAppraisalList"></div><button id="newStaffAppraisalBtn" class="apply-btn mt-4 px-4 py-2">+ New Appraisal</button></div>`; document.getElementById('mainContent').innerHTML = html; function renderAppraisals() { let filter = document.getElementById('staffAppraisalFilter').value; let appraisals = filter === 'all' ? schoolData.staffAppraisals : schoolData.staffAppraisals.filter(a => a.staff_id === filter); document.getElementById('staffAppraisalList').innerHTML = appraisals.map(a => { let staff = schoolData.teachers.find(t=>t.id === a.staff_id); return `<div class="border p-3 my-2"><p><strong>${staff?.name}</strong> | Rating: ${a.rating}/5</p><p>${escapeHtml(a.comment)}</p><small>${new Date(a.created_at).toLocaleDateString()}</small></div>`; }).join('') || '<p>No appraisals</p>'; } renderAppraisals(); document.getElementById('staffAppraisalFilter').addEventListener('change', renderAppraisals); document.getElementById('newStaffAppraisalBtn').onclick = () => { let modalDiv = document.createElement('div'); modalDiv.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[10000]'; modalDiv.innerHTML = `<div class="bg-white p-6 rounded-xl w-96"><h3>Appraise Staff</h3><select id="appraisalStaffSelect" class="border w-full my-2"><option>Select Staff</option>${staffList.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}</select><input id="appraisalStaffRating" type="number" placeholder="Rating (1-5)" class="border w-full my-2"><textarea id="appraisalStaffComment" placeholder="Comment" class="border w-full my-2" rows="3"></textarea><button id="submitStaffAppraisalBtn" class="apply-btn w-full py-2">Submit</button><button id="closeStaffAppModal" class="bg-gray-400 w-full mt-2 py-2 rounded">Cancel</button></div>`; document.body.appendChild(modalDiv); document.getElementById('submitStaffAppraisalBtn').onclick = async () => { let staffId = document.getElementById('appraisalStaffSelect').value; let rating = parseInt(document.getElementById('appraisalStaffRating').value)||null; let comment = document.getElementById('appraisalStaffComment').value; if(!staffId) return showToast("Select staff", true); await saveStaffAppraisal(staffId, comment, rating); await refreshData(); modalDiv.remove(); staffAppraisalView(); }; document.getElementById('closeStaffAppModal').onclick = () => modalDiv.remove(); }; }
 async function performanceAppraisalView() { if (!['dg_ceo', 'management_committee'].includes(currentUser.role)) { showToast("Access denied", true); return; } let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📋 DG/CEO Performance Appraisal</h2><div class="mb-4"><label class="font-bold">Load Previous:</label><select id="loadAppraisalSelect" class="border p-2 rounded w-64 ml-2"><option value="">-- New --</option>${schoolData.dgAppraisals.map(a=>`<option value="${a.id}">${a.appraisal_period} - Score: ${a.total_percentage}%</option>`).join('')}</select><button id="loadAppraisalBtn" class="apply-btn ml-2 px-4 py-2 rounded">Load</button><button id="newAppraisalBtn" class="bg-gray-500 text-white px-4 py-2 rounded ml-2">New</button></div><div id="appraisalFormContainer"></div></div>`;
     document.getElementById('mainContent').innerHTML = html;
     function renderForm(data) { const formHtml = `<form id="dgAppraisalForm"><input name="period" placeholder="Appraisal Period" class="border p-2 w-full my-2"><input name="prepared_by" placeholder="Prepared By" class="border p-2 w-full my-2"><textarea name="remarks" placeholder="Remarks" rows="4" class="border p-2 w-full my-2"></textarea><button type="submit" class="apply-btn w-full py-2">Save Appraisal</button></form>`; document.getElementById('appraisalFormContainer').innerHTML = formHtml; document.getElementById('dgAppraisalForm').onsubmit = async (e) => { e.preventDefault(); let period = e.target.period.value, prepared_by = e.target.prepared_by.value, remarks = e.target.remarks.value; await saveDGAppraisal({ appraisal_period: period, prepared_by, final_remarks: remarks, total_percentage: 85, created_at: new Date() }); await refreshData(); performanceAppraisalView(); showToast("Saved"); }; }
@@ -878,10 +1254,48 @@ async function directorAppraisalView() {
         };
     }
             }
+
 async function parentChildReportsView() { enhancedResultView(false); }
 async function parentResultView() { enhancedResultView(false); }
 async function parentPaymentHistoryView() { let payments = schoolData.payments.filter(p=>p.student_id === currentUser.studentId); let html = `<div class="card p-6"><h2>Payment History</h2><ul>${payments.map(p=>`<li>₦${p.amount} - ${p.term} ${p.year} - ${p.payment_method}</li>`).join('')}</ul></div>`; document.getElementById('mainContent').innerHTML = html; }
 async function myClassView() { let teacherClass = currentUser.assigned_class || (schoolData.teachers.find(t=>t.id===currentUser.id)?.assigned_class) || CLASSES[0]; let students = schoolData.students.filter(s => s.academic_class === teacherClass); let html = `<div class="bg-white p-5 rounded-xl"><h2>My Academic Class: ${teacherClass}</h2><button id="writeAppraisalBtn" class="apply-btn mt-2 mb-4 px-4 py-2">Write Appraisal</button><div id="appraisalList"></div><ul>${students.map(s=>`<li>${s.name} (${s.reg_number}) - Section: ${s.section}</li>`).join('')}</ul></div>`; document.getElementById('mainContent').innerHTML = html; let appraisals = schoolData.studentAppraisals.filter(a => students.some(s => s.id === a.student_id)); document.getElementById('appraisalList').innerHTML = `<h3>Recent Appraisals</h3>${appraisals.map(a=>{ let s = students.find(st=>st.id===a.student_id); return `<div class="appraisal-card p-3 my-2"><p><strong>${s?.name}</strong> rated ${a.rating}/5</p><p>${escapeHtml(a.comment)}</p><small>${new Date(a.created_at).toLocaleDateString()}</small></div>`;}).join('') || '<p>None</p>'}`; document.getElementById('writeAppraisalBtn').onclick = () => { let sid = prompt("Student ID:"); let comment = prompt("Comment:"); let rating = prompt("Rating 1-5:"); if(sid && comment && rating) saveAppraisal(sid, comment, parseInt(rating)).then(async()=>{ await refreshData(); myClassView(); }); }; }
+async function teacherResultEntry() {
+    let students = schoolData.students, currentYear = new Date().getFullYear();
+    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📝 Enter Subject Grades</h2><div class="filter-row"><select id="teacherTerm">${TERMS.map(t=>`<option>${t}</option>`).join('')}</select><input id="teacherYear" type="number" value="${currentYear}" class="w-28"><select id="teacherSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select><select id="teacherClassFilter"><option value="all">All Classes</option>${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select><input id="teacherSearch" placeholder="🔍 Search student" class="flex-1"></div>
+    <select id="teacherStudentSelect" class="border p-3 w-full mb-4 rounded-xl"><option>Select Student</option></select>
+    <div class="bg-gray-50 p-4 rounded-2xl"><div class="flex flex-wrap gap-2"><input id="newSubject" placeholder="Subject" class="flex-1"><input id="ca1Val" placeholder="CA1 (0-20)" type="number" class="w-24"><input id="ca2Val" placeholder="CA2 (0-20)" type="number" class="w-24"><input id="examVal" placeholder="Exam (0-60)" type="number" class="w-24"><button id="addSubjectGradeBtn" class="apply-btn px-4">+ Add</button></div><div id="existingSubjectsList" class="mt-4"></div></div></div>`;
+    document.getElementById('mainContent').innerHTML = html;
+    function filterStudents() {
+        let section = document.getElementById('teacherSectionFilter').value, classVal = document.getElementById('teacherClassFilter').value, search = document.getElementById('teacherSearch').value.toLowerCase();
+        let filtered = students.filter(s => (section==='all' || s.section===section) && (classVal==='all' || s.academic_class===classVal) && (s.name.toLowerCase().includes(search) || (s.reg_number||'').toLowerCase().includes(search)));
+        let select = document.getElementById('teacherStudentSelect');
+        select.innerHTML = '<option>Select Student</option>' + filtered.map(s=>`<option value="${s.id}">${s.name} (${s.reg_number})</option>`).join('');
+        if(select.value !== 'Select Student') loadSubjects(select.value);
+    }
+    async function loadSubjects(sid) { if(!sid || sid==='Select Student') return;
+        let term = document.getElementById('teacherTerm').value, year = document.getElementById('teacherYear').value;
+        let existing = schoolData.results.filter(r => r.student_id == sid && r.term === term && r.year == year);
+        document.getElementById('existingSubjectsList').innerHTML = existing.map(r => `<div class="flex justify-between items-center bg-white p-2 rounded-xl shadow-sm mt-2"><span class="font-medium">${escapeHtml(r.subject)}</span><span>CA1:${r.ca1} CA2:${r.ca2} Exam:${r.exam} Total:${r.total}</span><button class="delete-subject-btn text-red-500" data-id="${r.id}">✕</button></div>`).join('');
+        document.querySelectorAll('.delete-subject-btn').forEach(btn => btn.addEventListener('click', async () => { await supabaseClient.from('results').delete().eq('id', btn.dataset.id); await refreshData(); loadSubjects(sid); showToast("Subject deleted"); }));
+    }
+    document.getElementById('addSubjectGradeBtn').onclick = async () => {
+        let sid = document.getElementById('teacherStudentSelect').value; if(sid==='Select Student') return showToast("Select student", true);
+        let subject = document.getElementById('newSubject').value.trim(); if(!subject) return showToast("Subject required", true);
+        let ca1 = parseInt(document.getElementById('ca1Val').value)||0, ca2 = parseInt(document.getElementById('ca2Val').value)||0, exam = parseInt(document.getElementById('examVal').value)||0;
+        if(ca1<0||ca1>20||ca2<0||ca2>20||exam<0||exam>60) return showToast("Invalid marks (CA:0-20, Exam:0-60)", true);
+        let term = document.getElementById('teacherTerm').value, year = document.getElementById('teacherYear').value;
+        await supabaseClient.from('results').insert([{ student_id: sid, term, year, subject, ca1, ca2, exam, total: ca1+ca2+exam }]);
+        await refreshData(); showToast(`Grade for ${subject} added`); loadSubjects(sid);
+        document.getElementById('newSubject').value = ''; document.getElementById('ca1Val').value = ''; document.getElementById('ca2Val').value = ''; document.getElementById('examVal').value = '';
+    };
+    document.getElementById('teacherStudentSelect').addEventListener('change', (e) => loadSubjects(e.target.value));
+    document.getElementById('teacherTerm').addEventListener('change', () => loadSubjects(document.getElementById('teacherStudentSelect').value));
+    document.getElementById('teacherYear').addEventListener('change', () => loadSubjects(document.getElementById('teacherStudentSelect').value));
+    document.getElementById('teacherSectionFilter').addEventListener('change', filterStudents);
+    document.getElementById('teacherClassFilter').addEventListener('change', filterStudents);
+    document.getElementById('teacherSearch').addEventListener('input', filterStudents);
+    filterStudents();
+}
 async function attendanceView() {
     let teacherClass = currentUser.assigned_class || CLASSES[0];
     let students = schoolData.students.filter(s=>s.academic_class===teacherClass);
@@ -890,8 +1304,7 @@ async function attendanceView() {
     document.getElementById('attList').innerHTML = `<table class="w-full border"><thead><tr><th>Name</th><th>Present</th></tr></thead><tbody>${students.map(s=>`<tr><td class="p-2">${s.name}</td><td class="p-2"><input type="checkbox" class="attCheck" data-id="${s.id}"></td></tr>`).join('')}</tbody></table>`;
     document.getElementById('submitAttendance').onclick = () => showToast("Attendance recorded (demo)");
 }
-async function sectionStudentsView() {
-    let students = schoolData.students;
+async function sectionStudentsView() {  let students = schoolData.students;
     let html = `
         <div class="card p-6">
             <div class="flex justify-between items-center mb-4">
@@ -989,7 +1402,8 @@ async function sectionStudentsView() {
     });
 
     render();
-}
+                                     }
+
 async function sectionFeesView() {
     let students = schoolData.students;
     let currentYear = new Date().getFullYear();
@@ -1317,38 +1731,34 @@ async function sectionAnalysisView() {
     document.getElementById('sectionAnalysisSubject').addEventListener('change', loadAnalysis);
     loadAnalysis();
 }
+
+// ========== DASHBOARD VIEW ==========
+async function dashboardView() { document.getElementById('mainContent').innerHTML = `<div class="card p-6"><h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-tachometer-alt text-amber-600 mr-2"></i>Dashboard</h2><div class="grid grid-cols-1 md:grid-cols-4 gap-5"><div class="bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-2xl shadow"><i class="fas fa-users text-3xl text-blue-600"></i><p class="text-2xl font-bold mt-2">${schoolData.students.length}</p><p>Students</p></div><div class="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-2xl shadow"><i class="fas fa-chalkboard-user text-3xl text-green-600"></i><p class="text-2xl font-bold mt-2">${schoolData.teachers.length + schoolData.profiles.filter(p=>p.role !== 'parent').length}</p><p>Staff</p></div><div class="bg-gradient-to-br from-yellow-50 to-yellow-100 p-5 rounded-2xl shadow"><i class="fas fa-money-bill-wave text-3xl text-yellow-600"></i><p class="text-2xl font-bold mt-2">₦${schoolData.payments.reduce((a,b)=>a+(b.amount||0),0).toLocaleString()}</p><p>Fees Collected</p></div><div class="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-2xl shadow"><i class="fas fa-file-alt text-3xl text-purple-600"></i><p class="text-2xl font-bold mt-2">${schoolData.applications.length}</p><p>Applications</p></div></div></div>`; }
 async function parentDashboardView() { const student = schoolData.students.find(s => s.id == currentUser.studentId); if (!student) { document.getElementById('mainContent').innerHTML = `<div class="card p-6"><p class="text-red-600">Student not found.</p></div>`; return; } const paid = schoolData.payments.filter(p => p.student_id == currentUser.studentId && p.term === "1st Term" && p.year == new Date().getFullYear()).reduce((a,b)=>a+(b.amount||0),0); const due = Math.max(0,30000-paid); const html = `<div class="card p-6"><h2 class="text-2xl font-bold text-emerald-800 mb-4">Parent Dashboard</h2><div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-5 rounded-2xl"><h3>Welcome, ${escapeHtml(currentUser.full_name)}</h3></div><div class="grid md:grid-cols-2 gap-6 mt-4"><div class="bg-white p-4 border-l-4 border-emerald-500"><p><strong>Student:</strong> ${student.name}</p><p><strong>Reg:</strong> ${student.reg_number}</p><p><strong>Class:</strong> ${student.academic_class}</p></div><div class="bg-white p-4 border-l-4 border-amber-500"><p><strong>Fee Status:</strong> ${due<=0?'Paid':`₦${due} due`}</p>${due>0?'<button id="parentDashPay" class="apply-btn mt-2 px-4 py-1 text-sm">Pay Now</button>':''}</div></div></div>`; document.getElementById('mainContent').innerHTML = html; if(due>0) document.getElementById('parentDashPay')?.addEventListener('click',()=>parentPaymentPortalView()); }
 
-// ========== INITIALIZATION ==========
-window.addEventListener('DOMContentLoaded', async () => {
-    document.getElementById('staffAdminBtn').onclick = () => document.getElementById('loginModal').style.display = 'flex';
-    document.getElementById('parentBtn').onclick = () => document.getElementById('parentModal').style.display = 'flex';
-    document.getElementById('adminSignupBtn').onclick = () => document.getElementById('adminSignupModal').style.display = 'flex';
-    document.getElementById('publicApplyBtn').onclick = () => document.getElementById('fullApplicationModal').style.display = 'flex';
-    document.getElementById('contactBtn').onclick = () => document.getElementById('contactModal').style.display = 'flex';
-    document.getElementById('adminTab').onclick = () => { document.getElementById('adminLoginForm').style.display = 'block'; document.getElementById('staffLoginForm').style.display = 'none'; };
-    document.getElementById('staffTab').onclick = () => { document.getElementById('adminLoginForm').style.display = 'none'; document.getElementById('staffLoginForm').style.display = 'block'; };
-    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => { e.preventDefault(); try { await adminLogin(document.getElementById('adminEmail').value, document.getElementById('adminPassword').value); } catch(err) { showToast(err.message, true); } });
-    document.getElementById('staffLoginForm').addEventListener('submit', async (e) => { e.preventDefault(); try { await staffLogin(document.getElementById('staffUsername').value, document.getElementById('staffPassword').value); } catch(err) { showToast(err.message, true); } });
-    document.getElementById('parentLoginForm').addEventListener('submit', async (e) => { e.preventDefault(); try { await parentLogin(document.getElementById('studentRegNo').value, document.getElementById('parentPwd').value); } catch(err) { showToast(err.message, true); } });
-    document.getElementById('adminSignupForm').addEventListener('submit', async (e) => { e.preventDefault(); try { await adminSignup(document.getElementById('regCode').value, document.getElementById('signupEmail').value, document.getElementById('signupPassword').value, document.getElementById('signupFullName').value, document.getElementById('signupRole').value); } catch(err) { showToast(err.message, true); } });
-    document.getElementById('addStaffForm')?.addEventListener('submit', async (e) => { e.preventDefault(); showLoading(true);
-        try {
-            await supabaseClient.from('teachers').insert([{ name: document.getElementById('staffName').value, email: document.getElementById('staffEmail').value, role: document.getElementById('staffRole').value, section: document.getElementById('staffSection').value, assigned_class: document.getElementById('staffAssignedClass').value, salary: parseInt(document.getElementById('staffSalary').value)||0, username: document.getElementById('newStaffUsername').value, password: document.getElementById('newStaffPassword').value }]);
-            await refreshData(); closeModal('addStaffModal'); unifiedStaffList(); showToast("Staff added");
-        } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
-    });
-    document.getElementById('fullApplicationForm').addEventListener('submit', async (e) => { e.preventDefault(); const fd = new FormData(e.target); const obj = {}; for(let [k,v] of fd.entries()) obj[k] = v; obj.status = 'pending'; await supabaseClient.from('applications').insert([obj]); showToast('Application submitted'); closeModal('fullApplicationModal'); });
-    document.getElementById('confirmAcceptBtn').addEventListener('click', async () => { if(window.pendingAcceptId){ await supabaseClient.from('applications').update({status:'accepted'}).eq('id',window.pendingAcceptId); await refreshData(); showToast("Application accepted"); closeModal('emailFeedbackModal'); applicationsViewEnhanced(); } });
-    document.getElementById('logoutBtn').addEventListener('click', logoutUser);
-    document.getElementById('mobileMenuToggle').addEventListener('click', () => { document.getElementById('dynamicSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('active'); });
-    document.getElementById('sidebarOverlay').addEventListener('click', closeMobileSidebar);
-    document.getElementById('closeMobileSidebar').addEventListener('click', closeMobileSidebar);
+
+// ========== EVENT LISTENERS ==========
+document.addEventListener('DOMContentLoaded', async()=>{
     await refreshData();
     renderLandingCarouselAndAnnouncement();
     CLASSES.forEach(c=>{ let opt=document.createElement('option'); opt.value=c; opt.text=c; document.getElementById('appDesiredClass')?.appendChild(opt); });
-    setInterval(() => { let d = new Date(); document.getElementById('liveTime').innerText = d.toLocaleTimeString(); document.getElementById('liveDate').innerHTML = d.toDateString(); }, 1000);
+    document.getElementById('staffAdminBtn').onclick=()=>document.getElementById('loginModal').style.display='flex';
+    document.getElementById('parentBtn').onclick=()=>document.getElementById('parentModal').style.display='flex';
+    document.getElementById('adminSignupBtn').onclick=()=>document.getElementById('adminSignupModal').style.display='flex';
+    document.getElementById('publicApplyBtn').onclick=()=>document.getElementById('fullApplicationModal').style.display='flex';
+    document.getElementById('contactBtn').onclick=()=>document.getElementById('contactModal').style.display='flex';
+    document.getElementById('adminLoginForm').onsubmit=(e)=>{ e.preventDefault(); adminLogin(adminEmail.value, adminPassword.value).catch(err=>showToast(err.message,true)); };
+    document.getElementById('staffLoginForm').onsubmit=(e)=>{ e.preventDefault(); staffLogin(staffUsername.value, staffPassword.value).catch(err=>showToast(err.message,true)); };
+    document.getElementById('parentLoginForm').onsubmit=(e)=>{ e.preventDefault(); parentLogin(studentRegNo.value, parentPwd.value).catch(err=>showToast(err.message,true)); };
+    document.getElementById('adminSignupForm').onsubmit=async(e)=>{ e.preventDefault(); try{ await adminSignup(regCode.value, signupEmail.value, signupPassword.value, signupFullName.value, signupRole.value); }catch(err){ showToast(err.message,true); } };
+    document.getElementById('logoutBtn').onclick=()=>logoutUser();
+    document.getElementById('adminTab').onclick=()=>{ document.getElementById('adminLoginForm').style.display='block'; document.getElementById('staffLoginForm').style.display='none'; };
+    document.getElementById('staffTab').onclick=()=>{ document.getElementById('staffLoginForm').style.display='block'; document.getElementById('adminLoginForm').style.display='none'; };
+    document.getElementById('mobileMenuToggle').onclick=()=>{ document.getElementById('dynamicSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('active'); };
+    document.getElementById('sidebarOverlay').onclick=closeMobileSidebar;
+    document.getElementById('closeMobileSidebar').onclick=closeMobileSidebar;
+    setInterval(()=>{ let d=new Date(); document.getElementById('liveTime').innerText=d.toLocaleTimeString(); document.getElementById('liveDate').innerText=d.toLocaleDateString(); },1000);
 });
 </script>
 </body>
-</html>
+    </html>

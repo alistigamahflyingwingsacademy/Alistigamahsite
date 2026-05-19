@@ -806,62 +806,196 @@ document.getElementById('checkStatusSubmit')?.addEventListener('click', async ()
 });
 
 // ========== UNIFIED STAFF LIST ==========
+
 async function unifiedStaffList() {
-    let staffTeachers = schoolData.teachers.map(t => ({ id: t.id, name: t.name, role: t.role, email: t.email, assigned_class: t.assigned_class, section: t.section || '', salary: t.salary, source: 'teacher' }));
-    let staffProfiles = schoolData.profiles.filter(p => p.role && p.role !== 'parent').map(p => ({ id: p.id, name: p.full_name, role: p.role, email: p.email, assigned_class: '', section: p.section || '', salary: 0, source: 'profile' }));
+    // Combine staff from teachers table and profiles (admin users)
+    let staffTeachers = schoolData.teachers.map(t => ({
+        id: t.id,
+        name: t.name,
+        role: t.role,
+        email: t.email,
+        assigned_class: t.assigned_class,
+        section: t.section || '',
+        salary: t.salary,
+        source: 'teacher'
+    }));
+    let staffProfiles = schoolData.profiles
+        .filter(p => p.role && p.role !== 'parent')
+        .map(p => ({
+            id: p.id,
+            name: p.full_name,
+            role: p.role,
+            email: p.email,
+            assigned_class: '',
+            section: p.section || '',
+            salary: 0,
+            source: 'profile'
+        }));
     let allStaff = [...staffTeachers, ...staffProfiles];
-    let html = `<div class="card p-6"><div class="flex justify-between items-center flex-wrap gap-3 mb-5"><h2 class="text-2xl font-bold"><i class="fas fa-users text-amber-600 mr-2"></i>Staff Directory</h2><button id="openAddStaffBtn" class="apply-btn px-5 py-2 rounded-full"><i class="fas fa-plus mr-1"></i> Add Staff</button></div><div class="filter-row"><input id="staffSearch" placeholder="🔍 Search name/email" class="flex-1"><select id="staffRoleFilter"><option value="all">All Roles</option><option>dg_ceo</option><option>daf</option><option>management_committee</option><option>do</option><option>der</option><option>dprpa</option><option>headteacher</option><option>teacher</option></select><select id="staffSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select></div><div class="overflow-x-auto"><table class="min-w-full"><thead><tr><th>Name</th><th>Role</th><th>Email</th><th>Assigned Class</th><th>Section</th><th>Salary</th></tr></thead><tbody id="staffUnifiedBody"></tbody></table></div></div>`;
+
+    console.log("Unified Staff Total:", allStaff.length);
+    console.log("From teachers:", staffTeachers.length);
+    console.log("From profiles:", staffProfiles.length);
+
+    if (allStaff.length === 0) {
+        document.getElementById('mainContent').innerHTML = `
+            <div class="card p-6 text-center">
+                <i class="fas fa-users text-4xl text-gray-400 mb-3"></i>
+                <p class="text-gray-500">No staff found. Please add staff using the "Add Staff" button.</p>
+            </div>`;
+        return;
+    }
+
+    let html = `
+        <div class="card p-6">
+            <div class="flex justify-between items-center flex-wrap gap-3 mb-5">
+                <h2 class="text-2xl font-bold"><i class="fas fa-users text-amber-600 mr-2"></i>Staff Directory</h2>
+                <button id="openAddStaffBtn" class="apply-btn px-5 py-2 rounded-full"><i class="fas fa-plus mr-1"></i> Add Staff</button>
+            </div>
+            <div class="filter-row">
+                <input id="staffSearch" placeholder="🔍 Search name/email" class="flex-1 border rounded-xl p-2">
+                <select id="staffRoleFilter" class="border rounded-xl p-2">
+                    <option value="all">All Roles</option>
+                    <option>dg_ceo</option><option>daf</option><option>management_committee</option>
+                    <option>do</option><option>der</option><option>dprpa</option>
+                    <option>headteacher</option><option>teacher</option>
+                </select>
+                <select id="staffSectionFilter" class="border rounded-xl p-2">
+                    <option value="all">All Sections</option>
+                    ${SECTIONS.map(s => `<option>${s}</option>`).join('')}
+                </select>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full border">
+                    <thead class="bg-gray-100">
+                        <tr><th>Name</th><th>Role</th><th>Email</th><th>Assigned Class</th><th>Section</th><th>Salary</th></tr>
+                    </thead>
+                    <tbody id="staffUnifiedBody"></tbody>
+                </table>
+            </div>
+        </div>
+    `;
     document.getElementById('mainContent').innerHTML = html;
     document.getElementById('openAddStaffBtn').onclick = () => document.getElementById('addStaffModal').style.display = 'flex';
+
     function render() {
         let search = document.getElementById('staffSearch').value.toLowerCase();
         let roleFilter = document.getElementById('staffRoleFilter').value;
         let sectionFilter = document.getElementById('staffSectionFilter').value;
-        let filtered = allStaff.filter(s => (s.name.toLowerCase().includes(search) || (s.email||'').toLowerCase().includes(search)) && (roleFilter==='all' || s.role===roleFilter) && (sectionFilter==='all' || (s.section||'').toLowerCase().includes(sectionFilter.toLowerCase())));
-        document.getElementById('staffUnifiedBody').innerHTML = filtered.map(s => `<tr><td class="editable-staff" data-field="name" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.name)}</td><td class="font-semibold text-amber-700">${s.role}</td><td class="editable-staff" data-field="email" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.email)}</td><td class="editable-staff" data-field="assigned_class" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.assigned_class||'—')}</td><td class="editable-staff" data-field="section" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.section||'—')}</td><td class="editable-staff" data-field="salary" data-id="${s.id}" data-source="${s.source}">${s.salary ? '₦'+s.salary.toLocaleString() : '0'}</td></tr>`).join('');
-        attachEditable();
-    }
-    function attachEditable() {
+
+        let filtered = allStaff.filter(s => {
+            let matchSearch = s.name.toLowerCase().includes(search) || (s.email || '').toLowerCase().includes(search);
+            let matchRole = roleFilter === 'all' || s.role === roleFilter;
+            let matchSection = sectionFilter === 'all' || (s.section || '').toLowerCase().includes(sectionFilter.toLowerCase());
+            return matchSearch && matchRole && matchSection;
+        });
+
+        let tbody = document.getElementById('staffUnifiedBody');
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-500">No matching staff found.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(s => `
+            <tr>
+                <td class="editable-staff border p-2" data-field="name" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.name)}</td>
+                <td class="font-semibold text-amber-700 border p-2">${s.role}</td>
+                <td class="editable-staff border p-2" data-field="email" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.email)}</td>
+                <td class="editable-staff border p-2" data-field="assigned_class" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.assigned_class || '—')}</td>
+                <td class="editable-staff border p-2" data-field="section" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.section || '—')}</td>
+                <td class="editable-staff border p-2" data-field="salary" data-id="${s.id}" data-source="${s.source}">${s.salary ? '₦' + s.salary.toLocaleString() : '0'}</td>
+            </tr>
+        `).join('');
+
+        // Attach editable behaviour (same as original)
         document.querySelectorAll('.editable-staff').forEach(cell => {
-            cell.setAttribute('contenteditable','true');
+            cell.setAttribute('contenteditable', 'true');
             cell.addEventListener('blur', async () => {
-                let id=cell.dataset.id, source=cell.dataset.source, field=cell.dataset.field, val=cell.innerText.trim();
-                if(field==='salary') val=parseInt(val.replace(/[^0-9]/g,''))||0;
+                let id = cell.dataset.id;
+                let source = cell.dataset.source;
+                let field = cell.dataset.field;
+                let val = cell.innerText.trim();
+                if (field === 'salary') val = parseInt(val.replace(/[^0-9]/g, '')) || 0;
                 let table = source === 'teacher' ? 'teachers' : 'profiles';
                 await supabaseClient.from(table).update({ [field]: val }).eq('id', id);
-                await refreshData(); unifiedStaffList();
+                await refreshData();
+                unifiedStaffList();
                 showToast(`${field} updated`);
             });
         });
     }
-    render();
+
     document.getElementById('staffSearch').addEventListener('input', render);
     document.getElementById('staffRoleFilter').addEventListener('change', render);
     document.getElementById('staffSectionFilter').addEventListener('change', render);
+    render();
 }
-
 // ========== PAYROLL MODULE (with Add Staff to Payroll button) ==========
+
 async function payrollModule() {
-    let staffTeachers = schoolData.teachers.map(t=>({id:t.id,name:t.name,section:t.section||'', salary: t.salary || 0}));
-    let staffProfiles = schoolData.profiles.filter(p=>p.role && p.role !== 'parent').map(p=>({id:p.id,name:p.full_name,section:p.section||'', salary:0}));
+    // Combine staff from teachers and profiles (admin users)
+    let staffTeachers = schoolData.teachers.map(t => ({
+        id: t.id,
+        name: t.name,
+        section: t.section || '',
+        salary: t.salary || 0
+    }));
+    let staffProfiles = schoolData.profiles
+        .filter(p => p.role && p.role !== 'parent')
+        .map(p => ({
+            id: p.id,
+            name: p.full_name,
+            section: p.section || '',
+            salary: 0
+        }));
     let allStaff = [...staffTeachers, ...staffProfiles];
-    let currentMonth = new Date().toLocaleString('default',{month:'long'}), currentYear = new Date().getFullYear();
+
+    console.log("Payroll staff count:", allStaff.length);
+
+    if (allStaff.length === 0) {
+        document.getElementById('mainContent').innerHTML = `
+            <div class="card p-6 text-center">
+                <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-3"></i>
+                <p class="text-gray-700">No staff available. Please add staff via the "Add Staff" button first.</p>
+            </div>`;
+        return;
+    }
+
+    let currentMonth = new Date().toLocaleString('default', { month: 'long' });
+    let currentYear = new Date().getFullYear();
     let monthOptions = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">💰 Payroll Management / كشف الرواتب</h2>
-    <div class="filter-row"><select id="payrollMonth">${monthOptions.map(m=>`<option ${m===currentMonth?'selected':''}>${m}</option>`).join('')}</select>
-    <input id="payrollYear" type="number" value="${currentYear}" class="w-28"><select id="payrollSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select>
-    <button id="generatePayrollBtn" class="apply-btn">Refresh</button><button id="exportPayrollCsv" class="apply-btn bg-emerald-600">Export CSV</button>
-    <button id="syncStaffToPayroll" class="apply-btn bg-blue-600">Sync Staff to Payroll</button>
-    <button id="addStaffToPayrollBtn" class="apply-btn bg-purple-600">+ Add Staff to Payroll</button></div>
-    <div class="overflow-x-auto"><table class="min-w-full payroll-table border"><thead class="bg-gray-100"><tr><th>S/N</th><th>Employee Name</th><th>Basic Salary (₦)</th><th>Allowances (₦)</th><th>Gross Pay (₦)</th><th>Deductions (₦)</th><th>Net Pay (₦)</th><th>Account Details</th></tr></thead><tbody id="payrollTbody"></tbody><tfoot id="payrollTotals" class="bg-gray-50 font-bold"></tfoot></table></div></div>`;
+
+    let html = `
+        <div class="card p-6">
+            <h2 class="text-2xl font-bold mb-4">💰 Payroll Management / كشف الرواتب</h2>
+            <div class="filter-row">
+                <select id="payrollMonth">${monthOptions.map(m => `<option ${m === currentMonth ? 'selected' : ''}>${m}</option>`).join('')}</select>
+                <input id="payrollYear" type="number" value="${currentYear}" class="w-28">
+                <select id="payrollSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s => `<option>${s}</option>`).join('')}</select>
+                <button id="generatePayrollBtn" class="apply-btn">Refresh</button>
+                <button id="exportPayrollCsv" class="apply-btn bg-emerald-600">Export CSV</button>
+                <button id="syncStaffToPayroll" class="apply-btn bg-blue-600">Sync Staff to Payroll</button>
+                <button id="addStaffToPayrollBtn" class="apply-btn bg-purple-600">+ Add Staff to Payroll</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full payroll-table border">
+                    <thead class="bg-gray-100">
+                        <tr><th>S/N</th><th>Employee Name</th><th>Basic Salary (₦)</th><th>Allowances (₦)</th><th>Gross Pay (₦)</th><th>Deductions (₦)</th><th>Net Pay (₦)</th><th>Account Details</th></tr>
+                    </thead>
+                    <tbody id="payrollTbody"></tbody>
+                    <tfoot id="payrollTotals" class="bg-gray-50 font-bold"></tfoot>
+                </table>
+            </div>
+        </div>
+    `;
     document.getElementById('mainContent').innerHTML = html;
-    
+
     async function ensureAllStaffHavePayrollRecords(month, year, staffList) {
         let existing = schoolData.payrollRecords.filter(r => r.month === month && r.year === year);
         let newRecords = [];
-        for(let staff of staffList) {
+        for (let staff of staffList) {
             let exists = existing.find(r => r.staff_id == staff.id);
-            if(!exists) {
+            if (!exists) {
                 newRecords.push({
                     staff_id: staff.id,
                     employee_name: staff.name,
@@ -875,63 +1009,122 @@ async function payrollModule() {
                 });
             }
         }
-        if(newRecords.length > 0) {
+        if (newRecords.length > 0) {
             await supabaseClient.from('payroll_records').insert(newRecords);
             await refreshData();
             showToast(`Added ${newRecords.length} staff to payroll for ${month} ${year}`);
         }
     }
-    
+
     async function loadPayroll() {
-        let month = document.getElementById('payrollMonth').value, year = parseInt(document.getElementById('payrollYear').value), sectionFilter = document.getElementById('payrollSectionFilter').value;
-        let filteredStaff = allStaff.filter(s => sectionFilter==='all' || s.section===sectionFilter);
+        let month = document.getElementById('payrollMonth').value;
+        let year = parseInt(document.getElementById('payrollYear').value);
+        let sectionFilter = document.getElementById('payrollSectionFilter').value;
+        let filteredStaff = allStaff.filter(s => sectionFilter === 'all' || s.section === sectionFilter);
+
+        if (filteredStaff.length === 0) {
+            document.getElementById('payrollTbody').innerHTML = '<tr><td colspan="8" class="text-center py-4 text-gray-500">No staff found for the selected section.</td></tr>';
+            return;
+        }
+
         await ensureAllStaffHavePayrollRecords(month, year, filteredStaff);
         await refreshData();
+
         let updatedRecords = schoolData.payrollRecords.filter(r => r.month === month && r.year === year);
         let records = [];
-        for(let staff of filteredStaff) {
-            let rec = updatedRecords.find(r => r.staff_id === staff.id);
-            if(rec) records.push(rec);
+        for (let staff of filteredStaff) {
+            let rec = updatedRecords.find(r => r.staff_id == staff.id);
+            if (rec) records.push(rec);
         }
-        records.forEach(r => { r.gross_pay = (r.basic_salary||0) + (r.allowances||0); r.net_pay = r.gross_pay - (r.deductions||0); });
+
+        records.forEach(r => {
+            r.gross_pay = (r.basic_salary || 0) + (r.allowances || 0);
+            r.net_pay = r.gross_pay - (r.deductions || 0);
+        });
+
         let tbody = document.getElementById('payrollTbody');
-        tbody.innerHTML = records.map((r,i)=>`<tr><td class="text-center">${i+1}</td><td class="font-medium">${escapeHtml(r.employee_name)}</td><td><input type="text" class="payroll-basic" data-id="${r.id}" value="${r.basic_salary||0}" style="width:100px;"></td><td><input type="text" class="payroll-allowance" data-id="${r.id}" value="${r.allowances||0}" style="width:100px;"></td><td class="gross-pay-${r.id} font-bold text-emerald-700">${(r.gross_pay||0).toLocaleString()}</td><td><input type="text" class="payroll-deduction" data-id="${r.id}" value="${r.deductions||0}" style="width:100px;"></td><td class="net-pay-${r.id} font-bold text-blue-700">${(r.net_pay||0).toLocaleString()}</td><td><input type="text" class="payroll-account" data-id="${r.id}" value="${escapeHtml(r.account_details||'')}" style="width:150px;"></td></tr>`).join('');
-        let totals = {basic:0,allow:0,gross:0,ded:0,net:0};
-        records.forEach(r=>{ totals.basic+=r.basic_salary||0; totals.allow+=r.allowances||0; totals.gross+=r.gross_pay||0; totals.ded+=r.deductions||0; totals.net+=r.net_pay||0; });
-        document.getElementById('payrollTotals').innerHTML = `<tr><td colspan="2" class="text-right font-bold">TOTAL</td><td class="font-bold">₦${totals.basic.toLocaleString()}</td><td class="font-bold">₦${totals.allow.toLocaleString()}</td><td class="font-bold">₦${totals.gross.toLocaleString()}</td><td class="font-bold">₦${totals.ded.toLocaleString()}</td><td class="font-bold">₦${totals.net.toLocaleString()}</td><td></td></tr>`;
+        tbody.innerHTML = records.map((r, i) => `
+            <tr>
+                <td class="text-center border p-2">${i + 1}</td>
+                <td class="font-medium border p-2">${escapeHtml(r.employee_name)}</td>
+                <td class="border p-2"><input type="text" class="payroll-basic w-full text-right" data-id="${r.id}" value="${r.basic_salary || 0}"></td>
+                <td class="border p-2"><input type="text" class="payroll-allowance w-full text-right" data-id="${r.id}" value="${r.allowances || 0}"></td>
+                <td class="gross-pay-${r.id} font-bold text-emerald-700 border p-2 text-right">${(r.gross_pay || 0).toLocaleString()}</td>
+                <td class="border p-2"><input type="text" class="payroll-deduction w-full text-right" data-id="${r.id}" value="${r.deductions || 0}"></td>
+                <td class="net-pay-${r.id} font-bold text-blue-700 border p-2 text-right">${(r.net_pay || 0).toLocaleString()}</td>
+                <td class="border p-2"><input type="text" class="payroll-account w-full" data-id="${r.id}" value="${escapeHtml(r.account_details || '')}"></td>
+            </tr>
+        `).join('');
+
+        let totals = { basic: 0, allow: 0, gross: 0, ded: 0, net: 0 };
+        records.forEach(r => {
+            totals.basic += r.basic_salary || 0;
+            totals.allow += r.allowances || 0;
+            totals.gross += r.gross_pay || 0;
+            totals.ded += r.deductions || 0;
+            totals.net += r.net_pay || 0;
+        });
+        document.getElementById('payrollTotals').innerHTML = `
+            <tr>
+                <td colspan="2" class="text-right font-bold border p-2">TOTAL</td>
+                <td class="font-bold border p-2">₦${totals.basic.toLocaleString()}</td>
+                <td class="font-bold border p-2">₦${totals.allow.toLocaleString()}</td>
+                <td class="font-bold border p-2">₦${totals.gross.toLocaleString()}</td>
+                <td class="font-bold border p-2">₦${totals.ded.toLocaleString()}</td>
+                <td class="font-bold border p-2">₦${totals.net.toLocaleString()}</td>
+                <td class="border p-2"></td>
+            </tr>
+        `;
+
         attachPayrollEditable();
     }
+
     function attachPayrollEditable() {
         document.querySelectorAll('.payroll-basic, .payroll-allowance, .payroll-deduction, .payroll-account').forEach(inp => {
             inp.addEventListener('blur', async () => {
                 let id = inp.dataset.id;
-                let field = inp.classList.contains('payroll-basic') ? 'basic_salary' : (inp.classList.contains('payroll-allowance') ? 'allowances' : (inp.classList.contains('payroll-deduction') ? 'deductions' : 'account_details'));
+                let field = inp.classList.contains('payroll-basic') ? 'basic_salary' :
+                            (inp.classList.contains('payroll-allowance') ? 'allowances' :
+                            (inp.classList.contains('payroll-deduction') ? 'deductions' : 'account_details'));
                 let val = (field === 'account_details') ? inp.value : (parseFloat(inp.value) || 0);
                 let updateObj = { [field]: val };
-                if(field === 'basic_salary' || field === 'allowances' || field === 'deductions') {
+                if (field === 'basic_salary' || field === 'allowances' || field === 'deductions') {
                     let record = schoolData.payrollRecords.find(r => r.id == id);
-                    let basic = field === 'basic_salary' ? val : (record?.basic_salary||0);
-                    let allow = field === 'allowances' ? val : (record?.allowances||0);
-                    let ded = field === 'deductions' ? val : (record?.deductions||0);
+                    let basic = field === 'basic_salary' ? val : (record?.basic_salary || 0);
+                    let allow = field === 'allowances' ? val : (record?.allowances || 0);
+                    let ded = field === 'deductions' ? val : (record?.deductions || 0);
                     updateObj.gross_pay = basic + allow;
                     updateObj.net_pay = updateObj.gross_pay - ded;
                 }
                 await supabaseClient.from('payroll_records').update(updateObj).eq('id', id);
-                await refreshData(); loadPayroll();
+                await refreshData();
+                loadPayroll();
                 showToast(`${field} updated`);
             });
         });
     }
+
     document.getElementById('generatePayrollBtn').addEventListener('click', async () => { await refreshData(); loadPayroll(); });
     document.getElementById('payrollSectionFilter').addEventListener('change', loadPayroll);
     document.getElementById('payrollMonth').addEventListener('change', loadPayroll);
     document.getElementById('payrollYear').addEventListener('change', loadPayroll);
     document.getElementById('exportPayrollCsv').addEventListener('click', () => {
-        let rows = []; document.querySelectorAll('#payrollTbody tr').forEach(row => { let cols = []; row.querySelectorAll('td').forEach(cell => cols.push(cell.innerText)); rows.push(cols); });
-        let csv = rows.map(row => row.join(',')).join('\n'); let blob = new Blob([csv], {type: 'text/csv'}); let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'payroll.csv'; a.click();
+        let rows = [];
+        document.querySelectorAll('#payrollTbody tr').forEach(row => {
+            let cols = [];
+            row.querySelectorAll('td').forEach(cell => cols.push(cell.innerText));
+            rows.push(cols);
+        });
+        let csv = rows.map(row => row.join(',')).join('\n');
+        let blob = new Blob([csv], { type: 'text/csv' });
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'payroll.csv';
+        a.click();
     });
     document.getElementById('syncStaffToPayroll').addEventListener('click', async () => {
-        let month = document.getElementById('payrollMonth').value, year = parseInt(document.getElementById('payrollYear').value);
+        let month = document.getElementById('payrollMonth').value;
+        let year = parseInt(document.getElementById('payrollYear').value);
         await ensureAllStaffHavePayrollRecords(month, year, allStaff);
         loadPayroll();
     });
@@ -940,9 +1133,13 @@ async function payrollModule() {
         let year = parseInt(document.getElementById('payrollYear').value);
         let existingStaffIds = schoolData.payrollRecords.filter(r => r.month === month && r.year === year).map(r => r.staff_id);
         let availableStaff = allStaff.filter(s => !existingStaffIds.includes(s.id));
-        if(availableStaff.length === 0) { showToast("All staff are already in payroll for this month/year"); return; }
+        if (availableStaff.length === 0) {
+            showToast("All staff are already in payroll for this month/year");
+            return;
+        }
         let select = document.getElementById('payrollStaffSelect');
-        select.innerHTML = '<option value="">-- Select Staff --</option>' + availableStaff.map(s => `<option value="${s.id}" data-salary="${s.salary}">${escapeHtml(s.name)} (${s.section||'No section'})</option>`).join('');
+        select.innerHTML = '<option value="">-- Select Staff --</option>' +
+            availableStaff.map(s => `<option value="${s.id}" data-salary="${s.salary}">${escapeHtml(s.name)} (${s.section || 'No section'})</option>`).join('');
         document.getElementById('payrollStaffSalary').value = '';
         document.getElementById('payrollStaffAllowances').value = '0';
         document.getElementById('payrollStaffDeductions').value = '0';
@@ -954,42 +1151,9 @@ async function payrollModule() {
             document.getElementById('payrollStaffSalary').value = salary;
         };
     });
+
     loadPayroll();
 }
-
-document.getElementById('addToPayrollForm')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    let staffId = document.getElementById('payrollStaffSelect').value;
-    if(!staffId) { showToast("Please select a staff member", true); return; }
-    let month = document.getElementById('payrollMonth').value;
-    let year = parseInt(document.getElementById('payrollYear').value);
-    let basicSalary = parseFloat(document.getElementById('payrollStaffSalary').value) || 0;
-    let allowances = parseFloat(document.getElementById('payrollStaffAllowances').value) || 0;
-    let deductions = parseFloat(document.getElementById('payrollStaffDeductions').value) || 0;
-    let account = document.getElementById('payrollStaffAccount').value;
-    let grossPay = basicSalary + allowances;
-    let netPay = grossPay - deductions;
-    showLoading(true);
-    try {
-        let staff = schoolData.teachers.find(t => t.id == staffId) || schoolData.profiles.find(p => p.id == staffId);
-        let staffName = staff ? staff.name || staff.full_name : "Unknown";
-        await supabaseClient.from('payroll_records').insert([{
-            staff_id: staffId,
-            employee_name: staffName,
-            month, year,
-            basic_salary: basicSalary,
-            allowances: allowances,
-            deductions: deductions,
-            account_details: account,
-            gross_pay: grossPay,
-            net_pay: netPay
-        }]);
-        await refreshData();
-        showToast(`Staff added to payroll for ${month} ${year}`);
-        closeModal('addStaffToPayrollModal');
-        payrollModule();
-    } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
-});
 
 // ========== ENHANCED ADD STAFF (auto-add to payroll for current month) ==========
 document.getElementById('addStaffForm')?.addEventListener('submit', async (e) => {
@@ -1731,7 +1895,49 @@ async function sectionAnalysisView() {
     document.getElementById('sectionAnalysisSubject').addEventListener('change', loadAnalysis);
     loadAnalysis();
 }
-
+async function refreshData() {
+    showLoading(true);
+    try {
+        const [sRes, tRes, pRes, aRes, rRes, payRes, btRes, saRes, slRes, annRes, rexRes, payrollRes, dgRes, stuAppRes] = await Promise.all([
+            supabaseClient.from('students').select('*'),
+            supabaseClient.from('teachers').select('*'),
+            supabaseClient.from('profiles').select('*'),
+            supabaseClient.from('applications').select('*'),
+            supabaseClient.from('results').select('*'),
+            supabaseClient.from('payments').select('*'),
+            supabaseClient.from('bank_transfers').select('*'),
+            supabaseClient.from('staff_appraisals').select('*'),
+            supabaseClient.from('slides').select('*'),
+            supabaseClient.from('site_announcement').select('*').limit(1),
+            supabaseClient.from('result_extras').select('*'),
+            supabaseClient.from('payroll_records').select('*'),
+            supabaseClient.from('dg_appraisals').select('*'),
+            supabaseClient.from('student_appraisals').select('*')
+        ]);
+        schoolData = {
+            students: sRes.data || [],
+            teachers: tRes.data || [],
+            profiles: pRes.data || [],
+            applications: aRes.data || [],
+            results: rRes.data || [],
+            payments: payRes.data || [],
+            bankTransfers: btRes.data || [],
+            staffAppraisals: saRes.data || [],
+            slides: slRes.data || [],
+            announcements: annRes.data || [],
+            resultExtras: rexRes.data || [],
+            payrollRecords: payrollRes.data || [],
+            dgAppraisals: dgRes.data || [],
+            studentAppraisals: stuAppRes.data || []
+        };
+        console.log("✅ RefreshData complete. Teachers loaded:", schoolData.teachers.length);
+        console.log("✅ Profiles loaded:", schoolData.profiles.length);
+    } catch(e) {
+        console.error("Refresh error:", e);
+    } finally {
+        showLoading(false);
+    }
+}
 // ========== DASHBOARD VIEW ==========
 async function dashboardView() { document.getElementById('mainContent').innerHTML = `<div class="card p-6"><h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-tachometer-alt text-amber-600 mr-2"></i>Dashboard</h2><div class="grid grid-cols-1 md:grid-cols-4 gap-5"><div class="bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-2xl shadow"><i class="fas fa-users text-3xl text-blue-600"></i><p class="text-2xl font-bold mt-2">${schoolData.students.length}</p><p>Students</p></div><div class="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-2xl shadow"><i class="fas fa-chalkboard-user text-3xl text-green-600"></i><p class="text-2xl font-bold mt-2">${schoolData.teachers.length + schoolData.profiles.filter(p=>p.role !== 'parent').length}</p><p>Staff</p></div><div class="bg-gradient-to-br from-yellow-50 to-yellow-100 p-5 rounded-2xl shadow"><i class="fas fa-money-bill-wave text-3xl text-yellow-600"></i><p class="text-2xl font-bold mt-2">₦${schoolData.payments.reduce((a,b)=>a+(b.amount||0),0).toLocaleString()}</p><p>Fees Collected</p></div><div class="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-2xl shadow"><i class="fas fa-file-alt text-3xl text-purple-600"></i><p class="text-2xl font-bold mt-2">${schoolData.applications.length}</p><p>Applications</p></div></div></div>`; }
 async function parentDashboardView() { const student = schoolData.students.find(s => s.id == currentUser.studentId); if (!student) { document.getElementById('mainContent').innerHTML = `<div class="card p-6"><p class="text-red-600">Student not found.</p></div>`; return; } const paid = schoolData.payments.filter(p => p.student_id == currentUser.studentId && p.term === "1st Term" && p.year == new Date().getFullYear()).reduce((a,b)=>a+(b.amount||0),0); const due = Math.max(0,30000-paid); const html = `<div class="card p-6"><h2 class="text-2xl font-bold text-emerald-800 mb-4">Parent Dashboard</h2><div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-5 rounded-2xl"><h3>Welcome, ${escapeHtml(currentUser.full_name)}</h3></div><div class="grid md:grid-cols-2 gap-6 mt-4"><div class="bg-white p-4 border-l-4 border-emerald-500"><p><strong>Student:</strong> ${student.name}</p><p><strong>Reg:</strong> ${student.reg_number}</p><p><strong>Class:</strong> ${student.academic_class}</p></div><div class="bg-white p-4 border-l-4 border-amber-500"><p><strong>Fee Status:</strong> ${due<=0?'Paid':`₦${due} due`}</p>${due>0?'<button id="parentDashPay" class="apply-btn mt-2 px-4 py-1 text-sm">Pay Now</button>':''}</div></div></div>`; document.getElementById('mainContent').innerHTML = html; if(due>0) document.getElementById('parentDashPay')?.addEventListener('click',()=>parentPaymentPortalView()); }

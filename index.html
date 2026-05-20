@@ -169,28 +169,45 @@ async function refreshData() {
     showLoading(true);
     try {
         const [sRes, tRes, pRes, aRes, rRes, payRes, btRes, saRes, slRes, annRes, rexRes, payrollRes, dgRes, stuAppRes] = await Promise.all([
-            supabaseClient.from('students').select('*'), supabaseClient.from('teachers').select('*'), supabaseClient.from('profiles').select('*'),
-            supabaseClient.from('applications').select('*'), supabaseClient.from('results').select('*'), supabaseClient.from('payments').select('*'),
-            supabaseClient.from('bank_transfers').select('*'), supabaseClient.from('staff_appraisals').select('*'), supabaseClient.from('slides').select('*'),
-            supabaseClient.from('site_announcement').select('*').limit(1), supabaseClient.from('result_extras').select('*'),
-            supabaseClient.from('payroll_records').select('*'), supabaseClient.from('dg_appraisals').select('*'), supabaseClient.from('student_appraisals').select('*')
+            supabaseClient.from('students').select('*'),
+            supabaseClient.from('teachers').select('*'),
+            supabaseClient.from('profiles').select('*'),
+            supabaseClient.from('applications').select('*'),
+            supabaseClient.from('results').select('*'),
+            supabaseClient.from('payments').select('*'),
+            supabaseClient.from('bank_transfers').select('*'),
+            supabaseClient.from('staff_appraisals').select('*'),
+            supabaseClient.from('slides').select('*'),
+            supabaseClient.from('site_announcement').select('*').limit(1),
+            supabaseClient.from('result_extras').select('*'),
+            supabaseClient.from('payroll_records').select('*'),
+            supabaseClient.from('dg_appraisals').select('*'),
+            supabaseClient.from('student_appraisals').select('*')
         ]);
-        schoolData = { students: sRes.data||[], teachers: tRes.data||[], profiles: pRes.data||[], applications: aRes.data||[], results: rRes.data||[], payments: payRes.data||[], bankTransfers: btRes.data||[], staffAppraisals: saRes.data||[], slides: slRes.data||[], announcements: annRes.data||[], resultExtras: rexRes.data||[], payrollRecords: payrollRes.data||[], dgAppraisals: dgRes.data||[], studentAppraisals: stuAppRes.data||[] };
-    } catch(e) { console.error(e); } finally { showLoading(false); }
-}
-
-function resetIdleTimer() { if (!currentUser) return; if (idleTimeout) clearTimeout(idleTimeout); idleTimeout = setTimeout(() => { if (currentUser) { showToast("Auto-logout due to inactivity", false); logoutUser(); } }, 60 * 1000); }
-function attachActivityListeners() { ['mousedown','mousemove','keypress','scroll','touchstart'].forEach(ev => { document.removeEventListener(ev, resetIdleTimer); document.addEventListener(ev, resetIdleTimer); }); }
-
-function logoutUser() {
-    if(window.slideInterval) clearInterval(window.slideInterval);
-    currentUser = null;
-    document.getElementById('appContainer').classList.add('hidden');
-    document.getElementById('landingPage').style.display = 'block';
-    renderLandingCarouselAndAnnouncement();
-    showToast("Logged out");
-}
-
+        schoolData = {
+            students: sRes.data || [],
+            teachers: tRes.data || [],
+            profiles: pRes.data || [],
+            applications: aRes.data || [],
+            results: rRes.data || [],
+            payments: payRes.data || [],
+            bankTransfers: btRes.data || [],
+            staffAppraisals: saRes.data || [],
+            slides: slRes.data || [],
+            announcements: annRes.data || [],
+            resultExtras: rexRes.data || [],
+            payrollRecords: payrollRes.data || [],
+            dgAppraisals: dgRes.data || [],
+            studentAppraisals: stuAppRes.data || []
+        };
+        console.log("✅ Teachers loaded:", schoolData.teachers.length);
+        console.log("✅ Profiles loaded:", schoolData.profiles.length);
+    } catch(e) {
+        console.error("Refresh error:", e);
+    } finally {
+        showLoading(false);
+    }
+    }
 // ========== LANDING CAROUSEL & ANNOUNCEMENT ==========
 async function renderLandingCarouselAndAnnouncement() {
     const ann = schoolData.announcements[0]?.content || 'Welcome to Flying Wings – Excellence in Islamic Education';
@@ -1895,49 +1912,7 @@ async function sectionAnalysisView() {
     document.getElementById('sectionAnalysisSubject').addEventListener('change', loadAnalysis);
     loadAnalysis();
 }
-async function refreshData() {
-    showLoading(true);
-    try {
-        const [sRes, tRes, pRes, aRes, rRes, payRes, btRes, saRes, slRes, annRes, rexRes, payrollRes, dgRes, stuAppRes] = await Promise.all([
-            supabaseClient.from('students').select('*'),
-            supabaseClient.from('teachers').select('*'),
-            supabaseClient.from('profiles').select('*'),
-            supabaseClient.from('applications').select('*'),
-            supabaseClient.from('results').select('*'),
-            supabaseClient.from('payments').select('*'),
-            supabaseClient.from('bank_transfers').select('*'),
-            supabaseClient.from('staff_appraisals').select('*'),
-            supabaseClient.from('slides').select('*'),
-            supabaseClient.from('site_announcement').select('*').limit(1),
-            supabaseClient.from('result_extras').select('*'),
-            supabaseClient.from('payroll_records').select('*'),
-            supabaseClient.from('dg_appraisals').select('*'),
-            supabaseClient.from('student_appraisals').select('*')
-        ]);
-        schoolData = {
-            students: sRes.data || [],
-            teachers: tRes.data || [],
-            profiles: pRes.data || [],
-            applications: aRes.data || [],
-            results: rRes.data || [],
-            payments: payRes.data || [],
-            bankTransfers: btRes.data || [],
-            staffAppraisals: saRes.data || [],
-            slides: slRes.data || [],
-            announcements: annRes.data || [],
-            resultExtras: rexRes.data || [],
-            payrollRecords: payrollRes.data || [],
-            dgAppraisals: dgRes.data || [],
-            studentAppraisals: stuAppRes.data || []
-        };
-        console.log("✅ RefreshData complete. Teachers loaded:", schoolData.teachers.length);
-        console.log("✅ Profiles loaded:", schoolData.profiles.length);
-    } catch(e) {
-        console.error("Refresh error:", e);
-    } finally {
-        showLoading(false);
-    }
-}
+
 // ========== DASHBOARD VIEW ==========
 async function dashboardView() { document.getElementById('mainContent').innerHTML = `<div class="card p-6"><h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-tachometer-alt text-amber-600 mr-2"></i>Dashboard</h2><div class="grid grid-cols-1 md:grid-cols-4 gap-5"><div class="bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-2xl shadow"><i class="fas fa-users text-3xl text-blue-600"></i><p class="text-2xl font-bold mt-2">${schoolData.students.length}</p><p>Students</p></div><div class="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-2xl shadow"><i class="fas fa-chalkboard-user text-3xl text-green-600"></i><p class="text-2xl font-bold mt-2">${schoolData.teachers.length + schoolData.profiles.filter(p=>p.role !== 'parent').length}</p><p>Staff</p></div><div class="bg-gradient-to-br from-yellow-50 to-yellow-100 p-5 rounded-2xl shadow"><i class="fas fa-money-bill-wave text-3xl text-yellow-600"></i><p class="text-2xl font-bold mt-2">₦${schoolData.payments.reduce((a,b)=>a+(b.amount||0),0).toLocaleString()}</p><p>Fees Collected</p></div><div class="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-2xl shadow"><i class="fas fa-file-alt text-3xl text-purple-600"></i><p class="text-2xl font-bold mt-2">${schoolData.applications.length}</p><p>Applications</p></div></div></div>`; }
 async function parentDashboardView() { const student = schoolData.students.find(s => s.id == currentUser.studentId); if (!student) { document.getElementById('mainContent').innerHTML = `<div class="card p-6"><p class="text-red-600">Student not found.</p></div>`; return; } const paid = schoolData.payments.filter(p => p.student_id == currentUser.studentId && p.term === "1st Term" && p.year == new Date().getFullYear()).reduce((a,b)=>a+(b.amount||0),0); const due = Math.max(0,30000-paid); const html = `<div class="card p-6"><h2 class="text-2xl font-bold text-emerald-800 mb-4">Parent Dashboard</h2><div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-5 rounded-2xl"><h3>Welcome, ${escapeHtml(currentUser.full_name)}</h3></div><div class="grid md:grid-cols-2 gap-6 mt-4"><div class="bg-white p-4 border-l-4 border-emerald-500"><p><strong>Student:</strong> ${student.name}</p><p><strong>Reg:</strong> ${student.reg_number}</p><p><strong>Class:</strong> ${student.academic_class}</p></div><div class="bg-white p-4 border-l-4 border-amber-500"><p><strong>Fee Status:</strong> ${due<=0?'Paid':`₦${due} due`}</p>${due>0?'<button id="parentDashPay" class="apply-btn mt-2 px-4 py-1 text-sm">Pay Now</button>':''}</div></div></div>`; document.getElementById('mainContent').innerHTML = html; if(due>0) document.getElementById('parentDashPay')?.addEventListener('click',()=>parentPaymentPortalView()); }

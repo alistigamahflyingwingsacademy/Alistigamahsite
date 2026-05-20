@@ -235,6 +235,128 @@ async function refreshData() {
         showLoading(false);
     }
     }
+    // ========== MISSING UTILITIES ==========
+function attachActivityListeners() {
+    // Reset idle timer on user activity
+    if (idleTimeout) clearTimeout(idleTimeout);
+    idleTimeout = setTimeout(() => {
+        if (currentUser) {
+            showToast("Session expired due to inactivity. Please login again.");
+            logoutUser();
+        }
+    }, 30 * 60 * 1000); // 30 minutes
+    window.onload = () => attachActivityListeners();
+    document.onmousemove = attachActivityListeners;
+    document.onkeypress = attachActivityListeners;
+    document.onscroll = attachActivityListeners;
+}
+
+async function logoutUser() {
+    try {
+        await supabaseClient.auth.signOut();
+    } catch(e) { console.warn(e); }
+    currentUser = null;
+    document.getElementById('appContainer').classList.add('hidden');
+    document.getElementById('landingPage').style.display = 'flex';
+    showToast("Logged out successfully");
+}
+
+// Placeholder views – replace with actual implementations as needed
+async function downloadRecordsView() {
+    document.getElementById('mainContent').innerHTML = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📥 Download Records</h2><p class="text-gray-600">Export feature coming soon. You can use the CSV export buttons inside Students, Fees, or Payroll sections.</p></div>`;
+}
+
+async function announceView() {
+    let currentAnnouncement = schoolData.announcements[0]?.content || "";
+    let html = `
+        <div class="card p-6">
+            <h2 class="text-2xl font-bold mb-4">📢 Manage Site Announcement</h2>
+            <textarea id="announcementText" rows="4" class="border rounded-xl p-3 w-full mb-4">${escapeHtml(currentAnnouncement)}</textarea>
+            <button id="saveAnnouncementBtn" class="apply-btn px-6 py-2 rounded-full">Save Announcement</button>
+        </div>
+    `;
+    document.getElementById('mainContent').innerHTML = html;
+    document.getElementById('saveAnnouncementBtn').addEventListener('click', async () => {
+        let content = document.getElementById('announcementText').value.trim();
+        if (!content) return showToast("Announcement cannot be empty", true);
+        let existing = schoolData.announcements[0];
+        if (existing) {
+            await supabaseClient.from('site_announcement').update({ content }).eq('id', existing.id);
+        } else {
+            await supabaseClient.from('site_announcement').insert([{ content }]);
+        }
+        await refreshData();
+        showToast("Announcement updated");
+        announceView();
+    });
+}
+
+async function slidesManageView() {
+    let slides = schoolData.slides;
+    let html = `
+        <div class="card p-6">
+            <h2 class="text-2xl font-bold mb-4">🖼️ Manage Carousel Slides</h2>
+            <button id="addSlideBtn" class="apply-btn mb-4 px-4 py-2 rounded-full">+ Add New Slide</button>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="slidesList">
+                ${slides.map(slide => `
+                    <div class="border rounded-xl p-3 bg-white shadow">
+                        <img src="${escapeHtml(slide.image_url)}" class="h-32 w-full object-cover rounded mb-2">
+                        <input type="text" class="slide-caption w-full border rounded p-1 mb-2" data-id="${slide.id}" value="${escapeHtml(slide.caption || '')}" placeholder="Caption">
+                        <button class="delete-slide bg-red-500 text-white px-3 py-1 rounded-full text-sm" data-id="${slide.id}">Delete</button>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    document.getElementById('mainContent').innerHTML = html;
+
+    document.getElementById('addSlideBtn').addEventListener('click', async () => {
+        let url = prompt("Enter image URL (must be publicly accessible):");
+        if (!url) return;
+        let caption = prompt("Enter caption (optional):");
+        await supabaseClient.from('slides').insert([{ image_url: url, caption: caption || "" }]);
+        await refreshData();
+        slidesManageView();
+        showToast("Slide added");
+    });
+
+    document.querySelectorAll('.delete-slide').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (confirm("Delete this slide?")) {
+                await supabaseClient.from('slides').delete().eq('id', btn.dataset.id);
+                await refreshData();
+                slidesManageView();
+                showToast("Slide deleted");
+            }
+        });
+    });
+
+    document.querySelectorAll('.slide-caption').forEach(inp => {
+        inp.addEventListener('blur', async () => {
+            let id = inp.dataset.id;
+            let caption = inp.value;
+            await supabaseClient.from('slides').update({ caption }).eq('id', id);
+            await refreshData();
+            showToast("Caption updated");
+        });
+    });
+}
+
+async function performanceAppraisalView() {
+    document.getElementById('mainContent').innerHTML = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📊 Performance Appraisal (Staff)</h2><p class="text-gray-600">This module integrates with Staff Appraisal section. Please use <strong>Staff Appraisal</strong> from the menu for detailed reviews.</p></div>`;
+}
+
+async function saveAppraisal(studentId, comment, rating) {
+    if (!studentId || !comment || !rating) throw new Error("Missing fields");
+    await supabaseClient.from('student_appraisals').insert([{
+        student_id: studentId,
+        comment: comment,
+        rating: rating,
+        created_at: new Date(),
+        teacher_id: currentUser.id
+    }]);
+    showToast("Student appraisal saved");
+}
 // ========== LANDING CAROUSEL & ANNOUNCEMENT ==========
 async function renderLandingCarouselAndAnnouncement() {
     const ann = schoolData.announcements[0]?.content || 'Welcome to Flying Wings – Excellence in Islamic Education';

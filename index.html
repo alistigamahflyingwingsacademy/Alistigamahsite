@@ -55,6 +55,26 @@
         .quality-select { width: 100%; padding: 4px; border-radius: 6px; }
         .regulations-list { list-style-type: decimal; padding-left: 1.5rem; }
         .regulations-list li { margin-bottom: 0.75rem; line-height: 1.5; }
+        @media print {
+    .sidebar, .filter-row, #printReportBtn, .nav-link, header, footer, .modal, .apply-btn, button:not(.no-print) {
+        display: none !important;
+    }
+    .report-card-container {
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+    }
+    body, .report-card-container {
+        background: white;
+        color: black;
+    }
+    .report-card-container table {
+        border: 1px solid black;
+    }
+    .report-card-container th, .report-card-container td {
+        border: 1px solid black;
+    }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -121,7 +141,14 @@
 <div id="appraisalModal" class="modal"><div class="modal-content relative" style="max-width: 600px;"><span class="close-modal-x" onclick="closeModal('appraisalModal')">&times;</span><h3 class="text-xl font-bold mb-3">Staff Appraisal</h3><form id="appraisalForm"><select id="appraisalStaffSelect" class="border p-2 w-full mb-2 rounded" required><option>Select Staff</option></select><label class="block font-medium mt-2">Overall Rating (1-5):</label><input type="number" id="appraisalRating" min="1" max="5" class="border p-2 w-full rounded mb-2" required><label class="block font-medium">Comments / Feedback:</label><textarea id="appraisalComment" rows="3" class="border p-2 w-full rounded mb-3"></textarea><button type="submit" class="apply-btn w-full py-2 rounded">Submit Appraisal</button></form></div></div>
 <div id="acceptDetailsModal" class="modal"><div class="modal-content relative" style="max-width: 600px;"><span class="close-modal-x" onclick="closeModal('acceptDetailsModal')">&times;</span><h3 class="text-xl font-bold mb-3">Accept Application – Official Use Only</h3><form id="acceptDetailsForm"><input type="hidden" id="acceptAppId"><label class="block font-medium">Entrance Test Score:</label><input type="text" id="acceptEntranceScore" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Interview Remarks:</label><textarea id="acceptInterviewRemarks" rows="2" class="border p-2 w-full rounded mb-2"></textarea><label class="block font-medium">Class Admitted Into:</label><input type="text" id="acceptAdmittedClass" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Admission Number:</label><input type="text" id="acceptAdmissionNumber" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Date of Admission:</label><input type="date" id="acceptAdmissionDate" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Authorized Signature (Name):</label><input type="text" id="acceptSignature" class="border p-2 w-full rounded mb-2"><button type="submit" class="apply-btn w-full py-2 rounded">Accept & Save</button></form></div></div>
 <div id="statusCheckModal" class="modal"><div class="modal-content relative" style="max-width: 500px;"><span class="close-modal-x" onclick="closeModal('statusCheckModal')">&times;</span><h3 class="text-xl font-bold mb-3">Check Application Status</h3><input type="email" id="statusEmail" placeholder="Enter your email address" class="border p-3 w-full rounded-xl mb-4"><button id="checkStatusSubmit" class="apply-btn w-full py-2 rounded-xl">Check Status</button><div id="statusResult" class="mt-4 text-center"></div></div></div>
-
+<!-- Receipt Modal -->
+<div id="receiptModal" class="modal">
+    <div class="modal-content relative" style="max-width: 600px;">
+        <span class="close-modal-x" onclick="closeModal('receiptModal')">&times;</span>
+        <div id="receiptContent" class="p-4"></div>
+        <button onclick="window.print()" class="apply-btn w-full mt-4 py-2 rounded">Print Receipt</button>
+    </div>
+</div>
 <!-- New modal for adding staff to payroll -->
 <div id="addStaffToPayrollModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('addStaffToPayrollModal')">&times;</span><h3 class="text-xl font-bold mb-3">Add Staff to Payroll</h3><form id="addToPayrollForm"><label class="block font-medium">Select Staff:</label><select id="payrollStaffSelect" class="border p-2 w-full rounded mb-3" required><option value="">-- Select Staff --</option></select><label class="block font-medium">Basic Salary (₦):</label><input type="number" id="payrollStaffSalary" class="border p-2 w-full rounded mb-3" placeholder="Salary amount"><label class="block font-medium">Allowances (₦):</label><input type="number" id="payrollStaffAllowances" class="border p-2 w-full rounded mb-3" placeholder="Allowances" value="0"><label class="block font-medium">Deductions (₦):</label><input type="number" id="payrollStaffDeductions" class="border p-2 w-full rounded mb-3" placeholder="Deductions" value="0"><label class="block font-medium">Account Details:</label><input type="text" id="payrollStaffAccount" class="border p-2 w-full rounded mb-3" placeholder="Bank account details"><button type="submit" class="apply-btn w-full py-2 rounded">Add to Payroll</button></form></div></div>
 
@@ -466,6 +493,7 @@ async function feeManagementEnhanced() {
     let students = schoolData.students, currentYear = new Date().getFullYear();
     let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">💰 Fee Management by Term</h2><div class="filter-row"><input id="feeYear" type="number" value="${currentYear}" class="w-28"><select id="feeTermSelect">${TERMS.map(t=>`<option>${t}</option>`).join('')}</select><select id="feeSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select><select id="feeClassFilter"><option value="all">All Classes</option>${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select><input id="feeSearch" placeholder="🔍 Search student" class="flex-1"></div><div class="overflow-x-auto"><table class="min-w-full"><thead><tr><th>Student</th><th>Term Fee</th><th>Paid</th><th>Due</th><th>Status</th><th>Pay Online</th><th>Bank Proof</th><th>Admin Confirm</th><th>Edit Fee</th></tr></thead><tbody id="feeTermBody"></tbody></table></div><div id="pendingBankArea" class="mt-5"></div></div>`;
     document.getElementById('mainContent').innerHTML = html;
+    <td><button class="generate-receipt bg-blue-600 text-white px-2 py-1 rounded text-xs" data-student-id="${s.id}" data-term="${term}" data-year="${year}">Receipt</button></td>
     async function render() {
         let year = document.getElementById('feeYear').value, term = document.getElementById('feeTermSelect').value, section = document.getElementById('feeSectionFilter').value, classVal = document.getElementById('feeClassFilter').value, search = document.getElementById('feeSearch').value.toLowerCase();
         let filtered = students.filter(s => (section==='all' || s.section===section) && (classVal==='all' || s.academic_class===classVal) && (s.name.toLowerCase().includes(search) || (s.reg_number||'').toLowerCase().includes(search)));
@@ -550,6 +578,42 @@ document.getElementById('confirmAmountBtn')?.addEventListener('click', async () 
     } catch(err) { showToast(err.message, true); } finally { showLoading(false); pendingPaymentAction = null; }
 });
 
+document.querySelectorAll('.generate-receipt').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        let studentId = btn.dataset.studentId;
+        let term = btn.dataset.term;
+        let year = btn.dataset.year;
+        let student = schoolData.students.find(s => s.id == studentId);
+        let payments = schoolData.payments.filter(p => p.student_id == studentId && p.term === term && p.year == year);
+        let totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
+        let receiptHtml = `
+            <div class="text-center border-b pb-2">
+                <h2 class="text-xl font-bold">Al‑Istiqaamah Flying Wings Academy</h2>
+                <p>No. 10 Federal Government Layout, Samaru, Zaria</p>
+                <p>Receipt of Fee Payment</p>
+            </div>
+            <div class="mt-4">
+                <p><strong>Student Name:</strong> ${escapeHtml(student.name)}</p>
+                <p><strong>Registration No:</strong> ${student.reg_number}</p>
+                <p><strong>Class:</strong> ${student.academic_class}</p>
+                <p><strong>Term:</strong> ${term} ${year}</p>
+                <hr class="my-2">
+                <p><strong>Total Fee:</strong> ₦${(student.term_fee || 30000).toLocaleString()}</p>
+                <p><strong>Amount Paid:</strong> ₦${totalPaid.toLocaleString()}</p>
+                <p><strong>Payment Date:</strong> ${new Date().toLocaleDateString()}</p>
+                <p><strong>Payment Method:</strong> ${payments[0]?.payment_method || 'N/A'}</p>
+                <p><strong>Reference:</strong> ${payments[0]?.payment_reference || 'N/A'}</p>
+            </div>
+            <div class="text-center mt-4 text-sm">
+                <p>Thank you for your payment!</p>
+                <p>School Stamp & Signature</p>
+            </div>
+        `;
+        document.getElementById('receiptContent').innerHTML = receiptHtml;
+        document.getElementById('receiptModal').style.display = 'flex';
+    });
+});
+    
 // ========== PARENT PAYMENT PORTAL ==========
 async function parentPaymentPortalView() {
     let studentId = currentUser.studentId, student = schoolData.students.find(s => s.id == studentId);
@@ -825,7 +889,7 @@ document.getElementById('checkStatusSubmit')?.addEventListener('click', async ()
 // ========== UNIFIED STAFF LIST ==========
 
 async function unifiedStaffList() {
-    // Combine staff from teachers table and profiles (admin users)
+    // Staff from teachers table (all staff including daf, der, do, dprpa, headteacher, teacher)
     let staffTeachers = schoolData.teachers.map(t => ({
         id: t.id,
         name: t.name,
@@ -836,6 +900,7 @@ async function unifiedStaffList() {
         salary: t.salary,
         source: 'teacher'
     }));
+    // Staff from profiles (admin users who might not be in teachers)
     let staffProfiles = schoolData.profiles
         .filter(p => p.role && p.role !== 'parent')
         .map(p => ({
@@ -851,15 +916,11 @@ async function unifiedStaffList() {
     let allStaff = [...staffTeachers, ...staffProfiles];
 
     console.log("Unified Staff Total:", allStaff.length);
-    console.log("From teachers:", staffTeachers.length);
-    console.log("From profiles:", staffProfiles.length);
+    console.log("Teachers count:", staffTeachers.length);
+    console.log("Profiles count:", staffProfiles.length);
 
     if (allStaff.length === 0) {
-        document.getElementById('mainContent').innerHTML = `
-            <div class="card p-6 text-center">
-                <i class="fas fa-users text-4xl text-gray-400 mb-3"></i>
-                <p class="text-gray-500">No staff found. Please add staff using the "Add Staff" button.</p>
-            </div>`;
+        document.getElementById('mainContent').innerHTML = `<div class="card p-6 text-center"><i class="fas fa-users text-4xl text-gray-400 mb-3"></i><p>No staff found. Please add staff first.</p></div>`;
         return;
     }
 
@@ -924,7 +985,6 @@ async function unifiedStaffList() {
             </tr>
         `).join('');
 
-        // Attach editable behaviour (same as original)
         document.querySelectorAll('.editable-staff').forEach(cell => {
             cell.setAttribute('contenteditable', 'true');
             cell.addEventListener('blur', async () => {
@@ -947,10 +1007,10 @@ async function unifiedStaffList() {
     document.getElementById('staffSectionFilter').addEventListener('change', render);
     render();
 }
+                
 // ========== PAYROLL MODULE (with Add Staff to Payroll button) ==========
 
 async function payrollModule() {
-    // Combine staff from teachers and profiles (admin users)
     let staffTeachers = schoolData.teachers.map(t => ({
         id: t.id,
         name: t.name,
@@ -970,11 +1030,7 @@ async function payrollModule() {
     console.log("Payroll staff count:", allStaff.length);
 
     if (allStaff.length === 0) {
-        document.getElementById('mainContent').innerHTML = `
-            <div class="card p-6 text-center">
-                <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-3"></i>
-                <p class="text-gray-700">No staff available. Please add staff via the "Add Staff" button first.</p>
-            </div>`;
+        document.getElementById('mainContent').innerHTML = `<div class="card p-6 text-center"><i class="fas fa-exclamation-triangle text-4xl text-yellow-500"></i><p>No staff available. Please add staff first.</p></div>`;
         return;
     }
 
@@ -1011,8 +1067,7 @@ async function payrollModule() {
         let existing = schoolData.payrollRecords.filter(r => r.month === month && r.year === year);
         let newRecords = [];
         for (let staff of staffList) {
-            let exists = existing.find(r => r.staff_id == staff.id);
-            if (!exists) {
+            if (!existing.find(r => r.staff_id == staff.id)) {
                 newRecords.push({
                     staff_id: staff.id,
                     employee_name: staff.name,
@@ -1026,7 +1081,7 @@ async function payrollModule() {
                 });
             }
         }
-        if (newRecords.length > 0) {
+        if (newRecords.length) {
             await supabaseClient.from('payroll_records').insert(newRecords);
             await refreshData();
             showToast(`Added ${newRecords.length} staff to payroll for ${month} ${year}`);
@@ -1040,7 +1095,7 @@ async function payrollModule() {
         let filteredStaff = allStaff.filter(s => sectionFilter === 'all' || s.section === sectionFilter);
 
         if (filteredStaff.length === 0) {
-            document.getElementById('payrollTbody').innerHTML = '<tr><td colspan="8" class="text-center py-4 text-gray-500">No staff found for the selected section.</td></tr>';
+            document.getElementById('payrollTbody').innerHTML = '<tr><td colspan="8" class="text-center py-4 text-gray-500">No staff for selected section.</td></tr>';
             return;
         }
 
@@ -1082,8 +1137,7 @@ async function payrollModule() {
             totals.net += r.net_pay || 0;
         });
         document.getElementById('payrollTotals').innerHTML = `
-            <tr>
-                <td colspan="2" class="text-right font-bold border p-2">TOTAL</td>
+            <tr><td colspan="2" class="text-right font-bold border p-2">TOTAL</td>
                 <td class="font-bold border p-2">₦${totals.basic.toLocaleString()}</td>
                 <td class="font-bold border p-2">₦${totals.allow.toLocaleString()}</td>
                 <td class="font-bold border p-2">₦${totals.gross.toLocaleString()}</td>
@@ -1170,8 +1224,9 @@ async function payrollModule() {
     });
 
     loadPayroll();
-}
-
+                        }
+                
+        
 // ========== ENHANCED ADD STAFF (auto-add to payroll for current month) ==========
 document.getElementById('addStaffForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();

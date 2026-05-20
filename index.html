@@ -1994,6 +1994,70 @@ document.addEventListener('DOMContentLoaded', async()=>{
     document.getElementById('sidebarOverlay').onclick=closeMobileSidebar;
     document.getElementById('closeMobileSidebar').onclick=closeMobileSidebar;
     setInterval(()=>{ let d=new Date(); document.getElementById('liveTime').innerText=d.toLocaleTimeString(); document.getElementById('liveDate').innerText=d.toLocaleDateString(); },1000);
+    
+});document.getElementById('addToPayrollForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const staffId = document.getElementById('payrollStaffSelect').value;
+    if (!staffId) { showToast("Please select a staff member", true); return; }
+    
+    // Get current month/year from the payroll view (assumes those inputs exist on page)
+    const monthElem = document.getElementById('payrollMonth');
+    const yearElem = document.getElementById('payrollYear');
+    if (!monthElem || !yearElem) {
+        showToast("Payroll month/year not found. Please open Payroll section first.", true);
+        return;
+    }
+    const month = monthElem.value;
+    const year = parseInt(yearElem.value);
+    
+    const basicSalary = parseFloat(document.getElementById('payrollStaffSalary').value) || 0;
+    const allowances = parseFloat(document.getElementById('payrollStaffAllowances').value) || 0;
+    const deductions = parseFloat(document.getElementById('payrollStaffDeductions').value) || 0;
+    const accountDetails = document.getElementById('payrollStaffAccount').value || '';
+    const grossPay = basicSalary + allowances;
+    const netPay = grossPay - deductions;
+    
+    const selectedOption = document.getElementById('payrollStaffSelect').options[document.getElementById('payrollStaffSelect').selectedIndex];
+    const employeeName = selectedOption.text.split(' (')[0];
+    
+    const existing = schoolData.payrollRecords.find(r => r.staff_id == staffId && r.month === month && r.year === year);
+    showLoading(true);
+    try {
+        if (existing) {
+            await supabaseClient.from('payroll_records').update({
+                basic_salary: basicSalary,
+                allowances,
+                deductions,
+                account_details: accountDetails,
+                gross_pay: grossPay,
+                net_pay: netPay,
+                employee_name: employeeName
+            }).eq('id', existing.id);
+            showToast("Payroll record updated");
+        } else {
+            await supabaseClient.from('payroll_records').insert([{
+                staff_id: staffId,
+                employee_name: employeeName,
+                month,
+                year,
+                basic_salary: basicSalary,
+                allowances,
+                deductions,
+                account_details: accountDetails,
+                gross_pay: grossPay,
+                net_pay: netPay
+            }]);
+            showToast("Staff added to payroll");
+        }
+        await refreshData();
+        closeModal('addStaffToPayrollModal');
+        // Refresh the payroll view if it's currently open
+        if (typeof payrollModule === 'function') payrollModule();
+    } catch (err) {
+        showToast(err.message, true);
+    } finally {
+        showLoading(false);
+    }
 });
 </script>
 </body>

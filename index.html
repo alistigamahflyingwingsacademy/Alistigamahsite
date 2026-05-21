@@ -56,13 +56,24 @@
         .regulations-list { list-style-type: decimal; padding-left: 1.5rem; }
         .regulations-list li { margin-bottom: 0.75rem; line-height: 1.5; }
         @media print {
-            .sidebar, .filter-row, #printReportBtn, .nav-link, header, footer, .modal, .apply-btn, button:not(.no-print) {
-                display: none !important;
-            }
-            .report-card-container { margin: 0; padding: 0; box-shadow: none; }
-            body, .report-card-container { background: white; color: black; }
-            .report-card-container table { border: 1px solid black; }
-            .report-card-container th, .report-card-container td { border: 1px solid black; }
+    .sidebar, .filter-row, #printReportBtn, .nav-link, header, footer, .modal, .apply-btn, button:not(.no-print) {
+        display: none !important;
+    }
+    .report-card-container {
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+    }
+    body, .report-card-container {
+        background: white;
+        color: black;
+    }
+    .report-card-container table {
+        border: 1px solid black;
+    }
+    .report-card-container th, .report-card-container td {
+        border: 1px solid black;
+    }
         }
     </style>
 </head>
@@ -92,7 +103,7 @@
     </div>
     <div class="container mx-auto px-6 -mt-8">
         <div class="bg-white rounded-2xl shadow-lg p-5 flex justify-between items-center flex-wrap gap-4">
-            <div class="flex items-center gap-3"><i class="fas fa-clock text-amber-500 text-2xl"></i><div><span id="liveTime" class="text-2xl font-mono font-bold text-gray-800">--:--:--</span><div id="liveDate" class="text-gray-600 text-sm">--</div></div></div>
+            <div class="flex items-center gap-3"><i class="fas fa-clock text-amber-500 text-2xl"></i><div><span id="liveTime" class="text-2xl font-mono font-bold text-gray-800">--:--:--</span><div id="liveDate" class="text-gray-600"></div></div></div>
             <div class="flex items-center gap-3"><i class="fas fa-cloud-sun text-amber-500 text-2xl"></i><div><span id="weatherTemp">32</span>°C · <span id="weatherDesc">Clear sky</span></div></div>
         </div>
     </div>
@@ -106,43 +117,51 @@
     <div class="container mx-auto px-6 py-12">
         <!-- Vision & Mission -->
         <div class="grid md:grid-cols-2 gap-6">
-            <div class="bg-white p-6 rounded-2xl shadow border-t-8 border-emerald-600"><i class="fas fa-eye text-emerald-600 text-3xl"></i><h2 class="text-2xl font-bold mt-2">Vision</h2><p>To cultivate ethically conscious, academically excellent, and spiritually grounded leaders.</p></div>
-            <div class="bg-white p-6 rounded-2xl shadow border-t-8 border-amber-500"><i class="fas fa-bullhorn text-amber-500 text-3xl"></i><h2 class="text-2xl font-bold mt-2">Mission</h2><p>Enriched Islamic education & character development in a supportive environment.</p></div>
+            <div class="bg-white p-6 rounded-2xl shadow border-t-8 border-emerald-600"><i class="fas fa-eye text-emerald-600 text-3xl"></i><h2 class="text-2xl font-bold mt-2">Vision</h2><p>To cultivate a community of believers and learners who embody faith, knowledge, and inspiration — beacons of guidance, excellence, and service.</p></div>
+            <div class="bg-white p-6 rounded-2xl shadow border-t-8 border-amber-500"><i class="fas fa-bullhorn text-amber-500 text-3xl"></i><h2 class="text-2xl font-bold mt-2">Mission</h2><p>Enriched learning environment promoting academic achievement, leadership, Islamic values, nurturing learners who live by Qur’an and Sunnah.</p></div>
         </div>
         <!-- Core Objectives -->
-        <div class="bg-gray-100 py-12 text-center mt-8 rounded-2xl"><div class="container mx-auto px-6"><h2 class="text-3xl font-bold">📌 Core Objectives</h2><div class="grid md:grid-cols-3 gap-5 mt-6"><div class="bg-white p-6 rounded-xl shadow"><i class="fas fa-graduation-cap text-3xl text-amber-600 mb-2"></i><p class="font-bold">Academic Excellence</p></div><div class="bg-white p-6 rounded-xl shadow"><i class="fas fa-heart text-3xl text-emerald-600 mb-2"></i><p class="font-bold">Islamic Values</p></div><div class="bg-white p-6 rounded-xl shadow"><i class="fas fa-users text-3xl text-blue-600 mb-2"></i><p class="font-bold">Community Service</p></div></div></div></div>
+        <div class="bg-gray-100 py-12 text-center mt-8 rounded-2xl"><div class="container mx-auto px-6"><h2 class="text-3xl font-bold">📌 Core Objectives</h2><div class="grid md:grid-cols-3 gap-5 mt-6"><div class="bg-white p-5 rounded-xl shadow"><i class="fas fa-quran text-emerald-600 text-2xl"></i><p class="mt-2">Qur'anic & Prophetic knowledge</p></div><div class="bg-white p-5 rounded-xl shadow"><i class="fas fa-book-open text-emerald-600 text-2xl"></i><p class="mt-2">Joyful memorization</p></div><div class="bg-white p-5 rounded-xl shadow"><i class="fas fa-crown text-emerald-600 text-2xl"></i><p class="mt-2">Principled leadership</p></div></div></div></div>
         <!-- Rules and Regulations -->
-        <div class="mt-12 bg-white rounded-2xl shadow-lg overflow-hidden"><div class="bg-amber-50 px-6 py-4 border-b"><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-gavel text-amber-600 mr-2"></i>School Rules & Regulations</h2></div><div class="px-6 py-6"><ol class="regulations-list"><li>Punctuality and regular attendance are mandatory.</li><li>Students must wear complete uniforms as prescribed.</li><li>Respect for all staff and fellow students is essential.</li><li>No bullying or harassment of any form is tolerated.</li><li>Mobile phones are strictly prohibited during school hours.</li><li>Academic honesty and integrity are non-negotiable.</li><li>Participation in school activities is highly encouraged.</li></ol></div></div>
+        <div class="mt-12 bg-white rounded-2xl shadow-lg overflow-hidden"><div class="bg-amber-50 px-6 py-4 border-b"><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-gavel text-amber-600 mr-2"></i>Rules and Regulations For Application</h2></div><div class="p-6"><ul class="regulations-list space-y-3"><li>Adherence to regular payment of fees and forms dues.</li><li>Parents/Guardians should be vigilant to their children/wards, concerning punctuality.</li><li>Obtain the school Uniform for the section as prescribed in the attachment.</li><li>No applicant would be allowed to attend classes without being duly registered.</li><li>Cell-Phones and lunch money is not allowed, rather food and the like should be provided before stepping into the school premises. The applicant may subscribe to the school kitchen.</li><li>No student should leave the school before closing without a prior genuine reason from the parent/guardian to the concerned staff.</li></ul><div class="mt-6 bg-gray-50 p-4 rounded-xl border-l-4 border-amber-500 text-sm text-gray-700"><p><strong>NB:</strong></p><ul class="list-disc pl-5 mt-1 space-y-1"><li>School uniform should be obtained from the school.</li><li>Class placement is based on performance and age.</li><li>Any issue that has not been captured within the jurisdiction of the school, Islamic injunction would be applied.</li><li>Returning this form means accepting of the above mentioned rules and regulations.</li></ul></div></div></div>
     </div>
-    <footer class="bg-slate-900 text-white text-center py-4 mt-auto"><p>© 2026 Al‑Istiqaamah Flying Wings Academy | No. 10 Federal Government Layout, Samaru, Zaria | <i class="fas fa-microchip"></i> Built with care and excellence</p></footer>
+    <footer class="bg-slate-900 text-white text-center py-4 mt-auto"><p>© 2026 Al‑Istiqaamah Flying Wings Academy | No. 10 Federal Government Layout, Samaru, Zaria | <i class="fas fa-microchip"></i> Powered by Arrahmahtelecommunications</p></footer>
 </div>
 
 <!-- MODALS -->
-<div id="loginModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('loginModal')">&times;</span><h2 class="text-2xl font-bold mb-4">Access Portal</h2><div id="loginTabs" class="flex gap-2 mb-6 border-b"><span class="tab-btn active px-4 py-2 cursor-pointer font-semibold border-b-2 border-amber-500" data-tab="admin-tab">Staff/Admin</span><span class="tab-btn px-4 py-2 cursor-pointer font-semibold" data-tab="parent-tab">Parent</span></div><form id="adminLoginForm" class="tab-content" data-tab="admin-tab"><div class="mb-4"><label class="block font-semibold mb-1">Email</label><input id="adminEmail" type="email" class="w-full border rounded-xl p-3" required></div><div class="mb-4"><label class="block font-semibold mb-1">Password</label><input id="adminPassword" type="password" class="w-full border rounded-xl p-3" required></div><button type="submit" class="apply-btn w-full py-3 rounded-full">Login</button></form><form id="parentLoginForm" class="tab-content hidden" data-tab="parent-tab"><div class="mb-4"><label class="block font-semibold mb-1">Student Reg. Number</label><input id="parentRegNo" type="text" class="w-full border rounded-xl p-3" required></div><div class="mb-4"><label class="block font-semibold mb-1">Password</label><input id="parentPassword" type="password" class="w-full border rounded-xl p-3" required></div><button type="submit" class="apply-btn w-full py-3 rounded-full">Login</button></form></div></div>
-<div id="parentModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('parentModal')">&times;</span><h2 class="text-2xl font-bold mb-4">Parent Login</h2><form id="parentFormModal"><input id="parentFormRegNo" type="text" placeholder="Student Reg. Number" class="w-full border rounded-xl p-3 mb-4" required><input id="parentFormPassword" type="password" placeholder="Password" class="w-full border rounded-xl p-3 mb-4" required><button type="submit" class="apply-btn w-full py-3 rounded-full">Login</button></form></div></div>
-<div id="adminSignupModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('adminSignupModal')">&times;</span><h2 class="text-xl font-bold mb-3">Admin Signup</h2><form id="adminSignupForm"><input id="signupCode" type="text" placeholder="Signup Code" class="w-full border rounded-xl p-2 mb-3" required><input id="signupEmail" type="email" placeholder="Email" class="w-full border rounded-xl p-2 mb-3" required><input id="signupPassword" type="password" placeholder="Password" class="w-full border rounded-xl p-2 mb-3" required><input id="signupName" type="text" placeholder="Full Name" class="w-full border rounded-xl p-2 mb-3" required><select id="signupRole" class="w-full border rounded-xl p-2 mb-3"><option>dg_ceo</option><option>daf</option><option>management_committee</option></select><button type="submit" class="apply-btn w-full py-2 rounded-full">Create Account</button></form></div></div>
-<div id="emailFeedbackModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('emailFeedbackModal')">&times;</span><h3 class="text-xl font-bold">Send Announcement Email</h3><textarea id="feedbackText" rows="5" class="w-full border rounded-xl p-2 my-3" placeholder="Message content..."></textarea><button id="sendEmailBtn" class="apply-btn px-6 py-2 rounded-full">Send Email</button></div></div>
-<div id="contactModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('contactModal')">&times;</span><h3 class="text-2xl font-bold mb-4">Contact Us</h3><div class="space-y-4"><div><i class="fas fa-map-marker-alt text-amber-600 mr-2"></i><p><strong>Address:</strong> No. 10 Federal Government Layout, Samaru, Zaria</p></div><div><i class="fas fa-phone text-amber-600 mr-2"></i><p><strong>Phone:</strong> +234 (0) XXX XXX XXXX</p></div><div><i class="fas fa-envelope text-amber-600 mr-2"></i><p><strong>Email:</strong> info@flyingwings.edu.ng</p></div></div></div></div>
-<div id="fullApplicationModal" class="modal"><div class="modal-content relative" style="max-width: 1100px;"><span class="close-modal-x" onclick="closeModal('fullApplicationModal')">&times;</span><h3 class="text-2xl font-bold mb-4">Complete Application Form</h3><form id="fullApplicationForm"><div class="grid md:grid-cols-2 gap-3"><input type="text" name="surname" placeholder="Surname" class="border rounded-xl p-2" required><input type="text" name="first_name" placeholder="First Name" class="border rounded-xl p-2" required><input type="text" name="other_names" placeholder="Other Names" class="border rounded-xl p-2"><input type="email" name="parent_email" placeholder="Parent Email" class="border rounded-xl p-2" required><select name="desired_class" class="border rounded-xl p-2" required><option>Select Class</option><option>Pre-Nursery</option><option>Nursery 1</option><option>Primary 1</option></select><input type="date" name="dob" placeholder="Date of Birth" class="border rounded-xl p-2"><input type="text" name="gender" placeholder="Gender" class="border rounded-xl p-2"><input type="text" name="nationality" placeholder="Nationality" class="border rounded-xl p-2"><textarea name="home_address" placeholder="Home Address" rows="2" class="border rounded-xl p-2"></textarea><input type="file" name="attachment_birth_cert" accept="image/*" class="border rounded-xl p-2"><input type="file" name="attachment_medical" accept="image/*" class="border rounded-xl p-2"></div><button type="submit" class="apply-btn px-6 py-2 rounded-full mt-3">Submit Application</button></form></div></div>
+<div id="loginModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('loginModal')">&times;</span><h2 class="text-2xl font-bold mb-4">Access Portal</h2><div class="flex gap-3 mb-4"><button id="adminTab" class="flex-1 py-2 bg-amber-500 rounded-full text-white">Admin</button><button id="staffTab" class="flex-1 py-2 bg-gray-200 rounded-full">Staff</button></div><form id="adminLoginForm"><input id="adminEmail" placeholder="Email" class="border p-3 w-full mb-3 rounded-xl"><input id="adminPassword" placeholder="Password" type="password" class="border p-3 w-full mb-4 rounded-xl"><button type="submit" class="apply-btn w-full py-3 rounded-xl font-semibold">Login</button></form><form id="staffLoginForm" style="display:none"><input id="staffUsername" placeholder="Staff ID" class="border p-3 w-full mb-3 rounded-xl"><input id="staffPassword" placeholder="Password" type="password" class="border p-3 w-full mb-4 rounded-xl"><button type="submit" class="apply-btn w-full py-3 rounded-xl">Login</button></form></div></div>
+<div id="parentModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('parentModal')">&times;</span><h2 class="text-2xl font-bold mb-4">Parent Login</h2><form id="parentLoginForm"><input id="studentRegNo" placeholder="Student Reg Number" class="border p-3 w-full mb-3 rounded-xl"><input id="parentPwd" placeholder="Password (default: al123)" type="password" class="border p-3 w-full mb-4 rounded-xl"><button type="submit" class="apply-btn w-full py-3 rounded-xl">Login</button></form></div></div>
+<div id="adminSignupModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('adminSignupModal')">&times;</span><h2 class="text-2xl font-bold mb-3">Admin Signup</h2><form id="adminSignupForm"><input id="regCode" placeholder="Registration Code" class="border p-3 w-full mb-2 rounded-xl"><input id="signupEmail" placeholder="Email" class="border p-3 w-full mb-2 rounded-xl"><input id="signupPassword" placeholder="Password" type="password" class="border p-3 w-full mb-2 rounded-xl"><input id="signupFullName" placeholder="Full Name" class="border p-3 w-full mb-2 rounded-xl"><select id="signupRole" class="border p-3 w-full mb-4 rounded-xl"><option value="dg_ceo">DG/CEO</option><option value="daf">DAF</option><option value="management_committee">Management Committee</option><option value="do">DO</option><option value="der">DER</option><option value="dprpa">DPRPA</option><option value="headteacher">Headteacher</option><option value="teacher">Teacher</option></select><button type="submit" class="apply-btn w-full py-3 rounded-xl">Create Account</button></form></div></div>
+<div id="emailFeedbackModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('emailFeedbackModal')">&times;</span><h3 class="text-xl font-bold">Send Acceptance</h3><textarea id="feedbackMessage" rows="3" class="border w-full p-3 rounded-xl my-2"></textarea><button id="confirmAcceptBtn" class="apply-btn w-full py-2 rounded-xl">Confirm & Send</button></div></div>
+<div id="contactModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('contactModal')">&times;</span><h3 class="text-2xl font-bold mb-4">Contact Us</h3><p><i class="fas fa-phone-alt"></i> 08072550691, 07025553245, 08084816590</p><p><i class="fas fa-envelope"></i> alistiqaamahflyingwingsacademy@gmail.com</p><p><i class="fas fa-map-marker-alt"></i> No. 10 Federal Government Layout, Samaru, Zaria</p></div></div>
+<div id="fullApplicationModal" class="modal"><div class="modal-content relative" style="max-width: 1100px;"><span class="close-modal-x" onclick="closeModal('fullApplicationModal')">&times;</span><h3 class="text-2xl font-bold text-center mb-2">أكادمية الاستقامة أجنحة التحليق</h3><h4 class="text-xl font-bold text-center mb-1">AL-ISTIQAAMAH FLYING WINGS ACADEMY</h4><p class="text-center text-sm mb-4">No. 10 Federal Government Layout, Samaru, Zaria | 08072550691, 07025553245, 08084816590 | alistiqaamahflyingwingsacademy@gmail.com</p><form id="fullApplicationForm" class="space-y-5" enctype="multipart/form-data"><!-- Full form fields – all sections A-H + J with file uploads --><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">A. APPLICANT INFORMATION / البيانات المتقدم/ة</h3><div class="grid md:grid-cols-2 gap-3"><input name="surname" placeholder="Surname / اللقب" class="border p-2 rounded" required><input name="first_name" placeholder="First Name / الأسم الأول" class="border p-2 rounded" required><input name="other_names" placeholder="Other Names / الأسم الثاني" class="border p-2 rounded"><select name="gender" class="border p-2 rounded"><option>Gender / الجنس</option><option>Male</option><option>Female</option></select><input name="dob" type="date" placeholder="Date of Birth / تاريخ الميلاد" class="border p-2 rounded"><input name="age" type="number" placeholder="Age / العمر" class="border p-2 rounded"><input name="place_birth" placeholder="Place of Birth / مكان الميلاد" class="border p-2 rounded"><input name="nationality" placeholder="Nationality / الجنسية" class="border p-2 rounded"><input name="state_origin" placeholder="State of Origin / الولاية الأصلية" class="border p-2 rounded"><input name="lga" placeholder="Local Government / منطقة الحكم المحلي" class="border p-2 rounded"><select name="religion" class="border p-2 rounded"><option>Religion / الديانة</option><option>Islam</option><option>Christianity</option></select><input name="home_address" placeholder="Home Address / عنوان السكن" class="border p-2 rounded"><input name="child_id" placeholder="Child Identification Number / الرقم الوطني للطفل" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">B. CLASS / ACADEMIC INFORMATION</h3><div class="grid md:grid-cols-2 gap-3"><select name="desired_class" class="border p-2 rounded" id="appDesiredClass"></select><input name="term_session" placeholder="Term & Academic Session / الفصل الدراسي والسنوات" class="border p-2 rounded"><input name="previous_school" placeholder="Previous School Attended / المدرسة السابقة" class="border p-2 rounded"><input name="last_class_completed" placeholder="Last Class Completed / آخر صف دراسي أنجز" class="border p-2 rounded"><textarea name="reason_leaving" placeholder="Reason for Leaving / سبب ترك المدرسة السابقة" rows="2" class="border p-2 rounded"></textarea><input name="languages_spoken" placeholder="Languages Spoken / النجاحات التي يتحدثها" class="border p-2 rounded"><textarea name="special_needs" placeholder="Special Education Needs / احتياجات تعليمية خاصة" rows="2" class="border p-2 rounded"></textarea></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">C. HEALTH INFORMATION / البيانات الصحية</h3><div class="grid md:grid-cols-2 gap-3"><input name="blood_group" placeholder="Blood Group/Genotype / فصيلة الدم/التركيب الوراثي" class="border p-2 rounded"><input name="allergies" placeholder="Known Allergies / الحساسية (ان وجدت)" class="border p-2 rounded"><input name="physical_challenge" placeholder="Physical Challenge / إعاقات جسدية (ان وجدت)" class="border p-2 rounded"><input name="chronic_illness" placeholder="Chronic Illness / أمراض مزمنة (ان وجدت)" class="border p-2 rounded"><textarea name="emergency_health" placeholder="Emergency Health Info / معلومات طبية طارئة" rows="2" class="border p-2 rounded"></textarea><input name="immunization" placeholder="Immunization Status / حالة التطعيم" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">D. PARENT/GUARDIAN INFORMATION / بيانات الولاد/الوصي</h3><div class="grid md:grid-cols-2 gap-3"><input name="father_name" placeholder="Father's Full Name / اسم الأب كاملًا" class="border p-2 rounded"><input name="mother_name" placeholder="Mother's Full Name / اسم الأم كاملًا" class="border p-2 rounded"><input name="guardian_name" placeholder="Guardian's Name (if any) / اسم الوصي" class="border p-2 rounded"><input name="guardian_relation" placeholder="Relationship to Child / صلة القرابة" class="border p-2 rounded"><input name="parent_occupation" placeholder="Occupation / المهنة" class="border p-2 rounded"><input name="parent_residence" placeholder="Residential Address / عنوان السكن" class="border p-2 rounded"><input name="parent_office" placeholder="Office Address / عنوان الوظيفة" class="border p-2 rounded"><input name="parent_phone" placeholder="Phone Number(s) / رقم الهاتف" class="border p-2 rounded"><input name="parent_email" placeholder="Email Address / البريد الإلكتروني" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">E. SPONSOR/FINANCIAL INFORMATION / بيانات الكفل/الرسوم الدراسية</h3><div class="grid md:grid-cols-2 gap-3"><input name="sponsor_name" placeholder="Name of Sponsor / اسم الكفل" class="border p-2 rounded"><input name="sponsor_relation" placeholder="Relationship to Child / صلة القرابة بالطالب" class="border p-2 rounded"><input name="sponsor_address" placeholder="Contact Address / عنوان الاتصال" class="border p-2 rounded"><input name="sponsor_phone" placeholder="Phone Number / رقم الهاتف" class="border p-2 rounded"><input name="fee_responsible" placeholder="Person Responsible for Fees / الجهة المسؤولة عن الرسوم" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">F. RELIGIOUS INFORMATION (ISLAMIC) / البيانات الدينية</h3><div class="grid md:grid-cols-2 gap-3"><input name="muslim_name" placeholder="Muslim Name / الاسم الإسلامي" class="border p-2 rounded"><input name="quran_reading" placeholder="Qur'an Reading Ability / مستوى قراءة القرآن" class="border p-2 rounded"><input name="memorization_level" placeholder="Level of Qur'an Memorization / مقدار حفظ القرآن" class="border p-2 rounded"><input name="previous_madrasah" placeholder="Previous Madrasah Attended / المدرسة القرآنية السابقة" class="border p-2 rounded"><textarea name="religious_needs" placeholder="Religious Observance Needs / احتياجات دينية خاصة" rows="2" class="border p-2 rounded"></textarea></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">G. TRANSPORT & HOSTEL INFORMATION / بيانات النقل والسكن</h3><div class="grid md:grid-cols-2 gap-3"><input name="transport_mode" placeholder="Mode of Transportation / وسيلة المواصلات" class="border p-2 rounded"><select name="boarding_status" class="border p-2 rounded"><option>Boarding or Day / داخلي خارجي</option><option>Day</option><option>Boarding</option></select><input name="bus_pickup" placeholder="Bus Pick-up & Drop-off Point / مكان الصعود والنزول" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">H. DECLARATION & UNDERTAKING / الإقرار والتعهد</h3><p class="text-sm mb-2">اقرأ بأن جميع المعلومات الواردة أعلاه صحيحة، واتعهد بالالتزام بجميع قوانين وأنظمة المدرسة.</p><div class="grid md:grid-cols-2 gap-3"><input name="declaration_name" placeholder="Name of Parent/Guardian / اسم ولي الأمر / الوصي" class="border p-2 rounded" required><input name="declaration_signature" placeholder="Signature / التوقيع" class="border p-2 rounded"><input name="declaration_date" type="date" placeholder="Date / التاريخ" class="border p-2 rounded"></div></div><div class="border rounded-xl p-4 bg-gray-50"><h3 class="font-bold text-lg mb-2">I. REQUIRED ATTACHMENTS / المرافقات المطلوبة</h3><div class="grid md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium">Birth Certificate / Declaration of Age</label><input type="file" name="attachment_birth_cert" accept="image/*,application/pdf" class="border p-2 rounded w-full"></div><div><label class="block text-sm font-medium">Previous School Report / Testimonial</label><input type="file" name="attachment_previous_report" accept="image/*,application/pdf" class="border p-2 rounded w-full"></div><div><label class="block text-sm font-medium">Transfer Certificate</label><input type="file" name="attachment_transfer_cert" accept="image/*,application/pdf" class="border p-2 rounded w-full"></div><div><label class="block text-sm font-medium">Medical Report</label><input type="file" name="attachment_medical_report" accept="image/*,application/pdf" class="border p-2 rounded w-full"></div><div><label class="block text-sm font-medium">Immunization Card</label><input type="file" name="attachment_immunization_card" accept="image/*,application/pdf" class="border p-2 rounded w-full"></div><div><label class="block text-sm font-medium">Recent Passport Photographs</label><input type="file" name="attachment_passport_photos" accept="image/*" class="border p-2 rounded w-full"></div></div></div><button type="submit" class="apply-btn w-full py-3 rounded text-lg font-bold mt-4">Submit Application / تقديم الطلب</button></form></div></div>
 
-<div id="addStaffModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('addStaffModal')">&times;</span><h2 class="text-xl font-bold mb-3">➕ Add New Staff</h2><form id="addStaffForm"><input id="staffNameInput" type="text" placeholder="Staff Name" class="w-full border rounded-xl p-2 mb-3" required><input id="staffEmailInput" type="email" placeholder="Email" class="w-full border rounded-xl p-2 mb-3" required><select id="staffRoleInput" class="w-full border rounded-xl p-2 mb-3" required><option value="">Select Role</option><option>teacher</option><option>headteacher</option><option>do</option><option>der</option><option>dprpa</option></select><select id="staffSectionInput" class="w-full border rounded-xl p-2 mb-3"><option value="">Select Section (optional)</option><option>regular islamiyyah</option><option>regular memorization</option></select><input id="staffClassInput" type="text" placeholder="Assigned Class (optional)" class="w-full border rounded-xl p-2 mb-3"><button type="submit" class="apply-btn w-full py-2 rounded-full">Add Staff</button></form></div></div>
-<div id="amountModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('amountModal')">&times;</span><h3 class="text-xl font-bold mb-3">Enter Payment Amount</h3><input id="paymentAmount" type="number" placeholder="Amount" class="w-full border rounded-xl p-3 mb-3" min="0"><button id="confirmAmountBtn" class="apply-btn w-full py-2 rounded-full">Confirm</button></div></div>
-<div id="appraisalModal" class="modal"><div class="modal-content relative" style="max-width: 600px;"><span class="close-modal-x" onclick="closeModal('appraisalModal')">&times;</span><h3 class="text-xl font-bold mb-3">📝 New Staff Appraisal</h3><form id="appraisalForm"><select id="appraisalStaffSelect" class="w-full border rounded-xl p-2 mb-3" required><option>Select Staff</option></select><select id="appraisalRating" class="w-full border rounded-xl p-2 mb-3" required><option value="">Rating (1-5)</option><option value="1">1 - Poor</option><option value="2">2 - Below Average</option><option value="3">3 - Average</option><option value="4">4 - Good</option><option value="5">5 - Excellent</option></select><textarea id="appraisalComment" rows="4" placeholder="Comments..." class="w-full border rounded-xl p-2 mb-3"></textarea><button type="submit" class="apply-btn w-full py-2 rounded-full">Submit Appraisal</button></form></div></div>
-<div id="acceptDetailsModal" class="modal"><div class="modal-content relative" style="max-width: 600px;"><span class="close-modal-x" onclick="closeModal('acceptDetailsModal')">&times;</span><h3 class="text-xl font-bold mb-3">✅ Accept Application</h3><form id="acceptDetailsForm"><input id="acceptAppId" type="hidden"><input id="acceptEntranceScore" type="number" placeholder="Entrance Score" class="w-full border rounded-xl p-2 mb-2"><input id="acceptInterviewRemarks" placeholder="Interview Remarks" class="w-full border rounded-xl p-2 mb-2"><select id="acceptAdmittedClass" class="w-full border rounded-xl p-2 mb-2" required><option>Admitted Class</option><option>Primary 1</option><option>Primary 2</option></select><input id="acceptAdmissionNumber" type="text" placeholder="Admission Number" class="w-full border rounded-xl p-2 mb-2"><input id="acceptAdmissionDate" type="date" class="w-full border rounded-xl p-2 mb-2"><input id="acceptSignature" placeholder="Authorized Signature" class="w-full border rounded-xl p-2 mb-2"><button type="submit" class="apply-btn w-full py-2 rounded-full">Accept & Finalize</button></form></div></div>
-<div id="statusCheckModal" class="modal"><div class="modal-content relative" style="max-width: 500px;"><span class="close-modal-x" onclick="closeModal('statusCheckModal')">&times;</span><h3 class="text-xl font-bold mb-3">Check Application Status</h3><input id="statusEmail" type="email" placeholder="Enter your email" class="w-full border rounded-xl p-2 mb-3"><button id="checkStatusSubmit" class="apply-btn w-full py-2 rounded-full">Check Status</button><div id="statusResult" class="mt-4 text-center"></div></div></div>
-<div id="receiptModal" class="modal"><div class="modal-content relative" style="max-width: 600px;"><span class="close-modal-x" onclick="closeModal('receiptModal')">&times;</span><div id="receiptContent" class="text-center"></div><button onclick="window.print()" class="apply-btn mt-4 px-6 py-2 rounded-full">Print Receipt</button></div></div>
-<div id="addStaffToPayrollModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('addStaffToPayrollModal')">&times;</span><h3 class="text-xl font-bold mb-3">➕ Add Staff to Payroll</h3><form id="payrollAddForm"><select id="payrollStaffSelect" class="w-full border rounded-xl p-2 mb-3" required><option>Select Staff</option></select><input id="payrollMonth" type="month" class="w-full border rounded-xl p-2 mb-3" required><input id="payrollBaseSalary" type="number" placeholder="Base Salary" class="w-full border rounded-xl p-2 mb-3" required><button type="submit" class="apply-btn w-full py-2 rounded-full">Add to Payroll</button></form></div></div>
+<div id="addStaffModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('addStaffModal')">&times;</span><h2 class="text-xl font-bold mb-3">➕ Add New Staff</h2><form id="addStaffForm"><input id="staffName" placeholder="Full Name" required class="border p-3 w-full mb-2 rounded-xl"><input id="staffEmail" placeholder="Email" class="border p-3 w-full mb-2 rounded-xl"><select id="staffRole" class="border p-3 w-full mb-2 rounded-xl"><option value="teacher">Teacher</option><option value="headteacher">Headteacher</option><option value="daf">DAF</option><option value="do">DO</option><option value="der">DER</option><option value="dprpa">DPRPA</option><option value="dg_ceo">DG/CEO</option></select><input id="staffSection" placeholder="Section" class="border p-3 w-full mb-2 rounded-xl"><input id="staffAssignedClass" placeholder="Assigned Class" class="border p-3 w-full mb-2 rounded-xl"><input id="staffSalary" type="number" placeholder="Salary (₦)" class="border p-3 w-full mb-2 rounded-xl"><input id="newStaffUsername" placeholder="Staff ID (username)" required class="border p-3 w-full mb-2 rounded-xl"><input id="newStaffPassword" placeholder="Password" type="password" value="pass123" class="border p-3 w-full mb-3 rounded-xl"><button type="submit" class="apply-btn w-full py-3 rounded-xl">Create Staff</button></form></div></div>
+<div id="amountModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('amountModal')">&times;</span><h3 class="text-xl font-bold mb-3">Enter Payment Amount</h3><input type="number" id="paymentAmount" class="border p-3 w-full rounded-xl mb-4" placeholder="Amount in ₦"><button id="confirmAmountBtn" class="apply-btn w-full py-2 rounded-xl">Confirm Payment</button></div></div>
+<div id="appraisalModal" class="modal"><div class="modal-content relative" style="max-width: 600px;"><span class="close-modal-x" onclick="closeModal('appraisalModal')">&times;</span><h3 class="text-xl font-bold mb-3">Staff Appraisal</h3><form id="appraisalForm"><select id="appraisalStaffSelect" class="border p-2 w-full mb-2 rounded" required><option>Select Staff</option></select><label class="block font-medium mt-2">Overall Rating (1-5):</label><input type="number" id="appraisalRating" min="1" max="5" class="border p-2 w-full rounded mb-2" required><label class="block font-medium">Comments / Feedback:</label><textarea id="appraisalComment" rows="3" class="border p-2 w-full rounded mb-3"></textarea><button type="submit" class="apply-btn w-full py-2 rounded">Submit Appraisal</button></form></div></div>
+<div id="acceptDetailsModal" class="modal"><div class="modal-content relative" style="max-width: 600px;"><span class="close-modal-x" onclick="closeModal('acceptDetailsModal')">&times;</span><h3 class="text-xl font-bold mb-3">Accept Application – Official Use Only</h3><form id="acceptDetailsForm"><input type="hidden" id="acceptAppId"><label class="block font-medium">Entrance Test Score:</label><input type="text" id="acceptEntranceScore" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Interview Remarks:</label><textarea id="acceptInterviewRemarks" rows="2" class="border p-2 w-full rounded mb-2"></textarea><label class="block font-medium">Class Admitted Into:</label><input type="text" id="acceptAdmittedClass" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Admission Number:</label><input type="text" id="acceptAdmissionNumber" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Date of Admission:</label><input type="date" id="acceptAdmissionDate" class="border p-2 w-full rounded mb-2"><label class="block font-medium">Authorized Signature (Name):</label><input type="text" id="acceptSignature" class="border p-2 w-full rounded mb-2"><button type="submit" class="apply-btn w-full py-2 rounded">Accept & Save</button></form></div></div>
+<div id="statusCheckModal" class="modal"><div class="modal-content relative" style="max-width: 500px;"><span class="close-modal-x" onclick="closeModal('statusCheckModal')">&times;</span><h3 class="text-xl font-bold mb-3">Check Application Status</h3><input type="email" id="statusEmail" placeholder="Enter your email address" class="border p-3 w-full rounded-xl mb-4"><button id="checkStatusSubmit" class="apply-btn w-full py-2 rounded-xl">Check Status</button><div id="statusResult" class="mt-4 text-center"></div></div></div>
+<!-- Receipt Modal -->
+<div id="receiptModal" class="modal">
+    <div class="modal-content relative" style="max-width: 600px;">
+        <span class="close-modal-x" onclick="closeModal('receiptModal')">&times;</span>
+        <div id="receiptContent" class="p-4"></div>
+        <button onclick="window.print()" class="apply-btn w-full mt-4 py-2 rounded">Print Receipt</button>
+    </div>
+</div>
+<!-- New modal for adding staff to payroll -->
+<div id="addStaffToPayrollModal" class="modal"><div class="modal-content relative"><span class="close-modal-x" onclick="closeModal('addStaffToPayrollModal')">&times;</span><h3 class="text-xl font-bold mb-3">Add Staff to Payroll</h3><form id="addToPayrollForm"><label class="block font-medium">Select Staff:</label><select id="payrollStaffSelect" class="border p-2 w-full rounded mb-3" required><option value="">-- Select Staff --</option></select><label class="block font-medium">Basic Salary (₦):</label><input type="number" id="payrollStaffSalary" class="border p-2 w-full rounded mb-3" placeholder="Salary amount"><label class="block font-medium">Allowances (₦):</label><input type="number" id="payrollStaffAllowances" class="border p-2 w-full rounded mb-3" placeholder="Allowances" value="0"><label class="block font-medium">Deductions (₦):</label><input type="number" id="payrollStaffDeductions" class="border p-2 w-full rounded mb-3" placeholder="Deductions" value="0"><label class="block font-medium">Account Details:</label><input type="text" id="payrollStaffAccount" class="border p-2 w-full rounded mb-3" placeholder="Bank account details"><button type="submit" class="apply-btn w-full py-2 rounded">Add to Payroll</button></form></div></div>
 
 <!-- DASHBOARD CONTAINER -->
 <div id="appContainer" class="hidden flex flex-col h-screen fixed inset-0 z-40 bg-gray-50">
     <div class="bg-white/80 backdrop-blur-md shadow-sm px-6 py-3 flex justify-between items-center border-b border-gray-100">
-        <div class="flex items-center gap-3"><button id="mobileMenuToggle" class="text-2xl md:hidden text-emerald-800"><i class="fas fa-bars"></i></button><span class="font-bold text-emerald-800 text-lg">Flying Wings</span></div>
-        <div class="flex items-center gap-4"><span class="text-gray-700"><i class="fas fa-user-circle mr-1"></i><span id="topUserName"></span> (<span id="topUserRole"></span>)</span><button id="logoutBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full text-sm font-bold">Logout</button></div>
+        <div class="flex items-center gap-3"><button id="mobileMenuToggle" class="text-2xl md:hidden text-emerald-800"><i class="fas fa-bars"></i></button><span class="font-bold text-emerald-800 text-xl">🏫 Flying Wings Portal</span></div>
+        <div class="flex items-center gap-4"><span class="text-gray-700"><i class="fas fa-user-circle mr-1"></i><span id="topUserName"></span> (<span id="topUserRole"></span>)</span><button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm transition">Logout</button></div>
     </div>
     <div class="flex flex-1 overflow-hidden relative">
         <div id="sidebarOverlay" class="sidebar-overlay"></div>
         <aside id="dynamicSidebar" class="sidebar text-white flex flex-col shadow-xl">
-            <div class="p-5 border-b border-white/10 flex justify-between items-center"><span class="font-semibold text-lg"><i class="fas fa-compass mr-2"></i>Menu</span><button id="closeMobileSidebar" class="md:hidden text-2xl"><i class="fas fa-times"></i></button></div>
+            <div class="p-5 border-b border-white/10 flex justify-between items-center"><span class="font-semibold text-lg"><i class="fas fa-compass mr-2"></i>Menu</span><button id="closeMobileSidebar" class="md:hidden text-white text-2xl">&times;</button></div>
             <nav id="dynamicNav" class="flex-1 px-3 py-5 space-y-1"></nav>
         </aside>
         <main id="mainContent" class="flex-1 overflow-auto p-6"></main>
@@ -158,6 +177,8 @@ const PAYSTACK_PUBLIC_KEY = 'pk_test_d4f8b2c1a3e5f6b7c8d9e0f1a2b3c4d5e6f7a8b9';
 const CLASSES = ["Pre-Nursery","Nursery 1","Nursery 2","Nursery 3","Primary 1","Primary 2","Primary 3","Primary 4","Primary 5","Primary 6","JSS 1","JSS 2","JSS 3","SS 1","SS 2","SS 3"];
 const SECTIONS = ["regular islamiyyah","regular memorization","intensive memorization","integrated islamic basic section","advance section","woman section"];
 const TERMS = ["1st Term", "2nd Term", "3rd Term"];
+const QUALITIES = ["Class Attendance","Neatness in Appearance","Politeness","Honesty","Relationship with Others","Self Control","Helping Others","Sense of Responsibility","Initiative/Creativity","Emotional Stability","Physical Health","Perseverance"];
+const QUALITIES_ARABIC = { "Class Attendance":"حضور الفصل","Neatness in Appearance":"نظافة المشرف","Politeness":"الطفول","Honesty":"الصدق والإحالة","Relationship with Others":"العلاقة مع الأخرين","Self Control":"الاستغلال على النفس","Helping Others":"المساعدة في المجتمع","Sense of Responsibility":"حساسية الإنجاز","Initiative/Creativity":"التمكين والإبداع","Emotional Stability":"التوتر والتماسك","Physical Health":"الصحة المادية","Perseverance":"مشاريع" };
 
 let currentUser = null;
 let schoolData = { students: [], teachers: [], profiles: [], applications: [], results: [], payments: [], bankTransfers: [], staffAppraisals: [], slides: [], announcements: [], resultExtras: [], payrollRecords: [], dgAppraisals: [], studentAppraisals: [] };
@@ -165,7 +186,7 @@ let idleTimeout;
 let pendingPaymentAction = null;
 
 // ========== UTILITIES ==========
-function showToast(msg, isErr=false) { let t=document.getElementById('toast'); t.textContent=msg; t.style.backgroundColor=isErr?'#dc2626':'#10b981'; t.style.display='block'; setTimeout(()=>t.style.display='none', 3000); }
+function showToast(msg, isErr=false) { let t=document.getElementById('toast'); t.textContent=msg; t.style.backgroundColor=isErr?'#dc2626':'#10b981'; t.style.display='block'; setTimeout(()=>t.style.display='none',4000); }
 function showLoading(show) { document.getElementById('globalLoader').style.display=show?'flex':'none'; }
 function escapeHtml(str) { return String(str??'').replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 function closeModal(id) { document.getElementById(id).style.display='none'; }
@@ -206,251 +227,13 @@ async function refreshData() {
             dgAppraisals: dgRes.data || [],
             studentAppraisals: stuAppRes.data || []
         };
-        console.log("✅ Data refreshed successfully");
+        console.log("✅ Teachers loaded:", schoolData.teachers.length);
+        console.log("✅ Profiles loaded:", schoolData.profiles.length);
     } catch(e) {
         console.error("Refresh error:", e);
     } finally {
         showLoading(false);
     }
-}
-
-function attachActivityListeners() {
-    if (idleTimeout) clearTimeout(idleTimeout);
-    idleTimeout = setTimeout(() => {
-        if (currentUser) {
-            showToast("Session expired due to inactivity. Please login again.");
-            logoutUser();
-        }
-    }, 30 * 60 * 1000);
-    document.onmousemove = attachActivityListeners;
-    document.onkeypress = attachActivityListeners;
-    document.onscroll = attachActivityListeners;
-}
-
-async function logoutUser() {
-    try {
-        await supabaseClient.auth.signOut();
-    } catch(e) { console.warn(e); }
-    currentUser = null;
-    document.getElementById('appContainer').classList.add('hidden');
-    document.getElementById('landingPage').style.display = 'flex';
-    showToast("Logged out successfully");
-}
-
-// ========== UNIFIED STAFF LIST (FIXED) ==========
-async function unifiedStaffList() {
-    let staffTeachers = schoolData.teachers.map(t => ({
-        id: t.id,
-        name: t.name,
-        role: t.role,
-        email: t.email,
-        assigned_class: t.assigned_class,
-        section: t.section || '',
-        salary: t.salary,
-        source: 'teacher'
-    }));
-    let staffProfiles = schoolData.profiles
-        .filter(p => p.role && p.role !== 'parent')
-        .map(p => ({
-            id: p.id,
-            name: p.full_name,
-            role: p.role,
-            email: p.email,
-            assigned_class: '',
-            section: p.section || '',
-            salary: 0,
-            source: 'profile'
-        }));
-    let allStaff = [...staffTeachers, ...staffProfiles];
-
-    if (allStaff.length === 0) {
-        document.getElementById('mainContent').innerHTML = `<div class="card p-6 text-center"><i class="fas fa-users text-4xl text-gray-400 mb-3"></i><p>No staff found. Please add staff first.</p></div>`;
-        return;
-    }
-
-    let html = `
-        <div class="card p-6">
-            <div class="flex justify-between items-center flex-wrap gap-3 mb-5">
-                <h2 class="text-2xl font-bold"><i class="fas fa-users text-amber-600 mr-2"></i>Staff Directory</h2>
-                <button id="openAddStaffBtn" class="apply-btn px-5 py-2 rounded-full"><i class="fas fa-plus mr-1"></i> Add Staff</button>
-            </div>
-            <div class="filter-row">
-                <input id="staffSearch" placeholder="🔍 Search name/email" class="flex-1 border rounded-xl p-2">
-                <select id="staffRoleFilter" class="border rounded-xl p-2">
-                    <option value="all">All Roles</option>
-                    <option value="dg_ceo">DG/CEO</option>
-                    <option value="daf">DAF</option>
-                    <option value="do">DO</option>
-                    <option value="der">DER</option>
-                    <option value="dprpa">DPRPA</option>
-                    <option value="headteacher">Head Teacher</option>
-                    <option value="teacher">Teacher</option>
-                </select>
-                <select id="staffSectionFilter" class="border rounded-xl p-2">
-                    <option value="all">All Sections</option>
-                    ${SECTIONS.map(s => `<option value="${s}">${s}</option>`).join('')}
-                </select>
-            </div>
-            <div class="overflow-x-auto mt-5">
-                <table class="w-full border-collapse">
-                    <thead class="bg-amber-50">
-                        <tr>
-                            <th class="border p-3 text-left font-bold">Name</th>
-                            <th class="border p-3 text-left font-bold">Role</th>
-                            <th class="border p-3 text-left font-bold">Email</th>
-                            <th class="border p-3 text-left font-bold">Assigned Class</th>
-                            <th class="border p-3 text-left font-bold">Section</th>
-                            <th class="border p-3 text-left font-bold">Salary (₦)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="staffTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-    `;
-    document.getElementById('mainContent').innerHTML = html;
-
-    // Render function
-    function renderStaff() {
-        let search = document.getElementById('staffSearch').value.toLowerCase();
-        let roleFilter = document.getElementById('staffRoleFilter').value;
-        let sectionFilter = document.getElementById('staffSectionFilter').value;
-
-        let filtered = allStaff.filter(staff => {
-            let matchesSearch = staff.name.toLowerCase().includes(search) || (staff.email || '').toLowerCase().includes(search);
-            let matchesRole = roleFilter === 'all' || staff.role === roleFilter;
-            let matchesSection = sectionFilter === 'all' || staff.section === sectionFilter;
-            return matchesSearch && matchesRole && matchesSection;
-        });
-
-        let tbody = document.getElementById('staffTableBody');
-        if (filtered.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center p-4 text-gray-500">No staff found</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = filtered.map(staff => `
-            <tr class="hover:bg-gray-50 transition">
-                <td class="border p-3">${escapeHtml(staff.name)}</td>
-                <td class="border p-3"><span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm">${staff.role}</span></td>
-                <td class="border p-3">${escapeHtml(staff.email || '—')}</td>
-                <td class="border p-3">${escapeHtml(staff.assigned_class || '—')}</td>
-                <td class="border p-3">${escapeHtml(staff.section || '—')}</td>
-                <td class="border p-3 font-semibold">${staff.salary ? `₦${staff.salary.toLocaleString()}` : '—'}</td>
-            </tr>
-        `).join('');
-    }
-
-    // Attach event listeners
-    document.getElementById('staffSearch').addEventListener('input', renderStaff);
-    document.getElementById('staffRoleFilter').addEventListener('change', renderStaff);
-    document.getElementById('staffSectionFilter').addEventListener('change', renderStaff);
-    document.getElementById('openAddStaffBtn').addEventListener('click', () => {
-        document.getElementById('addStaffModal').style.display = 'flex';
-    });
-
-    // Initial render
-    renderStaff();
-}
-
-// ========== STUB FUNCTIONS (Placeholders) ==========
-
-
-// Placeholder views – replace with actual implementations as needed
-async function downloadRecordsView() {
-    document.getElementById('mainContent').innerHTML = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📥 Download Records</h2><p class="text-gray-600">Export feature coming soon. You can use the CSV export buttons inside Students, Fees, or Payroll sections.</p></div>`;
-}
-
-async function announceView() {
-    let currentAnnouncement = schoolData.announcements[0]?.content || "";
-    let html = `
-        <div class="card p-6">
-            <h2 class="text-2xl font-bold mb-4">📢 Manage Site Announcement</h2>
-            <textarea id="announcementText" rows="4" class="border rounded-xl p-3 w-full mb-4">${escapeHtml(currentAnnouncement)}</textarea>
-            <button id="saveAnnouncementBtn" class="apply-btn px-6 py-2 rounded-full">Save Announcement</button>
-        </div>
-    `;
-    document.getElementById('mainContent').innerHTML = html;
-    document.getElementById('saveAnnouncementBtn').addEventListener('click', async () => {
-        let content = document.getElementById('announcementText').value.trim();
-        if (!content) return showToast("Announcement cannot be empty", true);
-        let existing = schoolData.announcements[0];
-        if (existing) {
-            await supabaseClient.from('site_announcement').update({ content }).eq('id', existing.id);
-        } else {
-            await supabaseClient.from('site_announcement').insert([{ content }]);
-        }
-        await refreshData();
-        showToast("Announcement updated");
-        announceView();
-    });
-}
-
-async function slidesManageView() {
-    let slides = schoolData.slides;
-    let html = `
-        <div class="card p-6">
-            <h2 class="text-2xl font-bold mb-4">🖼️ Manage Carousel Slides</h2>
-            <button id="addSlideBtn" class="apply-btn mb-4 px-4 py-2 rounded-full">+ Add New Slide</button>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="slidesList">
-                ${slides.map(slide => `
-                    <div class="border rounded-xl p-3 bg-white shadow">
-                        <img src="${escapeHtml(slide.image_url)}" class="h-32 w-full object-cover rounded mb-2">
-                        <input type="text" class="slide-caption w-full border rounded p-1 mb-2" data-id="${slide.id}" value="${escapeHtml(slide.caption || '')}" placeholder="Caption">
-                        <button class="delete-slide bg-red-500 text-white px-3 py-1 rounded-full text-sm" data-id="${slide.id}">Delete</button>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `;
-    document.getElementById('mainContent').innerHTML = html;
-
-    document.getElementById('addSlideBtn').addEventListener('click', async () => {
-        let url = prompt("Enter image URL (must be publicly accessible):");
-        if (!url) return;
-        let caption = prompt("Enter caption (optional):");
-        await supabaseClient.from('slides').insert([{ image_url: url, caption: caption || "" }]);
-        await refreshData();
-        slidesManageView();
-        showToast("Slide added");
-    });
-
-    document.querySelectorAll('.delete-slide').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            if (confirm("Delete this slide?")) {
-                await supabaseClient.from('slides').delete().eq('id', btn.dataset.id);
-                await refreshData();
-                slidesManageView();
-                showToast("Slide deleted");
-            }
-        });
-    });
-
-    document.querySelectorAll('.slide-caption').forEach(inp => {
-        inp.addEventListener('blur', async () => {
-            let id = inp.dataset.id;
-            let caption = inp.value;
-            await supabaseClient.from('slides').update({ caption }).eq('id', id);
-            await refreshData();
-            showToast("Caption updated");
-        });
-    });
-}
-
-async function performanceAppraisalView() {
-    document.getElementById('mainContent').innerHTML = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📊 Performance Appraisal (Staff)</h2><p class="text-gray-600">This module integrates with Staff Appraisal section. Please use <strong>Staff Appraisal</strong> from the menu for detailed reviews.</p></div>`;
-}
-
-async function saveAppraisal(studentId, comment, rating) {
-    if (!studentId || !comment || !rating) throw new Error("Missing fields");
-    await supabaseClient.from('student_appraisals').insert([{
-        student_id: studentId,
-        comment: comment,
-        rating: rating,
-        created_at: new Date(),
-        teacher_id: currentUser.id
-    }]);
-    showToast("Student appraisal saved");
     }
 // ========== LANDING CAROUSEL & ANNOUNCEMENT ==========
 async function renderLandingCarouselAndAnnouncement() {
@@ -604,7 +387,7 @@ async function studentsViewEditable() {
     function render() {
         let section = document.getElementById('studentSectionFilter').value, classVal = document.getElementById('studentClassFilter').value, search = document.getElementById('studentSearch').value.toLowerCase();
         let filtered = students.filter(s => (section==='all' || s.section===section) && (classVal==='all' || s.academic_class===classVal) && (s.name.toLowerCase().includes(search) || (s.reg_number||'').toLowerCase().includes(search)));
-        document.getElementById('studentEditBody').innerHTML = filtered.map(s => `<tr><td class="editable-student" data-field="reg_number" data-id="${s.id}">${escapeHtml(s.reg_number)}</td><td class="editable-student" data-field="name" data-id="${s.id}">${escapeHtml(s.name)}</td><td class="editable-student" data-field="parent_name" data-id="${s.id}">${escapeHtml(s.parent_name||'')}</td><td class="editable-student" data-field="section" data-id="${s.id}">${escapeHtml(s.section||'')}</td><td class="editable-student" data-field="academic_class" data-id="${s.id}">${escapeHtml(s.academic_class||'')}</td><td class="editable-student" data-field="term_fee" data-id="${s.id}">${s.term_fee || 30000}</td><td><button class="delete-student text-red-500" data-id="${s.id}">Delete</button></td></tr>`).join('');
+        document.getElementById('studentEditBody').innerHTML = filtered.map(s => `<tr><td class="editable-student" data-field="reg_number" data-id="${s.id}">${escapeHtml(s.reg_number)}</td><td class="editable-student" data-field="name" data-id="${s.id}">${escapeHtml(s.name)}</td><td class="editable-student" data-field="parent_name" data-id="${s.id}">${escapeHtml(s.parent_name||'')}</td><td class="editable-student" data-field="section" data-id="${s.id}">${escapeHtml(s.section||'')}</td><td class="editable-student" data-field="academic_class" data-id="${s.id}">${escapeHtml(s.academic_class||'')}</td><td class="editable-student" data-field="term_fee" data-id="${s.id}">${s.term_fee || 30000}</td><td><button class="delete-student text-red-500" data-id="${s.id}">Delete</button></td>`).join('');
         attachEvents();
     }
     function attachEvents() {
@@ -691,7 +474,7 @@ async function enhancedResultView(adminMode=true) {
             subjectRanks[sub.subject] = rank;
         }
 
-        let cardHtml = `<div class="report-card-container"><div class="text-center border-b pb-2 mb-3"><h3 class="text-xl font-bold">Al‑Istiqaamah Flying Wings Academy</h3><p class="text-gray-600">${term} | ${year}</p></div><div class="grid grid-cols-2 gap-2 mb-4"><div><strong>Name:</strong> ${escapeHtml(student.name)}</div><div><strong>Reg No:</strong> ${student.reg_number}</div><div><strong>Class:</strong> ${student.academic_class}</div><div><strong>Days Present:</strong> <span class="editable-attendance" data-field="days_present" data-student="${sid}" data-term="${term}" data-year="${year}">${extra.days_present||0}</span></div><div><strong>Overall Position:</strong> ${overallRank} / ${totalStudents}</div></div><h4 class="font-bold mt-3">📚 Performance in subjects / الإنجاز في الدروس</h4><table class="w-full border mt-2"><thead><tr><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>Grade</th><th>Position</th><th>Remark</th></tr></thead><tbody>${subjectsResults.map(sub=>{ let total=(sub.ca1||0)+(sub.ca2||0)+(sub.exam||0); let grade=total>=80?'A':total>=70?'B':total>=60?'C':total>=50?'D':'F'; let remark=grade=='A'?'Excellent':grade=='B'?'Good':grade=='C'?'Average':'Needs Improvement'; let subRank = subjectRanks[sub.subject] || '—'; return `<tr><td class="font-medium">${escapeHtml(sub.subject)}</td><td>${sub.ca1||0}</td><td>${sub.ca2||0}</td><td>${sub.exam||0}</td><td class="font-bold">${total}</td><td>${grade}</td><td>${subRank}</td><td>${remark}</td></tr>`; }).join('')}</tbody></table><h4 class="font-bold mt-4">🌟 Personal & Social Qualities / الصفات الشخصية والاجتماعية</h4><table class="w-full border mt-2"><thead><tr><th>Quality</th><th>الرجاء</th><th>Grade</th></tr></thead><tbody>${QUALITIES.map(q=>`<tr><td>${q}</td><td>${QUALITIES_ARABIC[q]}</td><td><select class="quality-select" data-quality="${q}" data-student="${sid}" data-term="${term}" data-year="${year}">${['Excellent','Very Good','Good','Fair','Poor'].map(g=>`<option ${g=== (extra.qualities?.[q] || 'Good') ? 'selected' : ''}>${g}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table><p class="mt-3"><strong>Remarks / ملاحظات:</strong> <span class="editable-remarks" data-field="remarks" data-student="${sid}" data-term="${term}" data-year="${year}">${escapeHtml(extra.remarks||'')}</span></p><div class="mt-4 text-center"><p class="font-bold">Average: ${avg}% (${gradeStatus})</p></div><div class="flex justify-between mt-5 text-sm"><span>Teacher's Signature: ______________</span><span>Headteacher's Signature: ______________</span></div></div>`;
+        let cardHtml = `<div class="report-card-container"><div class="text-center border-b pb-2 mb-3"><h3 class="text-xl font-bold">Al‑Istiqaamah Flying Wings Academy</h3><p class="text-gray-600">${term} | ${year}</p></div><div class="grid grid-cols-2 gap-2 mb-4"><div><strong>Name:</strong> ${escapeHtml(student.name)}</div><div><strong>Reg No:</strong> ${student.reg_number}</div><div><strong>Class:</strong> ${student.academic_class}</div><div><strong>Days Present:</strong> <span class="editable-attendance" data-field="days_present" data-student="${sid}" data-term="${term}" data-year="${year}">${extra.days_present||0}</span></div><div><strong>Overall Position:</strong> ${overallRank} / ${totalStudents}</div></div><h4 class="font-bold mt-3">📚 Performance in subjects / الإنجاز في الدروس</h4><table class="w-full border mt-2"><thead><tr><th>Subject</th><th>CA1</th><th>CA2</th><th>Exam</th><th>Total</th><th>Grade</th><th>Position</th><th>Remark</th></tr></thead><tbody>${subjectsResults.map(sub=>{ let total=(sub.ca1||0)+(sub.ca2||0)+(sub.exam||0); let grade=total>=80?'A':total>=70?'B':total>=60?'C':total>=50?'D':'F'; let remark=grade=='A'?'Excellent':grade=='B'?'Good':grade=='C'?'Average':'Needs Improvement'; let subRank = subjectRanks[sub.subject] || '—'; return `<tr><td class="font-medium">${escapeHtml(sub.subject)}</td><td>${sub.ca1||0}</td><td>${sub.ca2||0}</td><td>${sub.exam||0}</td><td class="font-bold">${total}</td><td>${grade}</td><td>${subRank}</td><td>${remark}</td>`; }).join('')}</tbody></table><h4 class="font-bold mt-4">🌟 Personal & Social Qualities / الصفات الشخصية والاجتماعية</h4><table class="w-full border mt-2"><thead><tr><th>Quality</th><th>الرجاء</th><th>Grade</th></tr></thead><tbody>${QUALITIES.map(q=>`<tr><td>${q}</td><td>${QUALITIES_ARABIC[q]}</td><td><select class="quality-select" data-quality="${q}" data-student="${sid}" data-term="${term}" data-year="${year}">${['Excellent','Very Good','Good','Fair','Poor'].map(g=>`<option ${g=== (extra.qualities?.[q] || 'Good') ? 'selected' : ''}>${g}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table><p class="mt-3"><strong>Remarks / ملاحظات:</strong> <span class="editable-remarks" data-field="remarks" data-student="${sid}" data-term="${term}" data-year="${year}">${escapeHtml(extra.remarks||'')}</span></p><div class="mt-4 text-center"><p class="font-bold">Average: ${avg}% (${gradeStatus})</p></div><div class="flex justify-between mt-5 text-sm"><span>Teacher's Signature: ______________</span><span>Headteacher's Signature: ______________</span></div></div>`;
         document.getElementById('reportCardContainer').innerHTML = cardHtml;
         attachResultEditable(sid);
     }
@@ -710,6 +493,7 @@ async function feeManagementEnhanced() {
     let students = schoolData.students, currentYear = new Date().getFullYear();
     let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">💰 Fee Management by Term</h2><div class="filter-row"><input id="feeYear" type="number" value="${currentYear}" class="w-28"><select id="feeTermSelect">${TERMS.map(t=>`<option>${t}</option>`).join('')}</select><select id="feeSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select><select id="feeClassFilter"><option value="all">All Classes</option>${CLASSES.map(c=>`<option>${c}</option>`).join('')}</select><input id="feeSearch" placeholder="🔍 Search student" class="flex-1"></div><div class="overflow-x-auto"><table class="min-w-full"><thead><tr><th>Student</th><th>Term Fee</th><th>Paid</th><th>Due</th><th>Status</th><th>Pay Online</th><th>Bank Proof</th><th>Admin Confirm</th><th>Edit Fee</th></tr></thead><tbody id="feeTermBody"></tbody></table></div><div id="pendingBankArea" class="mt-5"></div></div>`;
     document.getElementById('mainContent').innerHTML = html;
+    <td><button class="generate-receipt bg-blue-600 text-white px-2 py-1 rounded text-xs" data-student-id="${s.id}" data-term="${term}" data-year="${year}">Receipt</button></td>
     async function render() {
         let year = document.getElementById('feeYear').value, term = document.getElementById('feeTermSelect').value, section = document.getElementById('feeSectionFilter').value, classVal = document.getElementById('feeClassFilter').value, search = document.getElementById('feeSearch').value.toLowerCase();
         let filtered = students.filter(s => (section==='all' || s.section===section) && (classVal==='all' || s.academic_class===classVal) && (s.name.toLowerCase().includes(search) || (s.reg_number||'').toLowerCase().includes(search)));
@@ -794,6 +578,42 @@ document.getElementById('confirmAmountBtn')?.addEventListener('click', async () 
     } catch(err) { showToast(err.message, true); } finally { showLoading(false); pendingPaymentAction = null; }
 });
 
+document.querySelectorAll('.generate-receipt').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        let studentId = btn.dataset.studentId;
+        let term = btn.dataset.term;
+        let year = btn.dataset.year;
+        let student = schoolData.students.find(s => s.id == studentId);
+        let payments = schoolData.payments.filter(p => p.student_id == studentId && p.term === term && p.year == year);
+        let totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
+        let receiptHtml = `
+            <div class="text-center border-b pb-2">
+                <h2 class="text-xl font-bold">Al‑Istiqaamah Flying Wings Academy</h2>
+                <p>No. 10 Federal Government Layout, Samaru, Zaria</p>
+                <p>Receipt of Fee Payment</p>
+            </div>
+            <div class="mt-4">
+                <p><strong>Student Name:</strong> ${escapeHtml(student.name)}</p>
+                <p><strong>Registration No:</strong> ${student.reg_number}</p>
+                <p><strong>Class:</strong> ${student.academic_class}</p>
+                <p><strong>Term:</strong> ${term} ${year}</p>
+                <hr class="my-2">
+                <p><strong>Total Fee:</strong> ₦${(student.term_fee || 30000).toLocaleString()}</p>
+                <p><strong>Amount Paid:</strong> ₦${totalPaid.toLocaleString()}</p>
+                <p><strong>Payment Date:</strong> ${new Date().toLocaleDateString()}</p>
+                <p><strong>Payment Method:</strong> ${payments[0]?.payment_method || 'N/A'}</p>
+                <p><strong>Reference:</strong> ${payments[0]?.payment_reference || 'N/A'}</p>
+            </div>
+            <div class="text-center mt-4 text-sm">
+                <p>Thank you for your payment!</p>
+                <p>School Stamp & Signature</p>
+            </div>
+        `;
+        document.getElementById('receiptContent').innerHTML = receiptHtml;
+        document.getElementById('receiptModal').style.display = 'flex';
+    });
+});
+    
 // ========== PARENT PAYMENT PORTAL ==========
 async function parentPaymentPortalView() {
     let studentId = currentUser.studentId, student = schoolData.students.find(s => s.id == studentId);
@@ -1066,10 +886,130 @@ document.getElementById('checkStatusSubmit')?.addEventListener('click', async ()
     } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
 });
 
+// ========== UNIFIED STAFF LIST ==========
 
-        
-    
+async function unifiedStaffList() {
+    // Staff from teachers table (all staff including daf, der, do, dprpa, headteacher, teacher)
+    let staffTeachers = schoolData.teachers.map(t => ({
+        id: t.id,
+        name: t.name,
+        role: t.role,
+        email: t.email,
+        assigned_class: t.assigned_class,
+        section: t.section || '',
+        salary: t.salary,
+        source: 'teacher'
+    }));
+    // Staff from profiles (admin users who might not be in teachers)
+    let staffProfiles = schoolData.profiles
+        .filter(p => p.role && p.role !== 'parent')
+        .map(p => ({
+            id: p.id,
+            name: p.full_name,
+            role: p.role,
+            email: p.email,
+            assigned_class: '',
+            section: p.section || '',
+            salary: 0,
+            source: 'profile'
+        }));
+    let allStaff = [...staffTeachers, ...staffProfiles];
+
+    console.log("Unified Staff Total:", allStaff.length);
+    console.log("Teachers count:", staffTeachers.length);
+    console.log("Profiles count:", staffProfiles.length);
+
+    if (allStaff.length === 0) {
+        document.getElementById('mainContent').innerHTML = `<div class="card p-6 text-center"><i class="fas fa-users text-4xl text-gray-400 mb-3"></i><p>No staff found. Please add staff first.</p></div>`;
+        return;
+    }
+
+    let html = `
+        <div class="card p-6">
+            <div class="flex justify-between items-center flex-wrap gap-3 mb-5">
+                <h2 class="text-2xl font-bold"><i class="fas fa-users text-amber-600 mr-2"></i>Staff Directory</h2>
+                <button id="openAddStaffBtn" class="apply-btn px-5 py-2 rounded-full"><i class="fas fa-plus mr-1"></i> Add Staff</button>
+            </div>
+            <div class="filter-row">
+                <input id="staffSearch" placeholder="🔍 Search name/email" class="flex-1 border rounded-xl p-2">
+                <select id="staffRoleFilter" class="border rounded-xl p-2">
+                    <option value="all">All Roles</option>
+                    <option>dg_ceo</option><option>daf</option><option>management_committee</option>
+                    <option>do</option><option>der</option><option>dprpa</option>
+                    <option>headteacher</option><option>teacher</option>
+                </select>
+                <select id="staffSectionFilter" class="border rounded-xl p-2">
+                    <option value="all">All Sections</option>
+                    ${SECTIONS.map(s => `<option>${s}</option>`).join('')}
+                </select>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full border">
+                    <thead class="bg-gray-100">
+                        <tr><th>Name</th><th>Role</th><th>Email</th><th>Assigned Class</th><th>Section</th><th>Salary</th></tr>
+                    </thead>
+                    <tbody id="staffUnifiedBody"></tbody>
+                </table>
+            </div>
+        </div>
+    `;
+    document.getElementById('mainContent').innerHTML = html;
+    document.getElementById('openAddStaffBtn').onclick = () => document.getElementById('addStaffModal').style.display = 'flex';
+
+    function render() {
+        let search = document.getElementById('staffSearch').value.toLowerCase();
+        let roleFilter = document.getElementById('staffRoleFilter').value;
+        let sectionFilter = document.getElementById('staffSectionFilter').value;
+
+        let filtered = allStaff.filter(s => {
+            let matchSearch = s.name.toLowerCase().includes(search) || (s.email || '').toLowerCase().includes(search);
+            let matchRole = roleFilter === 'all' || s.role === roleFilter;
+            let matchSection = sectionFilter === 'all' || (s.section || '').toLowerCase().includes(sectionFilter.toLowerCase());
+            return matchSearch && matchRole && matchSection;
+        });
+
+        let tbody = document.getElementById('staffUnifiedBody');
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-500">No matching staff found.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(s => `
+            <tr>
+                <td class="editable-staff border p-2" data-field="name" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.name)}</td>
+                <td class="font-semibold text-amber-700 border p-2">${s.role}</td>
+                <td class="editable-staff border p-2" data-field="email" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.email)}</td>
+                <td class="editable-staff border p-2" data-field="assigned_class" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.assigned_class || '—')}</td>
+                <td class="editable-staff border p-2" data-field="section" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.section || '—')}</td>
+                <td class="editable-staff border p-2" data-field="salary" data-id="${s.id}" data-source="${s.source}">${s.salary ? '₦' + s.salary.toLocaleString() : '0'}</td>
+            </tr>
+        `).join('');
+
+        document.querySelectorAll('.editable-staff').forEach(cell => {
+            cell.setAttribute('contenteditable', 'true');
+            cell.addEventListener('blur', async () => {
+                let id = cell.dataset.id;
+                let source = cell.dataset.source;
+                let field = cell.dataset.field;
+                let val = cell.innerText.trim();
+                if (field === 'salary') val = parseInt(val.replace(/[^0-9]/g, '')) || 0;
+                let table = source === 'teacher' ? 'teachers' : 'profiles';
+                await supabaseClient.from(table).update({ [field]: val }).eq('id', id);
+                await refreshData();
+                unifiedStaffList();
+                showToast(`${field} updated`);
+            });
+        });
+    }
+
+    document.getElementById('staffSearch').addEventListener('input', render);
+    document.getElementById('staffRoleFilter').addEventListener('change', render);
+    document.getElementById('staffSectionFilter').addEventListener('change', render);
+    render();
+}
+                
 // ========== PAYROLL MODULE (with Add Staff to Payroll button) ==========
+
 async function payrollModule() {
     let staffTeachers = schoolData.teachers.map(t => ({
         id: t.id,
@@ -1086,6 +1026,8 @@ async function payrollModule() {
             salary: 0
         }));
     let allStaff = [...staffTeachers, ...staffProfiles];
+
+    console.log("Payroll staff count:", allStaff.length);
 
     if (allStaff.length === 0) {
         document.getElementById('mainContent').innerHTML = `<div class="card p-6 text-center"><i class="fas fa-exclamation-triangle text-4xl text-yellow-500"></i><p>No staff available. Please add staff first.</p></div>`;
@@ -1110,7 +1052,9 @@ async function payrollModule() {
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full payroll-table border">
-                    <thead class="bg-gray-100"><tr><th>S/N</th><th>Employee Name</th><th>Basic Salary (₦)</th><th>Allowances (₦)</th><th>Gross Pay (₦)</th><th>Deductions (₦)</th><th>Net Pay (₦)</th><th>Account Details</th></tr></thead>
+                    <thead class="bg-gray-100">
+                        <tr><th>S/N</th><th>Employee Name</th><th>Basic Salary (₦)</th><th>Allowances (₦)</th><th>Gross Pay (₦)</th><th>Deductions (₦)</th><th>Net Pay (₦)</th><th>Account Details</th></tr>
+                    </thead>
                     <tbody id="payrollTbody"></tbody>
                     <tfoot id="payrollTotals" class="bg-gray-50 font-bold"></tfoot>
                 </table>
@@ -1280,108 +1224,137 @@ async function payrollModule() {
     });
 
     loadPayroll();
-}
+                        }
                 
+        
 // ========== ENHANCED ADD STAFF (auto-add to payroll for current month) ==========
 document.getElementById('addStaffForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
-    const name = document.getElementById('staffName').value.trim();
-    const username = document.getElementById('newStaffUsername').value.trim();
-    const password = document.getElementById('newStaffPassword').value;
-    const role = document.getElementById('staffRole').value;
-    const email = document.getElementById('staffEmail').value.trim();
-    
-    if (!name || !username || !password) {
-        showToast("Name, Staff ID (username) and Password are required", true);
-        return;
-    }
-    
     showLoading(true);
     try {
-        // Check if username already exists
-        const { data: existing, error: checkError } = await supabaseClient
-            .from('teachers')
-            .select('id')
-            .eq('username', username)
-            .maybeSingle();
-        
-        if (existing) {
-            throw new Error(`Username '${username}' is already taken. Please use a different Staff ID.`);
-        }
-        
-        // Insert new staff
         const { data: newStaff, error } = await supabaseClient.from('teachers').insert([{
-            name: name,
-            email: email || null,
-            role: role,
-            section: document.getElementById('staffSection').value || null,
-            assigned_class: document.getElementById('staffAssignedClass').value || null,
-            salary: parseInt(document.getElementById('staffSalary').value) || 0,
-            username: username,
-            password: password
+            name: document.getElementById('staffName').value,
+            email: document.getElementById('staffEmail').value,
+            role: document.getElementById('staffRole').value,
+            section: document.getElementById('staffSection').value,
+            assigned_class: document.getElementById('staffAssignedClass').value,
+            salary: parseInt(document.getElementById('staffSalary').value)||0,
+            username: document.getElementById('newStaffUsername').value,
+            password: document.getElementById('newStaffPassword').value
         }]).select();
-        
-        if (error) throw error;
-        
-        if (newStaff && newStaff[0]) {
-            const currentMonth = new Date().toLocaleString('default', { month: 'long' });
-            const currentYear = new Date().getFullYear();
-            // Add payroll record (optional – if fails, still show success for staff creation)
-            try {
-                await supabaseClient.from('payroll_records').insert([{
-                    staff_id: newStaff[0].id,
-                    employee_name: newStaff[0].name,
-                    month: currentMonth,
-                    year: currentYear,
-                    basic_salary: newStaff[0].salary || 0,
-                    allowances: 0,
-                    deductions: 0,
-                    account_details: '',
-                    gross_pay: newStaff[0].salary || 0,
-                    net_pay: newStaff[0].salary || 0
-                }]);
-                showToast(`Staff added and payroll record created for ${currentMonth}`);
-            } catch (payErr) {
-                console.warn("Payroll record insertion failed:", payErr);
-                showToast(`Staff added but payroll record could not be created. You can add it manually later.`);
-            }
+        if(error) throw error;
+        if(newStaff && newStaff[0]) {
+            let currentMonth = new Date().toLocaleString('default',{month:'long'});
+            let currentYear = new Date().getFullYear();
+            await supabaseClient.from('payroll_records').insert([{
+                staff_id: newStaff[0].id,
+                employee_name: newStaff[0].name,
+                month: currentMonth,
+                year: currentYear,
+                basic_salary: newStaff[0].salary || 0,
+                allowances: 0,
+                deductions: 0,
+                account_details: '',
+                gross_pay: newStaff[0].salary || 0,
+                net_pay: newStaff[0].salary || 0
+            }]);
+            showToast("Staff added and payroll record created for " + currentMonth);
         }
-        
         await refreshData();
         closeModal('addStaffModal');
         unifiedStaffList();
-        
-    } catch (err) {
-        console.error("Add staff error:", err);
-        showToast(err.message, true);
-    } finally {
-        showLoading(false);
-    }
+    } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
 });
+
+// ========== OTHER STUBS ==========
+async function downloadRecordsView() { document.getElementById('mainContent').innerHTML = `<div class="card p-6"><button class="apply-btn px-6 py-2 rounded-full" onclick="window.downloadCSV(schoolData.students,'students.csv')">Export Students CSV</button> <button class="apply-btn px-6 py-2 rounded-full ml-3" onclick="window.downloadCSV(schoolData.teachers,'staff.csv')">Export Staff CSV</button></div>`; window.downloadCSV=(data,fn)=>{ let blob = new Blob([JSON.stringify(data)],{type:'text/csv'}); let a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fn; a.click(); }; }
+async function announceView() { let ann = schoolData.announcements[0]?.content || ''; document.getElementById('mainContent').innerHTML = `<div class="card p-6"><textarea id="annText" class="border w-full p-3 rounded-xl h-32">${escapeHtml(ann)}</textarea><button class="apply-btn mt-4 px-6 py-2 rounded-full" onclick="window.updateAnnounce()">Update Announcement</button></div>`; window.updateAnnounce=async()=>{ await supabaseClient.from('site_announcement').upsert({id:1, content:document.getElementById('annText').value}); await refreshData(); showToast("Announcement updated"); }; }
+async function slidesManageView() { let slides = schoolData.slides; let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">Slideshow Manager</h2><input type="file" id="slideFile" accept="image/*" class="mb-3"><input id="slideCaption" placeholder="Caption" class="border p-3 w-full rounded-xl mb-3"><button id="uploadSlide" class="apply-btn px-6 py-2 rounded-full">Upload</button><div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">${slides.map(s=>`<div class="bg-white rounded-xl shadow p-2"><img src="${s.image_url}" class="h-32 w-full object-cover rounded-lg"><p class="text-sm mt-1">${escapeHtml(s.caption||'')}</p><button onclick="window.deleteSlide('${s.id}')" class="text-red-500 text-sm mt-1">Delete</button></div>`).join('')}</div></div>`;
+    document.getElementById('mainContent').innerHTML = html; document.getElementById('uploadSlide').onclick = async()=>{ let file=document.getElementById('slideFile').files[0]; if(!file) return; let path=`slides/${Date.now()}_${file.name}`; await supabaseClient.storage.from('school-slides').upload(path,file); let {data:{publicUrl}}=supabaseClient.storage.from('school-slides').getPublicUrl(path); await supabaseClient.from('slides').insert([{image_url:publicUrl, caption:document.getElementById('slideCaption').value}]); await refreshData(); slidesManageView(); }; window.deleteSlide=async(id)=>{ await supabaseClient.from('slides').delete().eq('id',id); await refreshData(); slidesManageView(); }; }
+async function performanceAppraisalView() { if (!['dg_ceo', 'management_committee'].includes(currentUser.role)) { showToast("Access denied", true); return; } let html = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📋 DG/CEO Performance Appraisal</h2><div class="mb-4"><label class="font-bold">Load Previous:</label><select id="loadAppraisalSelect" class="border p-2 rounded w-64 ml-2"><option value="">-- New --</option>${schoolData.dgAppraisals.map(a=>`<option value="${a.id}">${a.appraisal_period} - Score: ${a.total_percentage}%</option>`).join('')}</select><button id="loadAppraisalBtn" class="apply-btn ml-2 px-4 py-2 rounded">Load</button><button id="newAppraisalBtn" class="bg-gray-500 text-white px-4 py-2 rounded ml-2">New</button></div><div id="appraisalFormContainer"></div></div>`;
+    document.getElementById('mainContent').innerHTML = html;
+    function renderForm(data) { const formHtml = `<form id="dgAppraisalForm"><input name="period" placeholder="Appraisal Period" class="border p-2 w-full my-2"><input name="prepared_by" placeholder="Prepared By" class="border p-2 w-full my-2"><textarea name="remarks" placeholder="Remarks" rows="4" class="border p-2 w-full my-2"></textarea><button type="submit" class="apply-btn w-full py-2">Save Appraisal</button></form>`; document.getElementById('appraisalFormContainer').innerHTML = formHtml; document.getElementById('dgAppraisalForm').onsubmit = async (e) => { e.preventDefault(); let period = e.target.period.value, prepared_by = e.target.prepared_by.value, remarks = e.target.remarks.value; await saveDGAppraisal({ appraisal_period: period, prepared_by, final_remarks: remarks, total_percentage: 85, created_at: new Date() }); await refreshData(); performanceAppraisalView(); showToast("Saved"); }; }
+    document.getElementById('loadAppraisalBtn').onclick = () => { let id = document.getElementById('loadAppraisalSelect').value; if(!id) return; let app = schoolData.dgAppraisals.find(a=>a.id==id); if(app) renderForm(app); else renderForm({}); };
+    document.getElementById('newAppraisalBtn').onclick = () => renderForm({});
+    renderForm({});
+}
 
 async function directorRolesView() {
     showLoading(true);
-    const { data: kpis, error } = await supabaseClient.from('director_kpis').select('*').order('director_role', { ascending: true });
+    // Ensure director_kpis table exists (optional – run once via Supabase dashboard)
+    // Fetch all KPIs from Supabase
+    const { data: kpis, error } = await supabaseClient
+        .from('director_kpis')
+        .select('*')
+        .order('director_role', { ascending: true });
+    
     if (error) console.error("Error fetching KPIs:", error);
+    
     const directorRoles = ["DG/CEO", "DAF", "DER", "DO", "DPRPA"];
+    
+    // Group KPIs by director
     const grouped = {};
     directorRoles.forEach(role => { grouped[role] = (kpis || []).filter(k => k.director_role === role); });
-    let html = `<div class="card p-6"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold">📊 Director Roles & KPIs Dashboard</h2><button id="refreshKpisBtn" class="apply-btn px-4 py-2 rounded-full"><i class="fas fa-sync-alt"></i> Refresh</button></div><div class="grid md:grid-cols-2 gap-6" id="directorKpiContainer">`;
+    
+    let html = `
+        <div class="card p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">📊 Director Roles & KPIs Dashboard</h2>
+                <button id="refreshKpisBtn" class="apply-btn px-4 py-2 rounded-full"><i class="fas fa-sync-alt"></i> Refresh</button>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6" id="directorKpiContainer">
+    `;
+    
     for (const role of directorRoles) {
         const roleKpis = grouped[role] || [];
-        let totalWeight = 0, weightedSum = 0;
+        // Calculate overall performance for this director
+        let totalWeight = 0;
+        let weightedSum = 0;
         roleKpis.forEach(kpi => {
             totalWeight += kpi.weight;
-            let achievement = Math.min(100, (kpi.current_value / kpi.target_value) * 100);
+            let achievement = (kpi.current_value / kpi.target_value) * 100;
+            if (achievement > 100) achievement = 100;
             weightedSum += (achievement * kpi.weight);
         });
         const overallScore = totalWeight > 0 ? (weightedSum / totalWeight).toFixed(1) : 0;
-        html += `<div class="border rounded-2xl p-5 shadow-sm bg-white"><div class="flex justify-between items-center border-b pb-2 mb-3"><h3 class="text-xl font-bold text-emerald-700">${role}</h3><span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm">Score: ${overallScore}%</span></div><div class="overflow-x-auto"><table class="min-w-full text-sm"><thead class="bg-gray-50"><tr><th class="p-2">KPI Name</th><th>Target</th><th>Current</th><th class="w-32">Progress</th><th>Weight</th><th class="w-8"></th></tr></thead><tbody id="kpi-table-${role.replace(/\s/g, '')}">${roleKpis.map(kpi => `<tr data-kpi-id="${kpi.id}"><td class="editable-kpi p-2" data-field="kpi_name" data-id="${kpi.id}">${escapeHtml(kpi.kpi_name)}</td><td class="editable-kpi" data-field="target_value" data-id="${kpi.id}">${kpi.target_value}</td><td class="editable-kpi" data-field="current_value" data-id="${kpi.id}">${kpi.current_value}</td><td><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-emerald-600 h-2.5 rounded-full" style="width: ${Math.min(100, (kpi.current_value / kpi.target_value) * 100)}%"></div></div></td><td class="editable-kpi" data-field="weight" data-id="${kpi.id}">${kpi.weight}</td><td><button class="delete-kpi text-red-500" data-id="${kpi.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table></div><button class="add-kpi-btn mt-3 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm" data-role="${role}">+ Add KPI</button></div>`;
+        
+        html += `
+            <div class="border rounded-2xl p-5 shadow-sm bg-white">
+                <div class="flex justify-between items-center border-b pb-2 mb-3">
+                    <h3 class="text-xl font-bold text-emerald-700">${role}</h3>
+                    <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm">Score: ${overallScore}%</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr><th class="p-2">KPI Name</th><th>Target</th><th>Current</th><th class="w-32">Progress</th><th>Weight</th><th class="w-8"></th></tr>
+                        </thead>
+                        <tbody id="kpi-table-${role.replace(/\s/g, '')}">
+                            ${roleKpis.map(kpi => `
+                                <tr data-kpi-id="${kpi.id}">
+                                    <td class="editable-kpi p-2" data-field="kpi_name" data-id="${kpi.id}">${escapeHtml(kpi.kpi_name)}</td>
+                                    <td class="editable-kpi" data-field="target_value" data-id="${kpi.id}">${kpi.target_value}</td>
+                                    <td class="editable-kpi" data-field="current_value" data-id="${kpi.id}">${kpi.current_value}</td>
+                                    <td>
+                                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                            <div class="bg-emerald-600 h-2.5 rounded-full" style="width: ${Math.min(100, (kpi.current_value / kpi.target_value) * 100)}%"></div>
+                                        </div>
+                                    </td>
+                                    <td class="editable-kpi" data-field="weight" data-id="${kpi.id}">${kpi.weight}</td>
+                                    <td><button class="delete-kpi text-red-500" data-id="${kpi.id}"><i class="fas fa-trash"></i></button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <button class="add-kpi-btn mt-3 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm" data-role="${role}">+ Add KPI</button>
+            </div>
+        `;
     }
     html += `</div><canvas id="directorPerformanceChart" class="mt-8 max-h-80"></canvas></div>`;
     document.getElementById('mainContent').innerHTML = html;
     
+    // Helper: attach editable behaviour to all .editable-kpi cells
     function attachEditable() {
         document.querySelectorAll('.editable-kpi').forEach(cell => {
             cell.setAttribute('contenteditable', 'true');
@@ -1394,11 +1367,12 @@ async function directorRolesView() {
                     if (field === 'weight' && newValue < 1) newValue = 1;
                 }
                 await supabaseClient.from('director_kpis').update({ [field]: newValue }).eq('id', id);
-                await refreshData();
-                directorRolesView();
+                await refreshData();  // refresh global schoolData
+                directorRolesView();   // reload the whole view
                 showToast(`${field} updated`);
             });
         });
+        
         document.querySelectorAll('.delete-kpi').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (confirm("Delete this KPI?")) {
@@ -1409,6 +1383,7 @@ async function directorRolesView() {
                 }
             });
         });
+        
         document.querySelectorAll('.add-kpi-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const role = btn.dataset.role;
@@ -1416,49 +1391,105 @@ async function directorRolesView() {
                 if (!newKpiName) return;
                 const target = parseInt(prompt("Target value (e.g., 100):")) || 100;
                 const weight = parseInt(prompt("Weight (1-10, default 1):")) || 1;
-                await supabaseClient.from('director_kpis').insert([{ director_role: role, kpi_name: newKpiName, target_value: target, current_value: 0, weight: weight }]);
+                await supabaseClient.from('director_kpis').insert([{
+                    director_role: role,
+                    kpi_name: newKpiName,
+                    target_value: target,
+                    current_value: 0,
+                    weight: weight
+                }]);
                 await refreshData();
                 directorRolesView();
                 showToast(`KPI added for ${role}`);
             });
         });
     }
+    
     attachEditable();
     
+    // Draw chart for overall performance comparison
     const overallScores = {};
     for (const role of directorRoles) {
         const roleKpis = (kpis || []).filter(k => k.director_role === role);
         let totalWeight = 0, weightedSum = 0;
-        roleKpis.forEach(k => { totalWeight += k.weight; let ach = Math.min(100, (k.current_value / k.target_value) * 100); weightedSum += ach * k.weight; });
+        roleKpis.forEach(k => {
+            totalWeight += k.weight;
+            let ach = Math.min(100, (k.current_value / k.target_value) * 100);
+            weightedSum += ach * k.weight;
+        });
         overallScores[role] = totalWeight ? (weightedSum / totalWeight) : 0;
     }
+    
     const ctx = document.getElementById('directorPerformanceChart').getContext('2d');
+    // Destroy previous chart if exists
     if (window.directorChart) window.directorChart.destroy();
     window.directorChart = new Chart(ctx, {
         type: 'bar',
-        data: { labels: directorRoles, datasets: [{ label: 'Overall Performance (%)', data: directorRoles.map(r => overallScores[r]), backgroundColor: 'rgba(245, 158, 11, 0.6)', borderRadius: 8 }] },
-        options: { responsive: true, scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Achievement %' } } }, plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toFixed(1)}%` } } } }
+        data: {
+            labels: directorRoles,
+            datasets: [{
+                label: 'Overall Performance (%)',
+                data: directorRoles.map(r => overallScores[r]),
+                backgroundColor: 'rgba(245, 158, 11, 0.6)',
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: 'Achievement %' } } },
+            plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toFixed(1)}%` } } }
+        }
     });
+    
     document.getElementById('refreshKpisBtn').onclick = () => { directorRolesView(); };
     showLoading(false);
 }
 
 async function directorAppraisalView() {
     showToast("Appraise Directors: coming soon", false);
-    document.getElementById('mainContent').innerHTML = `<div class="card p-6"><h2 class="text-2xl font-bold mb-4">📋 Appraise Directors</h2><p class="text-gray-600 mb-4">Annual performance appraisal for director‑level roles.</p><div class="space-y-4"><div class="border rounded-xl p-4"><div class="flex justify-between items-center"><div><strong>Director:</strong> <span id="directorName">[Select Director]</span></div><select id="directorSelect" class="border rounded-xl p-2"><option>DG/CEO</option><option>DAF</option><option>DER</option><option>DO</option><option>DPRPA</option></select></div><div class="mt-3"><label class="block font-medium">Rating (1-5):</label><input type="number" id="rating" min="1" max="5" class="border rounded-xl p-2 w-24"></div><div class="mt-3"><label class="block font-medium">Comments / Feedback:</label><textarea id="appraisalComments" rows="3" class="border rounded-xl p-2 w-full"></textarea></div><button class="apply-btn mt-3 px-4 py-2 rounded-full" onclick="submitDirectorAppraisal()">Submit Appraisal</button></div></div></div>`;
+    document.getElementById('mainContent').innerHTML = `
+        <div class="card p-6">
+            <h2 class="text-2xl font-bold mb-4">📋 Appraise Directors</h2>
+            <p class="text-gray-600 mb-4">Annual performance appraisal for director‑level roles.</p>
+            <div class="space-y-4">
+                <div class="border rounded-xl p-4">
+                    <div class="flex justify-between items-center">
+                        <div><strong>Director:</strong> <span id="directorName">[Select Director]</span></div>
+                        <select id="directorSelect" class="border rounded-xl p-2">
+                            <option>DG/CEO</option><option>DAF</option><option>DER</option><option>DO</option><option>DPRPA</option>
+                        </select>
+                    </div>
+                    <div class="mt-3">
+                        <label class="block font-medium">Rating (1-5):</label>
+                        <input type="number" id="rating" min="1" max="5" class="border rounded-xl p-2 w-24">
+                    </div>
+                    <div class="mt-3">
+                        <label class="block font-medium">Comments / Feedback:</label>
+                        <textarea id="appraisalComments" rows="3" class="border rounded-xl p-2 w-full"></textarea>
+                    </div>
+                    <button class="apply-btn mt-3 px-4 py-2 rounded-full" onclick="submitDirectorAppraisal()">Submit Appraisal</button>
+                </div>
+            </div>
+        </div>
+    `;
+    // Define the global submit handler only once (avoid duplicates)
     if (typeof window.submitDirectorAppraisal === 'undefined') {
         window.submitDirectorAppraisal = function() {
             const director = document.getElementById('directorSelect').value;
             const rating = document.getElementById('rating').value;
             const comments = document.getElementById('appraisalComments').value;
-            if (!rating || rating < 1 || rating > 5) { showToast("Please provide a rating between 1 and 5", true); return; }
+            if (!rating || rating < 1 || rating > 5) {
+                showToast("Please provide a rating between 1 and 5", true);
+                return;
+            }
+            // Here you would normally save to Supabase table 'director_appraisals'
             console.log(`Appraisal for ${director}: rating ${rating}, comments: ${comments}`);
             showToast(`Appraisal for ${director} submitted (Rating: ${rating})`, false);
             document.getElementById('rating').value = '';
             document.getElementById('appraisalComments').value = '';
         };
     }
-}
+            }
 
 async function parentChildReportsView() { enhancedResultView(false); }
 async function parentResultView() { enhancedResultView(false); }
@@ -1843,7 +1874,6 @@ async function academicPerformanceView() {
         });
     }, 100);
 }
-
 async function sectionAnalysisView() {
     const sections = SECTIONS;
     const currentYear = new Date().getFullYear();
@@ -1938,197 +1968,34 @@ async function sectionAnalysisView() {
     loadAnalysis();
 }
 
+// ========== DASHBOARD VIEW ==========
 async function dashboardView() { document.getElementById('mainContent').innerHTML = `<div class="card p-6"><h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-tachometer-alt text-amber-600 mr-2"></i>Dashboard</h2><div class="grid grid-cols-1 md:grid-cols-4 gap-5"><div class="bg-gradient-to-br from-blue-50 to-blue-100 p-5 rounded-2xl shadow"><i class="fas fa-users text-3xl text-blue-600"></i><p class="text-2xl font-bold mt-2">${schoolData.students.length}</p><p>Students</p></div><div class="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-2xl shadow"><i class="fas fa-chalkboard-user text-3xl text-green-600"></i><p class="text-2xl font-bold mt-2">${schoolData.teachers.length + schoolData.profiles.filter(p=>p.role !== 'parent').length}</p><p>Staff</p></div><div class="bg-gradient-to-br from-yellow-50 to-yellow-100 p-5 rounded-2xl shadow"><i class="fas fa-money-bill-wave text-3xl text-yellow-600"></i><p class="text-2xl font-bold mt-2">₦${schoolData.payments.reduce((a,b)=>a+(b.amount||0),0).toLocaleString()}</p><p>Fees Collected</p></div><div class="bg-gradient-to-br from-purple-50 to-purple-100 p-5 rounded-2xl shadow"><i class="fas fa-file-alt text-3xl text-purple-600"></i><p class="text-2xl font-bold mt-2">${schoolData.applications.length}</p><p>Applications</p></div></div></div>`; }
+async function parentDashboardView() { const student = schoolData.students.find(s => s.id == currentUser.studentId); if (!student) { document.getElementById('mainContent').innerHTML = `<div class="card p-6"><p class="text-red-600">Student not found.</p></div>`; return; } const paid = schoolData.payments.filter(p => p.student_id == currentUser.studentId && p.term === "1st Term" && p.year == new Date().getFullYear()).reduce((a,b)=>a+(b.amount||0),0); const due = Math.max(0,30000-paid); const html = `<div class="card p-6"><h2 class="text-2xl font-bold text-emerald-800 mb-4">Parent Dashboard</h2><div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-5 rounded-2xl"><h3>Welcome, ${escapeHtml(currentUser.full_name)}</h3></div><div class="grid md:grid-cols-2 gap-6 mt-4"><div class="bg-white p-4 border-l-4 border-emerald-500"><p><strong>Student:</strong> ${student.name}</p><p><strong>Reg:</strong> ${student.reg_number}</p><p><strong>Class:</strong> ${student.academic_class}</p></div><div class="bg-white p-4 border-l-4 border-amber-500"><p><strong>Fee Status:</strong> ${due<=0?'Paid':`₦${due} due`}</p>${due>0?'<button id="parentDashPay" class="apply-btn mt-2 px-4 py-1 text-sm">Pay Now</button>':''}</div></div></div>`; document.getElementById('mainContent').innerHTML = html; if(due>0) document.getElementById('parentDashPay')?.addEventListener('click',()=>parentPaymentPortalView()); }
 
 
-
-
-// ========== AUTHENTICATION ==========
-async function adminLogin(email, pwd) {
-    let { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: pwd });
-    if (error) throw error;
-    let { data: profile, error: profileError } = await supabaseClient.from('profiles').select('*').eq('id', data.user.id).single();
-    if (profileError || !profile) {
-        const fallbackName = email.split('@')[0];
-        const { data: newProfile, error: insertError } = await supabaseClient.from('profiles').insert([{ id: data.user.id, full_name: fallbackName, role: 'teacher' }]).select().single();
-        if (insertError) throw new Error('Could not create profile: ' + insertError.message);
-        profile = newProfile;
-    }
-    currentUser = { id: profile.id, full_name: profile.full_name, role: profile.role };
-    await refreshData();
-    showDashboard();
-    closeModal('loginModal');
-    showToast(`Welcome ${currentUser.full_name}`);
-    attachActivityListeners();
-}
-
-async function staffLogin(username, pwd) {
-    let { data: staff, error } = await supabaseClient.from('teachers').select('*').eq('username', username).single();
-    if (error || !staff) throw new Error('Staff not found');
-    if (staff.password !== pwd) throw new Error('Wrong password');
-    currentUser = { id: staff.id, full_name: staff.name, role: staff.role || 'teacher', assigned_class: staff.assigned_class };
-    await refreshData();
-    showDashboard();
-    closeModal('loginModal');
-    showToast(`Welcome ${currentUser.full_name}`);
-    attachActivityListeners();
-}
-
-async function parentLogin(regNo, pwd) {
-    if (pwd !== 'al123') throw new Error('Invalid password');
-    let student = schoolData.students.find(s => s.reg_number === regNo);
-    if (!student) throw new Error('Student not found');
-    currentUser = { role: 'parent', full_name: `Parent of ${student.name}`, studentId: student.id };
-    await refreshData();
-    showDashboard();
-    closeModal('parentModal');
-    showToast(`Logged in as parent`);
-    attachActivityListeners();
-}
-
-async function adminSignup(code, email, pwd, name, role) {
-    if (code !== 'ALIFLY2026') throw new Error('Invalid code');
-    let { data, error } = await supabaseClient.auth.signUp({ email, password: pwd });
-    if (error) throw error;
-    const { error: insertError } = await supabaseClient.from('profiles').insert([{ id: data.user.id, full_name: name, role: role }]);
-    if (insertError) throw insertError;
-    showToast('Account created! Please verify email and login.');
-    closeModal('adminSignupModal');
-}
-
-// ========== DASHBOARD & MENU ==========
-const roleMenus = {
-    dg_ceo: ['Dashboard','Students','Enroll','Results','Fees','Unified Staff','Payroll','Apps','Download Records','Announce','Slides','View Appraisals','Performance Appraisal','Director Roles','Appraise Directors'],
-    daf: ['Dashboard','Students','Enroll','Results','Fees','Unified Staff','Payroll','Apps','Download Records','Announce','Slides','Staff Appraisal'],
-    management_committee: ['Dashboard','Students','Enroll','Results','Fees','Unified Staff','Download Records','Announce','Slides','View Appraisals','Appraise Directors'],
-    parent: ['Child reports','Fee payment','Payment history'],
-    teacher: ['My class','Grade student','Attendance','Results'],
-    headteacher: ['Section student','Section fees','Enroll','Results','Students','Fees'],
-    do: ['Dashboard','Enroll','Fees','Students','Unified Staff','Staff performance analysis','Staff Appraisal','Announce','Slides'],
-    der: ['Dashboard','Enroll','Students','Unified Staff','Academic performance','Sections analysis','Staff Appraisal','Announce','Slides'],
-    dprpa: ['Dashboard','Enroll','Students','Academic performance','Section analysis','Download Records','Staff Appraisal','Announce','Slides']
-};
-
-async function showDashboard() {
-    document.getElementById('landingPage').style.display = 'none';
-    document.getElementById('appContainer').classList.remove('hidden');
-    document.getElementById('topUserName').innerText = currentUser.full_name;
-    document.getElementById('topUserRole').innerText = currentUser.role.toUpperCase();
-    let menu = roleMenus[currentUser.role] || roleMenus.dg_ceo;
-    let navHtml = menu.map(label => `<div class="nav-link flex items-center gap-3 px-4 py-2 rounded-xl text-slate-200 hover:bg-white/10 transition" data-view="${label}"><i class="fas fa-${label===Dashboard'?'th':'pen'}"></i><span class="nav-text">${label}</span></div>`).join('');
-    document.getElementById('dynamicNav').innerHTML = navHtml;
-    const viewMap = {
-        'Dashboard':dashboardView, 'Students':studentsViewEditable, 'Enroll':enrollViewModern, 'Results':enhancedResultView, 'Fees':feeManagementEnhanced,
-        'Unified Staff':unifiedStaffList, 'Payroll':payrollModule, 'Apps':applicationsViewEnhanced, 'Download Records':downloadRecordsView, 'Announce':announceView,
-        'Slides':slidesManageView, 'Staff Appraisal':staffAppraisalView, 'View Appraisals':viewAppraisalsView, 'Performance Appraisal':performanceAppraisalView,
-        'Director Roles':directorRolesView, 'Appraise Directors':directorAppraisalView, 'Child reports':parentChildReportsView, 'Fee payment':parentPaymentPortalView,
-        'Result':parentResultView, 'Payment history':parentPaymentHistoryView, 'My class':myClassView, 'Grade student':teacherResultEntry, 'Attendance':attendanceView,
-        'Section student':sectionStudentsView, 'Section fees':sectionFeesView, 'Staff performance analysis':staffPerformanceAnalysisView,
-        'Academic performance':academicPerformanceView, 'Sections analysis':sectionAnalysisView
-    };
-    document.querySelectorAll('.nav-link').forEach(el => el.addEventListener('click', () => {
-        let fn = viewMap[el.dataset.view];
-        if (fn && typeof fn === 'function') fn();
-        else if (currentUser.role === 'parent') parentChildReportsView();
-        else dashboardView();
-        closeMobileSidebar();
-    }));
-    if (currentUser.role === 'parent') {
-        parentChildReportsView();
-    } else {
-        dashboardView();
-    }
-}
-
-// ========== INIT & EVENT LISTENERS ==========
-window.addEventListener('load', async () => {
+// ========== EVENT LISTENERS ==========
+document.addEventListener('DOMContentLoaded', async()=>{
     await refreshData();
     renderLandingCarouselAndAnnouncement();
-    updateLiveTime();
-    setInterval(updateLiveTime, 1000);
-
-    // Login handlers
-    document.getElementById('staffAdminBtn')?.addEventListener('click', () => document.getElementById('loginModal').style.display = 'flex');
-    document.getElementById('parentBtn')?.addEventListener('click', () => document.getElementById('parentModal').style.display = 'flex');
-    document.getElementById('adminSignupBtn')?.addEventListener('click', () => document.getElementById('adminSignupModal').style.display = 'flex');
-    document.getElementById('publicApplyBtn')?.addEventListener('click', () => document.getElementById('fullApplicationModal').style.display = 'flex');
-    document.getElementById('contactBtn')?.addEventListener('click', () => document.getElementById('contactModal').style.display = 'flex');
-
-    // Tab switching in login modal
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-            btn.classList.add('active');
-            let tabContent = document.querySelector(`.tab-content[data-tab="${btn.dataset.tab}"]`);
-            if(tabContent) tabContent.classList.remove('hidden');
-        });
-    });
-
-    document.getElementById('adminLoginForm')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        showLoading(true);
-        try {
-            await adminLogin(document.getElementById('adminEmail').value, document.getElementById('adminPassword').value);
-        } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
-    });
-
-    document.getElementById('parentLoginForm')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        showLoading(true);
-        try {
-            await parentLogin(document.getElementById('parentRegNo').value, document.getElementById('parentPassword').value);
-        } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
-    });
-
-    document.getElementById('adminSignupForm')?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        showLoading(true);
-        try {
-            await adminSignup(
-                document.getElementById('signupCode').value,
-                document.getElementById('signupEmail').value,
-                document.getElementById('signupPassword').value,
-                document.getElementById('signupName').value,
-                document.getElementById('signupRole').value
-            );
-        } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
-    });
-
-    document.getElementById('logoutBtn')?.addEventListener('click', logoutUser);
-    document.getElementById('mobileMenuToggle')?.addEventListener('click', () => {
-        document.getElementById('dynamicSidebar').classList.toggle('open');
-        document.getElementById('sidebarOverlay').classList.toggle('active');
-    });
-    document.getElementById('closeMobileSidebar')?.addEventListener('click', closeMobileSidebar);
-    document.getElementById('sidebarOverlay')?.addEventListener('click', closeMobileSidebar);
+    CLASSES.forEach(c=>{ let opt=document.createElement('option'); opt.value=c; opt.text=c; document.getElementById('appDesiredClass')?.appendChild(opt); });
+    document.getElementById('staffAdminBtn').onclick=()=>document.getElementById('loginModal').style.display='flex';
+    document.getElementById('parentBtn').onclick=()=>document.getElementById('parentModal').style.display='flex';
+    document.getElementById('adminSignupBtn').onclick=()=>document.getElementById('adminSignupModal').style.display='flex';
+    document.getElementById('publicApplyBtn').onclick=()=>document.getElementById('fullApplicationModal').style.display='flex';
+    document.getElementById('contactBtn').onclick=()=>document.getElementById('contactModal').style.display='flex';
+    document.getElementById('adminLoginForm').onsubmit=(e)=>{ e.preventDefault(); adminLogin(adminEmail.value, adminPassword.value).catch(err=>showToast(err.message,true)); };
+    document.getElementById('staffLoginForm').onsubmit=(e)=>{ e.preventDefault(); staffLogin(staffUsername.value, staffPassword.value).catch(err=>showToast(err.message,true)); };
+    document.getElementById('parentLoginForm').onsubmit=(e)=>{ e.preventDefault(); parentLogin(studentRegNo.value, parentPwd.value).catch(err=>showToast(err.message,true)); };
+    document.getElementById('adminSignupForm').onsubmit=async(e)=>{ e.preventDefault(); try{ await adminSignup(regCode.value, signupEmail.value, signupPassword.value, signupFullName.value, signupRole.value); }catch(err){ showToast(err.message,true); } };
+    document.getElementById('logoutBtn').onclick=()=>logoutUser();
+    document.getElementById('adminTab').onclick=()=>{ document.getElementById('adminLoginForm').style.display='block'; document.getElementById('staffLoginForm').style.display='none'; };
+    document.getElementById('staffTab').onclick=()=>{ document.getElementById('staffLoginForm').style.display='block'; document.getElementById('adminLoginForm').style.display='none'; };
+    document.getElementById('mobileMenuToggle').onclick=()=>{ document.getElementById('dynamicSidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('active'); };
+    document.getElementById('sidebarOverlay').onclick=closeMobileSidebar;
+    document.getElementById('closeMobileSidebar').onclick=closeMobileSidebar;
+    setInterval(()=>{ let d=new Date(); document.getElementById('liveTime').innerText=d.toLocaleTimeString(); document.getElementById('liveDate').innerText=d.toLocaleDateString(); },1000);
 });
-
-function updateLiveTime() {
-    let now = new Date();
-    document.getElementById('liveTime').innerText = now.toLocaleTimeString();
-    document.getElementById('liveDate').innerText = now.toLocaleDateString();
-}
-
-async function renderLandingCarouselAndAnnouncement() {
-    const ann = schoolData.announcements[0]?.content || 'Welcome to Flying Wings – Excellence in Islamic Education';
-    document.getElementById('announcementBarWrapper').innerHTML = `<div class="bg-amber-100 border-l-4 border-amber-500 p-3 rounded-r-xl">📢 ${escapeHtml(ann)}</div>`;
-    let slides = schoolData.slides.length ? schoolData.slides : [{ image_url: 'https://via.placeholder.com/1200x500?text=Flying+Wings+Academy', caption: 'Empowering Minds & Souls' }];
-    let idx = 0;
-    const container = document.getElementById('slidesContainer');
-    const dotsContainer = document.getElementById('dotsContainer');
-    function renderSlide() {
-        container.innerHTML = `<img src="${slides[idx].image_url}" class="w-full h-full object-cover" alt="slide"><div class="absolute bottom-4 left-0 right-0 text-center text-white bg-black/50 p-2">${escapeHtml(slides[idx].caption || '')}</div>`;
-        if(dotsContainer) {
-            dotsContainer.innerHTML = slides.map((_, i) => `<span class="dot ${i===idx?'bg-amber-500':'bg-gray-400'}" style="cursor:pointer"></span>`).join('');
-            document.querySelectorAll('.dot').forEach((dot, i) => dot.addEventListener('click', () => { idx = i; renderSlide(); }));
-        }
-    }
-    renderSlide();
-    if(slides.length > 1) { if(window.slideInterval) clearInterval(window.slideInterval); window.slideInterval = setInterval(() => { idx = (idx+1)%slides.length; renderSlide(); }, 5000); }
-    document.getElementById('prevSlide')?.addEventListener('click', () => { idx = (idx-1+slides.length)%slides.length; renderSlide(); });
-    document.getElementById('nextSlide')?.addEventListener('click', () => { idx = (idx+1)%slides.length; renderSlide(); });
-}
 </script>
 </body>
-</html>
+    </html>
+  

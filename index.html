@@ -682,21 +682,19 @@ async function saveDGAppraisal(data) {
     return true;
     }
 // ========== APPLICATIONS MANAGEMENT ==========
-async function applicationsViewEnhanced() {
+        async function applicationsViewEnhanced() {
     let apps = schoolData.applications;
     let html = `<div class="card p-6"><div class="flex flex-wrap justify-between items-center gap-4 mb-6"><h2 class="text-2xl font-bold">📋 Applications Management</h2><div class="flex gap-2"><button id="refreshAppsBtn" class="apply-btn px-4 py-2 rounded-full"><i class="fas fa-sync-alt"></i> Refresh</button></div></div><div class="filter-row"><input id="appSearch" placeholder="🔍 Search by name or email" class="flex-1 border rounded-xl p-2"><select id="appStatusFilter" class="border rounded-xl p-2"><option value="all">All Status</option><option>pending</option><option>accepted</option><option>rejected</option></select><button id="exportAppsCsv" class="bg-emerald-600 text-white px-4 py-2 rounded-full">Export CSV</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-4" id="appsGrid"></div></div>`;
     document.getElementById('mainContent').innerHTML = html;
-    
     function renderApps() {
         let search = document.getElementById('appSearch').value.toLowerCase();
         let status = document.getElementById('appStatusFilter').value;
         let filtered = apps.filter(a => (a.full_name?.toLowerCase().includes(search) || (a.email||'').toLowerCase().includes(search)) && (status==='all' || a.status === status));
         let grid = document.getElementById('appsGrid');
         if(filtered.length === 0) { grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">No applications found.</div>'; return; }
-        grid.innerHTML = filtered.map(app => `<div class="app-card border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition"><div class="p-4 bg-gradient-to-r from-gray-50 to-white border-b"><div class="flex justify-between items-start"><h3 class="font-bold text-lg">${escapeHtml(app.full_name||'N/A')}</h3><span class="status-badge px-3 py-1 rounded-full text-xs font-semibold ${app.status==='accepted'?'bg-green-100 text-green-800':app.status==='rejected'?'bg-red-100 text-red-800':'bg-yellow-100 text-yellow-800'}">${app.status || 'pending'}</span></div><p class="text-sm text-gray-600 mt-1"><i class="fas fa-envelope mr-1"></i> ${escapeHtml(app.email||'—')}</p><p class="text-sm text-gray-600"><i class="fas fa-graduation-cap mr-1"></i> ${escapeHtml(app.desired_class||'—')}</p></div><div class="p-4 flex flex-wrap gap-2 justify-between items-center"><button class="view-app-details text-blue-600 hover:text-blue-800 text-sm" data-id="${app.id}"><i class="fas fa-eye mr-1"></i> View Details</button><div class="flex gap-2">${app.status === 'accepted' ? `<button class="print-admission-letter bg-indigo-600 text-white px-3 py-1 rounded-full text-xs" data-id="${app.id}"><i class="fas fa-print mr-1"></i> Print Letter</button>` : ''}${app.status !== 'accepted' ? `<button class="accept-app-with-details bg-green-600 text-white px-3 py-1 rounded-full text-xs" data-id="${app.id}">Accept</button>` : ''}${app.status !== 'rejected' ? `<button class="reject-app bg-red-600 text-white px-3 py-1 rounded-full text-xs" data-id="${app.id}">Reject</button>` : ''}<button class="delete-app bg-gray-500 text-white px-3 py-1 rounded-full text-xs" data-id="${app.id}">Delete</button></div></div></div>`).join('');
+        grid.innerHTML = filtered.map(app => `<div class="app-card border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition"><div class="p-4 bg-gradient-to-r from-gray-50 to-white border-b"><div class="flex justify-between items-start"><h3 class="font-bold text-lg">${escapeHtml(app.full_name||'N/A')}</h3><span class="status-badge px-3 py-1 rounded-full text-xs font-semibold ${app.status==='accepted'?'bg-green-100 text-green-800':app.status==='rejected'?'bg-red-100 text-red-800':'bg-yellow-100 text-yellow-800'}">${app.status || 'pending'}</span></div><p class="text-sm text-gray-600 mt-1"><i class="fas fa-envelope mr-1"></i> ${escapeHtml(app.email||'—')}</p><p class="text-sm text-gray-600"><i class="fas fa-graduation-cap mr-1"></i> ${escapeHtml(app.desired_class||'—')}</p></div><div class="p-4 flex flex-wrap gap-2 justify-between items-center"><button class="view-app-details text-blue-600 hover:text-blue-800 text-sm" data-id="${app.id}"><i class="fas fa-eye mr-1"></i> View Details</button><div class="flex gap-2">${app.status !== 'accepted' ? `<button class="accept-app-with-details bg-green-600 text-white px-3 py-1 rounded-full text-xs" data-id="${app.id}">Accept</button>` : ''}${app.status !== 'rejected' ? `<button class="reject-app bg-red-600 text-white px-3 py-1 rounded-full text-xs" data-id="${app.id}">Reject</button>` : ''}<button class="delete-app bg-gray-500 text-white px-3 py-1 rounded-full text-xs" data-id="${app.id}">Delete</button></div></div></div>`).join('');
         attachAppEvents();
     }
-    
     function attachAppEvents() {
         document.querySelectorAll('.view-app-details').forEach(btn => btn.addEventListener('click', async () => {
             let appId = btn.dataset.id;
@@ -743,25 +741,76 @@ async function applicationsViewEnhanced() {
             modal.querySelector('.close-modal-x').onclick = () => modal.remove();
             modal.addEventListener('click', (e) => { if(e.target === modal) modal.remove(); });
         }));
-        
-        document.querySelectorAll('.print-admission-letter').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const appId = btn.dataset.id;
-                printAdmissionLetter(appId);
-            });
-        });
-        
         document.querySelectorAll('.accept-app-with-details').forEach(btn => btn.addEventListener('click', () => { document.getElementById('acceptAppId').value = btn.dataset.id; document.getElementById('acceptDetailsModal').style.display = 'flex'; }));
         document.querySelectorAll('.reject-app').forEach(btn => btn.addEventListener('click', async () => { if(confirm("Reject this application?")){ await supabaseClient.from('applications').update({status:'rejected'}).eq('id', btn.dataset.id); await refreshData(); applicationsViewEnhanced(); showToast("Application rejected"); } }));
         document.querySelectorAll('.delete-app').forEach(btn => btn.addEventListener('click', async () => { if(confirm("Permanently delete this application?")){ await supabaseClient.from('applications').delete().eq('id', btn.dataset.id); await refreshData(); applicationsViewEnhanced(); showToast("Application deleted"); } }));
     }
-    
     document.getElementById('appSearch').addEventListener('input', renderApps);
     document.getElementById('appStatusFilter').addEventListener('change', renderApps);
     document.getElementById('refreshAppsBtn').addEventListener('click', async () => { await refreshData(); renderApps(); });
     document.getElementById('exportAppsCsv').addEventListener('click', () => { let csvRows = [["ID","Full Name","Email","Desired Class","Status","Created At"]]; apps.forEach(a => { csvRows.push([a.id, a.full_name, a.email, a.desired_class, a.status, a.created_at]); }); let csv = csvRows.map(row => row.join(",")).join("\n"); let blob = new Blob([csv], {type: 'text/csv'}); let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'applications.csv'; a.click(); });
     renderApps();
 }
+
+// ========== ACCEPT DETAILS FORM SUBMIT ==========
+document.getElementById('acceptDetailsForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let appId = document.getElementById('acceptAppId').value;
+    let officialData = {
+        entrance_score: document.getElementById('acceptEntranceScore').value,
+        interview_remarks: document.getElementById('acceptInterviewRemarks').value,
+        admitted_class: document.getElementById('acceptAdmittedClass').value,
+        admission_number: document.getElementById('acceptAdmissionNumber').value,
+        admission_date: document.getElementById('acceptAdmissionDate').value,
+        authorized_signature: document.getElementById('acceptSignature').value,
+        status: 'accepted'
+    };
+    showLoading(true);
+    try {
+        let app = schoolData.applications.find(a => a.id == appId);
+        let existingOfficial = app.official_data || {};
+        await supabaseClient.from('applications').update({ status: 'accepted', official_data: { ...existingOfficial, ...officialData } }).eq('id', appId);
+        await refreshData();
+        showToast("Application accepted with official details");
+        closeModal('acceptDetailsModal');
+        applicationsViewEnhanced();
+    } catch(err) { showToast(err.message, true); } finally { showLoading(false); }
+});
+
+// ========== FULL APPLICATION FORM SUBMIT ==========
+document.getElementById('fullApplicationForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showLoading(true);
+    let form = e.target;
+    let formDataObj = {};
+    let fileAttachments = {};
+    for(let el of form.elements) {
+        if(el.name && el.type !== 'file') formDataObj[el.name] = el.value;
+    }
+    let fileInputs = form.querySelectorAll('input[type="file"]');
+    for(let inp of fileInputs) {
+        if(inp.files.length > 0) {
+            let file = inp.files[0];
+            let fileName = `${Date.now()}_${inp.name}.${file.name.split('.').pop()}`;
+            let { error } = await supabaseClient.storage.from('application-attachments').upload(fileName, file);
+            if(error) { showToast("Error uploading " + inp.name, true); continue; }
+            let { data: { publicUrl } } = supabaseClient.storage.from('application-attachments').getPublicUrl(fileName);
+            fileAttachments[inp.name] = publicUrl;
+        }
+    }
+    formDataObj.attachments = fileAttachments;
+    let fullName = `${formDataObj.first_name || ''} ${formDataObj.surname || ''}`.trim();
+    if (!fullName) fullName = "Applicant";
+    let email = formDataObj.parent_email || 'applicant@example.com';
+    let desiredClass = formDataObj.desired_class || '';
+    try {
+        await supabaseClient.from('applications').insert([{ full_name: fullName, email: email, desired_class: desiredClass, status: 'pending', form_data: formDataObj }]);
+        showToast('Application submitted successfully!');
+        closeModal('fullApplicationModal');
+        form.reset();
+    } catch (err) { showToast(err.message, true); } finally { showLoading(false); }
+});
+
     
 async function printAdmissionLetter(applicationId) {
     const app = schoolData.applications.find(a => a.id == applicationId);

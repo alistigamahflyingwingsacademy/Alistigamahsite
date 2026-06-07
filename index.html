@@ -191,7 +191,26 @@ function logoutUser() {
     renderLandingCarouselAndAnnouncement();
     showToast("Logged out");
 }
-
+async function saveAppraisal(studentId, comment, rating) {
+    if (!studentId || !comment || rating < 1 || rating > 5) {
+        showToast("Invalid appraisal data", true);
+        return false;
+    }
+    const { error } = await supabaseClient.from('student_appraisals').insert([{
+        student_id: studentId,
+        comment: comment,
+        rating: rating,
+        created_by: currentUser.id,
+        created_at: new Date()
+    }]);
+    if (error) {
+        showToast(error.message, true);
+        return false;
+    }
+    await refreshData();
+    showToast("Student appraisal saved");
+    return true;
+    }
 // ========== LANDING CAROUSEL & ANNOUNCEMENT ==========
 async function renderLandingCarouselAndAnnouncement() {
     const ann = schoolData.announcements[0]?.content || 'Welcome to Flying Wings – Excellence in Islamic Education';

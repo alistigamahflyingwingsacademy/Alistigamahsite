@@ -1335,7 +1335,9 @@ async function attendanceView() {
     document.getElementById('attList').innerHTML = `<table class="w-full border"><thead><tr><th>Name</th><th>Present</th></tr></thead><tbody>${students.map(s=>`<tr><td class="p-2">${s.name}</td><td class="p-2"><input type="checkbox" class="attCheck" data-id="${s.id}"></td></tr>`).join('')}</tbody></table>`;
     document.getElementById('submitAttendance').onclick = () => showToast("Attendance recorded (demo)");
 }
-async function sectionStudentsView() {  let students = schoolData.students;
+
+        async function sectionStudentsView() {
+    let students = schoolData.students;
     let html = `
         <div class="card p-6">
             <div class="flex justify-between items-center mb-4">
@@ -1356,7 +1358,7 @@ async function sectionStudentsView() {  let students = schoolData.students;
             <div class="overflow-x-auto">
                 <table class="min-w-full">
                     <thead class="bg-gray-100">
-                        <tr><th>Reg No</th><th>Name</th><th>Parent</th><th>Section</th><th>Class</th><th>Total Fees (₦)</th><th>Actions</th></tr>
+                        <tr><th>Reg No</th><th>Name</th><th>Parent</th><th>Section</th><th>Class</th><th>Term Fee (₦)</th><th>Actions</th></tr>
                     </thead>
                     <tbody id="sectionStudentsTableBody"></tbody>
                 </table>
@@ -1388,19 +1390,18 @@ async function sectionStudentsView() {  let students = schoolData.students;
                 <td class="editable-student-section" data-field="parent_name" data-id="${s.id}">${escapeHtml(s.parent_name || '')}</td>
                 <td class="editable-student-section" data-field="section" data-id="${s.id}">${escapeHtml(s.section || '')}</td>
                 <td class="editable-student-section" data-field="academic_class" data-id="${s.id}">${escapeHtml(s.academic_class || '')}</td>
-                <td class="editable-student-section" data-field="total_fees" data-id="${s.id}">${s.total_fees || 30000}</td>
+                <td class="editable-student-section" data-field="term_fee" data-id="${s.id}">${s.term_fee || 30000}</td>
                 <td><button class="delete-student-section text-red-500" data-id="${s.id}">Delete</button></td>
             </tr>
         `).join('');
 
-        // Attach inline editing
         document.querySelectorAll('.editable-student-section').forEach(cell => {
             cell.setAttribute('contenteditable', 'true');
             cell.addEventListener('blur', async () => {
                 let field = cell.dataset.field;
                 let id = cell.dataset.id;
                 let val = cell.innerText.trim();
-                if (field === 'total_fees') val = parseFloat(val) || 0;
+                if (field === 'term_fee') val = parseFloat(val) || 0;
                 await supabaseClient.from('students').update({ [field]: val }).eq('id', id);
                 await refreshData();
                 students = schoolData.students;
@@ -1409,7 +1410,6 @@ async function sectionStudentsView() {  let students = schoolData.students;
             });
         });
 
-        // Delete button handler
         document.querySelectorAll('.delete-student-section').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (confirm("Delete this student permanently?")) {
@@ -1428,13 +1428,11 @@ async function sectionStudentsView() {  let students = schoolData.students;
     searchInput.addEventListener('input', render);
 
     document.getElementById('addStudentFromSectionBtn').addEventListener('click', () => {
-        // Reuse the modern enrollment view
         enrollViewModern();
     });
 
     render();
-                                     }
-
+        }
 async function sectionFeesView() {
     let students = schoolData.students;
     let currentYear = new Date().getFullYear();
@@ -1482,12 +1480,14 @@ async function sectionFeesView() {
         for (const section of SECTIONS) {
             const sectionStudents = students.filter(s => s.section === section);
             const studentIds = sectionStudents.map(s => s.id);
+            
+            const totalFeeExpected = sectionStudents.reduce((sum, s) => sum + (s.term_fee || 30000), 0);
+            
             let totalPaid = 0;
             for (const sid of studentIds) {
                 const payments = schoolData.payments.filter(p => p.student_id === sid && p.term === term && p.year === year);
                 totalPaid += payments.reduce((sum, p) => sum + (p.amount || 0), 0);
             }
-            const totalFeeExpected = sectionStudents.length * 30000;
             const totalDue = Math.max(0, totalFeeExpected - totalPaid);
             const collectionRate = totalFeeExpected === 0 ? 0 : (totalPaid / totalFeeExpected) * 100;
 
@@ -1518,7 +1518,6 @@ async function sectionFeesView() {
             </tr>
         `).join('');
 
-        // Attach detail view buttons
         document.querySelectorAll('.viewSectionDetailsBtn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const section = btn.dataset.section;
@@ -1532,15 +1531,17 @@ async function sectionFeesView() {
 
                 let detailHtml = `<h3 class="font-bold text-lg mt-4 mb-2">${section} – Student Fee Details (${term} ${year})</h3>
                     <div class="overflow-x-auto"><table class="min-w-full border">
-                        <thead class="bg-gray-50"><tr><th>Student</th><th>Reg No</th><th>Paid (₦)</th><th>Due (₦)</th><th>Status</th></tr></thead>
+                        <thead class="bg-gray-50"><tr><th>Student</th><th>Reg No</th><th>Term Fee (₦)</th><th>Paid (₦)</th><th>Due (₦)</th><th>Status</th></tr></thead>
                         <tbody>`;
                 for (const stu of sectionStudents) {
+                    const termFee = stu.term_fee || 30000;
                     const paid = schoolData.payments.filter(p => p.student_id === stu.id && p.term === term && p.year === year).reduce((s, p) => s + (p.amount || 0), 0);
-                    const due = Math.max(0, 30000 - paid);
+                    const due = Math.max(0, termFee - paid);
                     const status = due <= 0 ? 'Paid' : (paid > 0 ? 'Partial' : 'Unpaid');
                     detailHtml += `<tr>
                         <td>${escapeHtml(stu.name)}</td>
                         <td>${stu.reg_number}</td>
+                        <td>₦${termFee.toLocaleString()}</td>
                         <td>₦${paid.toLocaleString()}</td>
                         <td>₦${due.toLocaleString()}</td>
                         <td><span class="status-${status.toLowerCase()} px-2 py-0.5 rounded-full text-xs">${status}</span></td>
@@ -1563,23 +1564,19 @@ async function sectionFeesView() {
 
     loadReport();
 }
+
 async function staffPerformanceAnalysisView() {
-    // Merge staff from teachers and profiles
     let staffTeachers = schoolData.teachers.map(t => ({ id: t.id, name: t.name, role: t.role, source: 'teacher' }));
     let staffProfiles = schoolData.profiles.filter(p => p.role && p.role !== 'parent').map(p => ({ id: p.id, name: p.full_name, role: p.role, source: 'profile' }));
     let allStaff = [...staffTeachers, ...staffProfiles];
 
-    // Load appraisals
     const appraisals = schoolData.staffAppraisals;
 
-    // Compute average per staff
     const staffPerformance = allStaff.map(staff => {
         const myAppraisals = appraisals.filter(a => a.staff_id === staff.id);
-        const avgGoal = myAppraisals.length ? myAppraisals.reduce((s, a) => s + (a.goal_completion || 0), 0) / myAppraisals.length : 0;
-        const avgSkill = myAppraisals.length ? myAppraisals.reduce((s, a) => s + (a.skill_rating || 0), 0) / myAppraisals.length : 0;
-        // Overall score: average of goal% (converted to 0-5) and skill rating, then scaled to %
-        const overall = ((avgGoal / 100) * 5 + avgSkill) / 2 * 20; // out of 100
-        return { ...staff, avgGoal, avgSkill, overallScore: overall.toFixed(1), appraisalCount: myAppraisals.length };
+        const avgRating = myAppraisals.length ? myAppraisals.reduce((s, a) => s + (a.rating || 0), 0) / myAppraisals.length : 0;
+        const overallScore = (avgRating / 5) * 100;
+        return { ...staff, avgRating, overallScore: overallScore.toFixed(1), appraisalCount: myAppraisals.length };
     });
 
     let html = `
@@ -1596,7 +1593,7 @@ async function staffPerformanceAnalysisView() {
             <div class="table-container overflow-x-auto">
                 <table class="min-w-full">
                     <thead class="bg-gray-100">
-                        <tr><th>Name</th><th>Role</th><th>Avg Goal Completion (%)</th><th>Avg Skill Rating (1-5)</th><th>Overall Score (%)</th><th># Appraisals</th></tr>
+                        <tr><th>Name</th><th>Role</th><th>Average Rating (1-5)</th><th>Overall Score (%)</th><th># Appraisals</th></tr>
                     </thead>
                     <tbody id="perfTableBody"></tbody>
                 </table>
@@ -1616,13 +1613,16 @@ async function staffPerformanceAnalysisView() {
             <tr>
                 <td class="font-medium">${escapeHtml(s.name)}</td>
                 <td>${s.role}</td>
-                <td>${s.avgGoal.toFixed(1)}%</td>
-                <td>${s.avgSkill.toFixed(1)}</td>
-                <td><div class="w-full bg-gray-200 rounded-full h-2.5"><div class="bg-emerald-600 h-2.5 rounded-full" style="width: ${s.overallScore}%"></div></div>${s.overallScore}%</td>
+                <td>${s.avgRating.toFixed(1)} / 5</td>
+                <td>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-emerald-600 h-2.5 rounded-full" style="width: ${s.overallScore}%"></div>
+                    </div>
+                    ${s.overallScore}%
+                </td>
                 <td>${s.appraisalCount}</td>
             </tr>
         `).join('');
-        // Update chart (top 10 by overall score)
         const top10 = [...filtered].sort((a,b) => b.overallScore - a.overallScore).slice(0,10);
         if (window.staffPerfChart) window.staffPerfChart.destroy();
         window.staffPerfChart = new Chart(document.getElementById('staffPerformanceChart'), {
@@ -1644,9 +1644,7 @@ async function staffPerformanceAnalysisView() {
     document.getElementById('staffPerfSearch').addEventListener('input', renderTable);
     document.getElementById('refreshPerfBtn').addEventListener('click', async () => {
         await refreshData();
-        // Recompute staffPerformance (simplified – in original code this was done inside)
-        showToast("Data refreshed");
-        renderTable();
+        staffPerformanceAnalysisView();
     });
     renderTable();
 }

@@ -671,7 +671,16 @@ async function viewAppraisalsView() {
     document.getElementById('refreshAppraisalsView').addEventListener('click', async () => { await refreshData(); render(); });
     render();
 }
-
+async function saveDGAppraisal(data) {
+    const { error } = await supabaseClient.from('dg_appraisals').insert([data]);
+    if (error) {
+        showToast(error.message, true);
+        return false;
+    }
+    await refreshData();
+    showToast("DG appraisal saved");
+    return true;
+    }
 // ========== APPLICATIONS MANAGEMENT ==========
 async function applicationsViewEnhanced() {
     let apps = schoolData.applications;

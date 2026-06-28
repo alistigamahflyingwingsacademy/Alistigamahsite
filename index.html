@@ -551,7 +551,7 @@ async function studentsViewEditable() {
 // ========== UNIFIED STAFF LIST ==========
 async function unifiedStaffList() {
     let staffTeachers = schoolData.teachers.map(t => ({ id: t.id, name: t.name, role: t.role, email: t.email, assigned_class: t.assigned_class, section: t.section || '', salary: t.salary || 0, source: 'teacher' }));
-    let staffProfiles = schoolData.profiles.filter(p => p.role && p.role !== 'parent').map(p => ({ id: p.id, name: p.full_name, role: p.role, email: p.email, assigned_class: '', section: p.section || '', salary: null, source: 'profile' }));
+    let staffProfiles = schoolData.profiles.filter(p => p.role && p.role !== 'parent').map(p => ({ id: p.id, name: p.full_name, role: p.role, email: p.email, assigned_class: '', section: p.section || '', salary: 0, source: 'profile' }));
     let allStaff = [...staffTeachers, ...staffProfiles];
     let html = `<div class="card p-6"><div class="flex justify-between items-center flex-wrap gap-3 mb-5"><h2 class="text-2xl font-bold"><i class="fas fa-users text-amber-600 mr-2"></i>Staff Directory</h2><button id="openAddStaffBtn" class="apply-btn px-5 py-2 rounded-full"><i class="fas fa-plus mr-1"></i> Add Staff</button></div><div class="filter-row"><input id="staffSearch" placeholder="🔍 Search name/email" class="flex-1"><select id="staffRoleFilter"><option value="all">All Roles</option><option>dg_ceo</option><option>daf</option><option>management_committee</option><option>do</option><option>der</option><option>dprpa</option><option>headteacher</option><option>teacher</option></select><select id="staffSectionFilter"><option value="all">All Sections</option>${SECTIONS.map(s=>`<option>${s}</option>`).join('')}</select></div><div class="overflow-x-auto"><table class="min-w-full"><thead><tr><th>Name</th><th>Role</th><th>Email</th><th>Assigned Class</th><th>Section</th><th>Salary</th></tr></thead><tbody id="staffUnifiedBody"></tbody>}</div></div>`;
     document.getElementById('mainContent').innerHTML = html;
@@ -562,25 +562,12 @@ async function unifiedStaffList() {
         let sectionFilter = document.getElementById('staffSectionFilter').value;
         let filtered = allStaff.filter(s => (s.name.toLowerCase().includes(search) || (s.email||'').toLowerCase().includes(search)) && (roleFilter==='all' || s.role===roleFilter) && (sectionFilter==='all' || (s.section||'').toLowerCase().includes(sectionFilter.toLowerCase())));
         let tbody = document.getElementById('staffUnifiedBody');
-        tbody.innerHTML = filtered.map(s => {
-            // For profiles, show plain text instead of editable dropdowns/fields
-            const isTeacher = s.source === 'teacher';
-            return `<tr>
-                <td class="editable-staff" data-field="name" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.name)}</td>
-                <td class="font-semibold text-amber-700">${s.role}</td>
-                <td class="editable-staff" data-field="email" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.email)}</td>
-                <td>${isTeacher ? `<select class="staff-class-select" data-id="${s.id}" data-source="${s.source}"><option value="">— None —</option>${CLASSES.map(cls => `<option value="${cls}" ${s.assigned_class === cls ? 'selected' : ''}>${cls}</option>`).join('')}</select>` : escapeHtml(s.assigned_class || '—')}</td>
-                <td>${isTeacher ? `<select class="staff-section-select" data-id="${s.id}" data-source="${s.source}"><option value="">— None —</option>${SECTIONS.map(sec => `<option value="${sec}" ${s.section === sec ? 'selected' : ''}>${sec}</option>`).join('')}</select>` : escapeHtml(s.section || '—')}</td>
-                <td>${isTeacher ? `<span class="editable-staff salary-cell" data-field="salary" data-id="${s.id}" data-source="${s.source}" contenteditable="true">${s.salary ? '₦'+s.salary.toLocaleString() : '0'}</span>` : '—'}</td>
-            </tr>`;
-        }).join('');
+        tbody.innerHTML = filtered.map(s => `<tr><td class="editable-staff" data-field="name" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.name)}</td><td class="font-semibold text-amber-700">${s.role}</td><td class="editable-staff" data-field="email" data-id="${s.id}" data-source="${s.source}">${escapeHtml(s.email)}</td><td><select class="staff-class-select" data-id="${s.id}" data-source="${s.source}"><option value="">— None —</option>${CLASSES.map(cls => `<option value="${cls}" ${s.assigned_class === cls ? 'selected' : ''}>${cls}</option>`).join('')}</select></td><td><select class="staff-section-select" data-id="${s.id}" data-source="${s.source}"><option value="">— None —</option>${SECTIONS.map(sec => `<option value="${sec}" ${s.section === sec ? 'selected' : ''}>${sec}</option>`).join('')}</select></td><td class="editable-staff salary-cell" data-field="salary" data-id="${s.id}" data-source="${s.source}">${s.salary ? '₦'+s.salary.toLocaleString() : '0'}</td></tr>`).join('');
         attachEditable();
     }
     function attachEditable() {
-        // Only editable fields for all sources: name, email
         document.querySelectorAll('.editable-staff').forEach(cell => {
-            // Only allow editing for fields that are contenteditable
-            if (cell.getAttribute('contenteditable') !== 'true') return;
+            cell.setAttribute('contenteditable', 'true');
             cell.addEventListener('blur', async () => {
                 let id = cell.dataset.id, source = cell.dataset.source, field = cell.dataset.field;
                 let val = cell.innerText.trim();
@@ -591,16 +578,12 @@ async function unifiedStaffList() {
                     val = numVal;
                 }
                 let table = source === 'teacher' ? 'teachers' : 'profiles';
-                // Do not attempt to update salary on profiles (already skipped but just in case)
-                if (field === 'salary' && source === 'profile') return;
                 const { error } = await supabaseClient.from(table).update({ [field]: val }).eq('id', id);
                 if (error) { showToast(error.message, true); return; }
-                await refreshData();
-                unifiedStaffList();
+                await refreshData(); unifiedStaffList();
                 showToast(`${field} updated`);
             });
         });
-        // For teacher dropdowns (class and section)
         document.querySelectorAll('.staff-class-select').forEach(select => {
             select.addEventListener('change', async (e) => {
                 let id = select.dataset.id, source = select.dataset.source;
@@ -626,7 +609,8 @@ async function unifiedStaffList() {
     document.getElementById('staffSearch').addEventListener('input', render);
     document.getElementById('staffRoleFilter').addEventListener('change', render);
     document.getElementById('staffSectionFilter').addEventListener('change', render);
-        }
+}
+
 // ========== PAYROLL MODULE ==========
 async function payrollModule() {
     let staffTeachers = schoolData.teachers.map(t=>({id:t.id,name:t.name,section:t.section||'', salary: t.salary || 0}));

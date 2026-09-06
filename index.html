@@ -267,6 +267,12 @@
             display: block;
             margin: 0 auto 5px;
         }
+        .sig-canvas {
+            border: 1px solid #ccc;
+            background: white;
+            width: 100%;
+            height: 120px;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -292,6 +298,7 @@
                     <button id="publicApplyBtn" class="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded-full font-bold"><i class="fas fa-file-alt mr-2"></i>Apply for Admission</button>
                     <button id="contactBtn" class="bg-gray-700 hover:bg-gray-800 text-white px-6 py-2 rounded-full font-bold"><i class="fas fa-envelope mr-2"></i>Contact Us</button>
                     <button id="checkStatusBtn" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full font-bold"><i class="fas fa-search mr-2"></i>Check Application Status</button>
+                    <button id="printLetterBtn" class="bg-rose-700 hover:bg-rose-800 text-white px-6 py-2 rounded-full font-bold"><i class="fas fa-print mr-2"></i>Print Admission Letter (₦2000)</button>
                 </div>
             </div>
         </div>
@@ -415,7 +422,6 @@
     <!-- Full Application Modal -->
     <div id="fullApplicationModal" class="modal">
         <div class="modal-content relative" style="max-width:1100px;"><span class="close-modal-x" onclick="closeModal('fullApplicationModal')">&times;</span>
-            <!-- Corrected Arabic spelling: added missing ي -->
             <h3 class="text-2xl font-bold text-center mb-2">أكاديمية الاستقامة أجنحة التحليق</h3>
             <h4 class="text-xl font-bold text-center mb-1">AL-ISTIQAAMAH FLYING WINGS ACADEMY</h4>
             <p class="text-center text-sm mb-4">No. 10 Federal Government Layout, Samaru, Zaria | 08072550691, 07025553245, 08084816590</p>
@@ -540,12 +546,18 @@
         </div>
     </div>
 
+    <!-- ===== UPDATED Status Check Modal ===== -->
     <div id="statusCheckModal" class="modal">
-        <div class="modal-content relative" style="max-width:500px;"><span class="close-modal-x" onclick="closeModal('statusCheckModal')">&times;</span>
+        <div class="modal-content relative" style="max-width:600px;">
+            <span class="close-modal-x" onclick="closeModal('statusCheckModal')">&times;</span>
             <h3 class="text-xl font-bold mb-3">Check Application Status</h3>
-            <input type="email" id="statusEmail" placeholder="Enter your email address" class="border p-3 w-full rounded-xl mb-4" />
-            <button id="checkStatusSubmit" class="apply-btn w-full py-2 rounded-xl">Check Status</button>
-            <div id="statusResult" class="mt-4 text-center"></div>
+            <div class="space-y-3">
+                <input type="text" id="statusSearchName" placeholder="Full Name (or part of it)" class="border p-3 w-full rounded-xl">
+                <input type="text" id="statusSearchPhone" placeholder="Phone Number" class="border p-3 w-full rounded-xl">
+                <input type="email" id="statusSearchEmail" placeholder="Email Address" class="border p-3 w-full rounded-xl">
+                <button id="checkStatusSubmit" class="apply-btn w-full py-2 rounded-xl">Check Status</button>
+            </div>
+            <div id="statusResult" class="mt-4"></div>
         </div>
     </div>
 
@@ -596,9 +608,9 @@
         </div>
     </div>
 
-    <!-- Accept Details Modal with Signature Pad -->
+    <!-- ===== UPDATED Accept Details Modal (no stamp upload) ===== -->
     <div id="acceptDetailsModal" class="modal">
-        <div class="modal-content relative" style="max-width:700px;"><span class="close-modal-x" onclick="closeModal('acceptDetailsModal')">&times;</span>
+        <div class="modal-content relative" style="max-width:750px;"><span class="close-modal-x" onclick="closeModal('acceptDetailsModal')">&times;</span>
             <h3 class="text-xl font-bold mb-3">Accept Application – Official Use Only</h3>
             <form id="acceptDetailsForm">
                 <input type="hidden" id="acceptAppId" />
@@ -609,16 +621,28 @@
                     <div><label>Date of Admission:</label><input type="date" id="acceptAdmissionDate" class="border p-2 w-full rounded" /></div>
                 </div>
                 <div class="mb-2"><label>Interview Remarks:</label><textarea id="acceptInterviewRemarks" rows="2" class="border p-2 w-full rounded"></textarea></div>
+                <!-- Head Master Signature -->
                 <div class="border rounded p-3 mb-3 bg-gray-50">
-                    <label class="block font-bold mb-2">Authorized Signature (Draw below):</label>
-                    <canvas id="signatureCanvas" width="400" height="150" style="border:1px solid #ccc; background:white; width:100%; height:150px;"></canvas>
+                    <label class="block font-bold mb-2">Head Master's Signature (Draw below):</label>
+                    <canvas id="signatureCanvas" class="sig-canvas"></canvas>
                     <div class="flex gap-2 mt-2">
                         <button type="button" id="clearSignatureBtn" class="bg-gray-500 text-white px-3 py-1 rounded text-sm">Clear</button>
                         <button type="button" id="undoSignatureBtn" class="bg-gray-500 text-white px-3 py-1 rounded text-sm">Undo</button>
                     </div>
                     <input type="hidden" id="acceptSignatureData" value="" />
+                    <div class="mt-2"><label>Head Master's Name (Printed):</label><input id="acceptSignature" class="border p-2 w-full rounded" /></div>
                 </div>
-                <div class="mb-2"><label>Authorized Name (Printed):</label><input id="acceptSignature" class="border p-2 w-full rounded" /></div>
+                <!-- Register Signature -->
+                <div class="border rounded p-3 mb-3 bg-gray-50">
+                    <label class="block font-bold mb-2">Register's Signature (Draw below):</label>
+                    <canvas id="registerSignatureCanvas" class="sig-canvas"></canvas>
+                    <div class="flex gap-2 mt-2">
+                        <button type="button" id="clearRegisterSigBtn" class="bg-gray-500 text-white px-3 py-1 rounded text-sm">Clear</button>
+                        <button type="button" id="undoRegisterSigBtn" class="bg-gray-500 text-white px-3 py-1 rounded text-sm">Undo</button>
+                    </div>
+                    <input type="hidden" id="registerSignatureData" value="" />
+                    <div class="mt-2"><label>Register's Name (Printed):</label><input id="registerSignatureName" class="border p-2 w-full rounded" placeholder="e.g. Mr. Ahmed" /></div>
+                </div>
                 <button type="submit" class="apply-btn w-full py-2 rounded">Accept & Save</button>
             </form>
         </div>
@@ -655,6 +679,48 @@
             <h3 class="text-xl font-bold">Send Acceptance</h3>
             <textarea id="feedbackMessage" rows="3" class="border w-full p-3 rounded-xl my-2"></textarea>
             <button id="confirmAcceptBtn" class="apply-btn w-full py-2 rounded-xl">Confirm & Send</button>
+        </div>
+    </div>
+
+    <!-- Edit Grade Modal -->
+    <div id="editGradeModal" class="modal">
+        <div class="modal-content relative" style="max-width:500px;">
+            <span class="close-modal-x" onclick="closeModal('editGradeModal')">&times;</span>
+            <h3 class="text-xl font-bold mb-3">Edit Subject Grade</h3>
+            <form id="editGradeForm">
+                <input type="hidden" id="editGradeId" />
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-sm font-medium">Subject</label>
+                        <input type="text" id="editSubject" class="border p-2 w-full rounded" disabled />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">CA1 (0-20)</label>
+                        <input type="number" id="editCa1" min="0" max="20" class="border p-2 w-full rounded" required />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">CA2 (0-20)</label>
+                        <input type="number" id="editCa2" min="0" max="20" class="border p-2 w-full rounded" required />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Exam (0-60)</label>
+                        <input type="number" id="editExam" min="0" max="60" class="border p-2 w-full rounded" required />
+                    </div>
+                    <button type="submit" class="apply-btn w-full py-2 rounded">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== NEW: Print Admission Letter Payment Modal ===== -->
+    <div id="printLetterModal" class="modal">
+        <div class="modal-content relative" style="max-width:500px;">
+            <span class="close-modal-x" onclick="closeModal('printLetterModal')">&times;</span>
+            <h3 class="text-xl font-bold mb-3">Print Admission Letter</h3>
+            <p class="text-sm text-gray-600 mb-4">Enter your admission number to pay ₦2,000 and get your admission letter.</p>
+            <input type="text" id="admissionNumberInput" placeholder="Admission Number" class="border p-3 w-full rounded-xl mb-3" />
+            <button id="payForLetterBtn" class="apply-btn w-full py-2 rounded-xl">Pay ₦2,000 & Get Letter</button>
+            <div id="letterPaymentResult" class="mt-4"></div>
         </div>
     </div>
 
@@ -740,7 +806,9 @@
         let carouselSlides = [];
         let pendingPaymentAction = null;
         let signaturePad = null;
+        let registerSignaturePad = null;
         let directorChart = null;
+        let cachedStampDataUrl = null;
 
         // ============================================================
         //  ROLE MENUS — "Apps" changed to "Applicant"
@@ -2552,7 +2620,7 @@
                     btn.addEventListener('click', function() {
                         document.getElementById('acceptAppId').value = this.dataset.id;
                         document.getElementById('acceptDetailsModal').style.display = 'flex';
-                        setTimeout(initSignaturePad, 200);
+                        setTimeout(initSignaturePads, 200);
                     });
                 });
                 document.querySelectorAll('.reject-app').forEach(function(btn) {
@@ -2611,7 +2679,7 @@
         }
 
         // ============================================================
-        //  ADMISSION LETTER (WITH LOGO)
+        //  ADMISSION LETTER — ENHANCED: MAROON BORDER, STATIC STAMP (loaded via fetch), 2 SIGNATURES
         // ============================================================
         function printAdmissionLetter(application) {
             var official = application.official_data || {};
@@ -2624,39 +2692,312 @@
             var admissionNumber = official.admission_number || 'Pending';
             var admissionDate = official.admission_date || new Date().toLocaleDateString();
             var passportPhotoUrl = formData.attachments?.attachment_passport_photos || null;
-            var signatureImage = official.authorized_signature_image || null;
-            var signatoryName = official.authorized_signature_name || 'Authorized Officer';
-            var letterHtml =
-                '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Admission Letter - ' + fullName +
-                '</title><style>body{font-family:"Times New Roman",serif;margin:0;padding:0.5in;}.letter{max-width:800px;margin:0 auto;border:1px solid #ccc;padding:20px;}.header{text-align:center;margin-bottom:20px;}.header img{max-height:70px;display:block;margin:0 auto 5px;}.header h1{font-size:24px;margin:0;}.header h2{font-size:18px;margin:5px 0;}.header p{margin:5px 0;font-size:12px;}.motto{font-style:italic;font-size:14px;}.ref{text-align:right;margin-bottom:20px;}.student-details{border:1px solid #000;padding:10px;margin:20px 0;width:70%;}.student-details td{padding:5px;}.passport-photo{float:right;width:120px;height:140px;border:1px solid #000;text-align:center;margin-left:20px;background:#f9f9f9;display:flex;align-items:center;justify-content:center;overflow:hidden;}.passport-photo img{width:100%;height:100%;object-fit:cover;}.passport-photo .placeholder{font-size:12px;color:#999;text-align:center;}.signatures{margin-top:40px;display:flex;justify-content:space-between;}.signature-line{text-align:center;width:200px;}.signature-image{height:60px;margin-bottom:5px;}.signature-image img{max-height:60px;max-width:180px;}.footer{margin-top:30px;font-size:10px;text-align:center;}.clearfix::after{content:"";clear:both;display:table;}@media print{.no-print{display:none;}}</style></head><body><div class="letter"><div class="header"><img src="logo.jpg" alt="School Logo" onerror="this.style.display=\'none\'"><h1>أكاديمية الاستقامة أجنحة التحليق</h1><h2>AL-ISTIQAAMAH FLYING WINGS ACADEMY</h2><p>No. 10 Federal Government Layout, Samaru, Zaria, Nigeria.</p><p class="motto">"The best of mankind is the most beneficial to humanity"</p><p>Email: alistiqaamah.fwac@gmail.com | Phone: +2348084816590, +2348067990749</p></div><div class="ref"><strong>Ref: AFWAN/AC/01/ADM NO.</strong> ' +
-                admissionNumber +
-                '</div><div class="content clearfix"><div class="passport-photo">' +
-                (passportPhotoUrl ?
-                    '<img src="' + passportPhotoUrl +
-                    '" alt="Passport Photo" onerror="this.style.display=\'none\'; this.parentElement.innerHTML=\'<div class=\\\'placeholder\\\'>[Passport<br>Photo]</div>\';">' :
-                    '<div class="placeholder">[Passport<br>Photo]</div>') +
-                '</div><table class="student-details"><tr><td><strong>Name:</strong></td><td>' + escapeHtml(
-                    fullName) +
-                '</td></tr><tr><td><strong>Gender:</strong></td><td>' + escapeHtml(gender) +
-                '</td></tr><tr><td><strong>State of Origin:</strong></td><td>' + escapeHtml(state) +
-                '</td></tr><tr><td><strong>Admitted Class:</strong></td><td>' + escapeHtml(category) +
-                '</td></tr></table><p style="margin-top:30px;">I write to inform you that you have been offered <strong>provisional admission</strong> as indicated above, subject to confirmation of all registration requirements. Lost admission letters will be reprinted at the cost of N500.00. Failure to register in two week\'s time may lead to withdrawal of the admission.</p></div><div class="signatures"><div class="signature-line">' +
-                (signatureImage ?
-                    '<div class="signature-image"><img src="' + signatureImage +
-                    '" alt="Signature"></div>' : '<div style="height:40px;"></div>') +
-                '<div>' + escapeHtml(signatoryName) +
-                '</div><div style="border-top:1px solid #000; padding-top:5px;">توقيع عميد المرسلة<br>Head Master\'s Signature</div></div><div class="signature-line"><div style="height:40px;"></div><div>School Stamp</div><div style="border-top:1px solid #000; padding-top:5px;">خاتم المرسلة<br>School Stamp</div></div><div class="signature-line"><div style="height:40px;"></div><div>Section Registrar</div><div style="border-top:1px solid #000; padding-top:5px;">توقيع مسجل القسم<br>Section Registrar\'s Signature</div></div></div><div class="footer">Date of Issue: ' +
-                new Date().toLocaleDateString() + ' | Admission Date: ' + admissionDate +
-                '</div></div><div class="no-print" style="text-align:center;margin-top:20px;"><button onclick="window.print();">Print Letter</button><button onclick="window.close();">Close</button></div></body></html>';
+            var headSignatureImage = official.authorized_signature_image || null;
+            var headSignatureName = official.authorized_signature_name || 'Authorized Officer';
+            var registerSignatureImage = official.register_signature_image || null;
+            var registerSignatureName = official.register_signature_name || 'Register';
+
+            // Use cached stamp data URL if available, else fallback to file path
+            var stampImage = cachedStampDataUrl || 'stamp.png';
+
+            var letterHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Admission Letter - ${fullName}</title>
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body {
+                    font-family: 'Times New Roman', serif;
+                    background: #f4f1ea;
+                    padding: 40px 20px;
+                    display: flex;
+                    justify-content: center;
+                }
+                .letter {
+                    max-width: 1000px;
+                    width: 100%;
+                    background: #ffffff;
+                    border: 12px double #800000;
+                    border-radius: 30px;
+                    padding: 30px 40px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+                    position: relative;
+                }
+                .letter::before {
+                    content: '';
+                    position: absolute;
+                    top: 12px; left: 12px; right: 12px; bottom: 12px;
+                    border: 3px solid #a52a2a;
+                    border-radius: 25px;
+                    pointer-events: none;
+                }
+                .letter::after {
+                    content: '✦';
+                    position: absolute;
+                    top: 18px;
+                    left: 30px;
+                    font-size: 24px;
+                    color: #800000;
+                    opacity: 0.3;
+                }
+                .header {
+                    text-align: center;
+                    border-bottom: 3px solid #800000;
+                    padding-bottom: 15px;
+                    margin-bottom: 20px;
+                }
+                .header img {
+                    max-height: 80px;
+                    display: block;
+                    margin: 0 auto 8px;
+                    border-radius: 50%;
+                    border: 2px solid #800000;
+                }
+                .header h1 {
+                    font-size: 28px;
+                    color: #1a3c34;
+                    letter-spacing: 1px;
+                    margin: 0;
+                }
+                .header h2 {
+                    font-size: 20px;
+                    color: #800000;
+                    margin: 2px 0;
+                }
+                .header .motto {
+                    font-style: italic;
+                    color: #5a5a5a;
+                    font-size: 14px;
+                }
+                .header .contact {
+                    font-size: 12px;
+                    color: #444;
+                }
+                .ref {
+                    text-align: right;
+                    margin-bottom: 15px;
+                    font-size: 14px;
+                    color: #1a3c34;
+                }
+                .content {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 20px;
+                    margin: 20px 0;
+                }
+                .photo {
+                    flex: 0 0 130px;
+                    height: 150px;
+                    border: 3px solid #800000;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    background: #f9f6ef;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .photo img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+                .photo .placeholder {
+                    font-size: 12px;
+                    color: #999;
+                    text-align: center;
+                }
+                .details {
+                    flex: 1;
+                    min-width: 250px;
+                }
+                .details table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                .details td {
+                    padding: 6px 10px;
+                    border-bottom: 1px dashed #ddd;
+                }
+                .details td:first-child {
+                    font-weight: bold;
+                    width: 40%;
+                    color: #1a3c34;
+                }
+                .body-text {
+                    margin: 20px 0 30px;
+                    line-height: 1.8;
+                    text-align: justify;
+                }
+                .body-text strong {
+                    color: #800000;
+                }
+                .signatures {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 30px;
+                    border-top: 3px double #800000;
+                    padding-top: 20px;
+                }
+                .signature-box {
+                    text-align: center;
+                    width: 30%;
+                }
+                .signature-box .sig-image {
+                    height: 60px;
+                    margin-bottom: 5px;
+                }
+                .signature-box .sig-image img {
+                    max-height: 60px;
+                    max-width: 150px;
+                }
+                .signature-box .label {
+                    font-size: 12px;
+                    color: #555;
+                    border-top: 1px solid #aaa;
+                    padding-top: 5px;
+                    margin-top: 5px;
+                }
+                .stamp-container {
+                    margin-top: 10px;
+                    text-align: center;
+                }
+                .stamp-container img {
+                    max-height: 80px;
+                    border: 2px solid #800000;
+                    border-radius: 10px;
+                    padding: 5px;
+                    background: white;
+                }
+                .footer {
+                    margin-top: 20px;
+                    text-align: center;
+                    font-size: 11px;
+                    color: #777;
+                    border-top: 1px solid #e0d5c0;
+                    padding-top: 10px;
+                }
+                .no-print { text-align: center; margin-top: 20px; }
+                .no-print button {
+                    background: #800000;
+                    color: white;
+                    border: none;
+                    padding: 10px 25px;
+                    border-radius: 30px;
+                    font-size: 16px;
+                    cursor: pointer;
+                    margin: 0 8px;
+                }
+                .no-print button:hover { background: #a52a2a; }
+                @media print {
+                    body { background: white; padding: 0; }
+                    .letter { border: 6px double #800000; box-shadow: none; }
+                    .no-print { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="letter">
+                <div class="header">
+                    <img src="logo.jpg" alt="School Logo" onerror="this.style.display='none'">
+                    <h1>أكاديمية الاستقامة أجنحة التحليق</h1>
+                    <h2>AL-ISTIQAAMAH FLYING WINGS ACADEMY</h2>
+                    <p class="motto">"The best of mankind is the most beneficial to humanity"</p>
+                    <p class="contact">No. 10 Federal Government Layout, Samaru, Zaria, Nigeria.<br>
+                    Email: alistiqaamah.fwac@gmail.com | Phone: +2348084816590, +2348067990749</p>
+                </div>
+
+                <div class="ref"><strong>Ref: AFWAN/AC/01/ADM NO.</strong> ${admissionNumber}</div>
+
+                <div class="content">
+                    <div class="photo">
+                        ${passportPhotoUrl ? `<img src="${passportPhotoUrl}" alt="Passport" onerror="this.parentElement.innerHTML='<div class=\\'placeholder\\'>[Passport<br>Photo]</div>';">` : '<div class="placeholder">[Passport<br>Photo]</div>'}
+                    </div>
+                    <div class="details">
+                        <table>
+                            <tr><td>Name:</td><td>${escapeHtml(fullName)}</td></tr>
+                            <tr><td>Gender:</td><td>${escapeHtml(gender)}</td></tr>
+                            <tr><td>State of Origin:</td><td>${escapeHtml(state)}</td></tr>
+                            <tr><td>Admitted Class:</td><td>${escapeHtml(category)}</td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="body-text">
+                    I write to inform you that you have been offered <strong>provisional admission</strong> as indicated above,
+                    subject to confirmation of all registration requirements. Lost admission letters will be reprinted at the cost of N500.00.
+                    Failure to register in two week's time may lead to withdrawal of the admission.
+                </div>
+
+                <div class="signatures">
+                    <div class="signature-box">
+                        ${headSignatureImage ? `<div class="sig-image"><img src="${headSignatureImage}" alt="Signature"></div>` : '<div style="height:40px;"></div>'}
+                        <div><strong>${escapeHtml(headSignatureName)}</strong></div>
+                        <div class="label">توقيع عميد المرسلة<br>Head Master's Signature</div>
+                    </div>
+                    <div class="signature-box">
+                        <div class="stamp-container">
+                            <img src="${stampImage}" alt="School Stamp" onerror="this.style.display='none'">
+                        </div>
+                        <div>School Stamp</div>
+                        <div class="label">خاتم المرسلة<br>School Stamp</div>
+                    </div>
+                    <div class="signature-box">
+                        ${registerSignatureImage ? `<div class="sig-image"><img src="${registerSignatureImage}" alt="Signature"></div>` : '<div style="height:40px;"></div>'}
+                        <div><strong>${escapeHtml(registerSignatureName)}</strong></div>
+                        <div class="label">توقيع المسجل<br>Register's Signature</div>
+                    </div>
+                </div>
+
+                <div class="footer">
+                    Date of Issue: ${new Date().toLocaleDateString()} &nbsp;|&nbsp; Admission Date: ${admissionDate}
+                </div>
+            </div>
+
+            <div class="no-print">
+                <button onclick="window.print();">🖨️ Print Letter</button>
+                <button onclick="window.close();">❌ Close</button>
+            </div>
+        </body>
+        </html>`;
+
             var win = window.open();
             win.document.write(letterHtml);
             win.document.close();
         }
 
         // ============================================================
-        //  SIGNATURE PAD
+        //  LOAD STAMP AS DATA URL (automatically from stamp.png)
         // ============================================================
-        function initSignaturePad() {
+        async function loadStamp() {
+            try {
+                const response = await fetch('stamp.png');
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const blob = await response.blob();
+                const reader = new FileReader();
+                return new Promise((resolve) => {
+                    reader.onload = function() {
+                        cachedStampDataUrl = reader.result;
+                        resolve();
+                    };
+                    reader.onerror = function() {
+                        console.warn('Failed to read stamp file');
+                        resolve();
+                    };
+                    reader.readAsDataURL(blob);
+                });
+            } catch (e) {
+                console.warn('Stamp not loaded (will use fallback)', e);
+                cachedStampDataUrl = null;
+            }
+        }
+
+        // ============================================================
+        //  INITIALIZE SIGNATURE PADS (two pads)
+        // ============================================================
+        function initSignaturePads() {
+            // Head Master signature
             var canvas = document.getElementById('signatureCanvas');
             if (!canvas) return;
             if (signaturePad) signaturePad.clear();
@@ -2667,6 +3008,20 @@
             canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext('2d').scale(ratio, ratio);
             signaturePad.clear();
+
+            // Register signature
+            var canvasReg = document.getElementById('registerSignatureCanvas');
+            if (!canvasReg) return;
+            if (registerSignaturePad) registerSignaturePad.clear();
+            registerSignaturePad = new SignaturePad(canvasReg, { backgroundColor: 'white', penColor: 'black',
+                minWidth: 1, maxWidth: 2 });
+            var ratioReg = Math.max(window.devicePixelRatio || 1, 1);
+            canvasReg.width = canvasReg.offsetWidth * ratioReg;
+            canvasReg.height = canvasReg.offsetHeight * ratioReg;
+            canvasReg.getContext('2d').scale(ratioReg, ratioReg);
+            registerSignaturePad.clear();
+
+            // Clear/Undo buttons
             document.getElementById('clearSignatureBtn')?.addEventListener('click', function() { signaturePad
                     .clear(); });
             document.getElementById('undoSignatureBtn')?.addEventListener('click', function() {
@@ -2674,15 +3029,31 @@
                 if (data) { data.pop();
                     signaturePad.fromData(data); }
             });
+            document.getElementById('clearRegisterSigBtn')?.addEventListener('click', function() {
+                registerSignaturePad.clear();
+            });
+            document.getElementById('undoRegisterSigBtn')?.addEventListener('click', function() {
+                var data = registerSignaturePad.toData();
+                if (data) { data.pop();
+                    registerSignaturePad.fromData(data); }
+            });
         }
 
+        // ============================================================
+        //  ACCEPT DETAILS FORM SUBMIT (save both signatures, no stamp upload)
+        // ============================================================
         document.getElementById('acceptDetailsForm')?.addEventListener('submit', async function(e) {
             e.preventDefault();
             var appId = document.getElementById('acceptAppId').value;
-            var signatureDataURL = '';
+            var headSigData = '';
+            var regSigData = '';
             if (signaturePad && !signaturePad.isEmpty()) {
-                signatureDataURL = signaturePad.toDataURL('image/png');
+                headSigData = signaturePad.toDataURL('image/png');
             }
+            if (registerSignaturePad && !registerSignaturePad.isEmpty()) {
+                regSigData = registerSignaturePad.toDataURL('image/png');
+            }
+
             var officialData = {
                 entrance_score: document.getElementById('acceptEntranceScore').value,
                 interview_remarks: document.getElementById('acceptInterviewRemarks').value,
@@ -2690,7 +3061,9 @@
                 admission_number: document.getElementById('acceptAdmissionNumber').value,
                 admission_date: document.getElementById('acceptAdmissionDate').value,
                 authorized_signature_name: document.getElementById('acceptSignature').value,
-                authorized_signature_image: signatureDataURL,
+                authorized_signature_image: headSigData,
+                register_signature_name: document.getElementById('registerSignatureName').value,
+                register_signature_image: regSigData,
                 status: 'accepted'
             };
             showLoading(true);
@@ -3213,6 +3586,9 @@
             return true;
         }
 
+        // ============================================================
+        //  TEACHER RESULT ENTRY – FIX: remove 'total' from INSERT + EDIT functionality
+        // ============================================================
         async function teacherResultEntry() {
             var students = schoolData.students,
                 currentYear = new Date().getFullYear();
@@ -3259,9 +3635,13 @@
                             '</span><span>CA1:' + r.ca1 + ' CA2:' + r.ca2 + ' Exam:' + r.exam +
                             ' Total:' + r.total +
                             '</span><button class="delete-subject-btn text-red-500" data-id="' +
-                            r.id + '">✕</button></div>';
+                            r.id + '">✕</button> <button class="edit-subject-btn text-blue-500 hover:text-blue-700" data-id="' +
+                            r.id + '" data-subject="' + escapeHtml(r.subject) + '" data-ca1="' +
+                            r.ca1 + '" data-ca2="' + r.ca2 + '" data-exam="' + r.exam +
+                            '">📝 Edit</button></div>';
                     }).join('');
                 }
+                // Attach delete events
                 document.querySelectorAll('.delete-subject-btn').forEach(function(btn) {
                     btn.addEventListener('click', async function() {
                         await supabaseClient.from('results').delete().eq('id', this.dataset
@@ -3269,6 +3649,18 @@
                         await refreshData();
                         loadSubjects(sid);
                         showToast('Subject deleted');
+                    });
+                });
+                // Attach edit events
+                document.querySelectorAll('.edit-subject-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        // Populate the edit modal with current values
+                        document.getElementById('editGradeId').value = this.dataset.id;
+                        document.getElementById('editSubject').value = this.dataset.subject;
+                        document.getElementById('editCa1').value = this.dataset.ca1;
+                        document.getElementById('editCa2').value = this.dataset.ca2;
+                        document.getElementById('editExam').value = this.dataset.exam;
+                        document.getElementById('editGradeModal').style.display = 'flex';
                     });
                 });
             }
@@ -3286,7 +3678,6 @@
                 }
                 var term = document.getElementById('teacherTerm').value;
                 var year = parseInt(document.getElementById('teacherYear').value);
-                var total = ca1 + ca2 + exam;
                 showLoading(true);
                 try {
                     var existing = schoolData.results.find(function(r) { return r.student_id == sid &&
@@ -3299,8 +3690,7 @@
                         subject: subject,
                         ca1: ca1,
                         ca2: ca2,
-                        exam: exam,
-                        total: total
+                        exam: exam
                     }]);
                     if (error) throw error;
                     await refreshData();
@@ -3323,6 +3713,35 @@
             document.getElementById('teacherClassFilter').addEventListener('change', filterStudents);
             document.getElementById('teacherSearch').addEventListener('input', filterStudents);
             filterStudents();
+
+            // ========== Edit grade form submission ==========
+            document.getElementById('editGradeForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                var id = document.getElementById('editGradeId').value;
+                var ca1 = parseInt(document.getElementById('editCa1').value) || 0;
+                var ca2 = parseInt(document.getElementById('editCa2').value) || 0;
+                var exam = parseInt(document.getElementById('editExam').value) || 0;
+                if (ca1 < 0 || ca1 > 20 || ca2 < 0 || ca2 > 20 || exam < 0 || exam > 60) {
+                    showToast('Invalid marks: CA (0-20), Exam (0-60)', true);
+                    return;
+                }
+                showLoading(true);
+                try {
+                    // Update only ca1, ca2, exam – total will auto-update
+                    var { error } = await supabaseClient.from('results').update({
+                        ca1: ca1,
+                        ca2: ca2,
+                        exam: exam
+                    }).eq('id', id);
+                    if (error) throw error;
+                    await refreshData();
+                    showToast('Grade updated successfully');
+                    closeModal('editGradeModal');
+                    // Reload the current student's subjects
+                    var sid = document.getElementById('teacherStudentSelect').value;
+                    if (sid) loadSubjects(sid);
+                } catch (err) { showToast(err.message, true); } finally { showLoading(false); }
+            });
         }
 
         // ============================================================
@@ -4091,9 +4510,121 @@
         });
 
         // ============================================================
+        //  ENHANCED STATUS CHECK — Search by name, phone, email; show all for same email
+        // ============================================================
+        document.getElementById('checkStatusSubmit').addEventListener('click', async function() {
+            var name = document.getElementById('statusSearchName').value.trim().toLowerCase();
+            var phone = document.getElementById('statusSearchPhone').value.trim();
+            var email = document.getElementById('statusSearchEmail').value.trim().toLowerCase();
+            var resultDiv = document.getElementById('statusResult');
+
+            if (!name && !phone && !email) {
+                resultDiv.innerHTML = '<span class="text-red-600">Please enter at least one search criterion (Name, Phone, or Email).</span>';
+                return;
+            }
+
+            var applications = schoolData.applications;
+            var matches = applications.filter(function(app) {
+                var appName = (app.full_name || '').toLowerCase();
+                var appPhone = (app.form_data && app.form_data.parent_phone) || '';
+                var appEmail = (app.email || '').toLowerCase();
+
+                var nameMatch = name ? appName.includes(name) : false;
+                var phoneMatch = phone ? appPhone.includes(phone) : false;
+                var emailMatch = email ? appEmail.includes(email) : false;
+
+                if (email) {
+                    return appEmail === email;
+                }
+                return (name && nameMatch) || (phone && phoneMatch);
+            });
+
+            if (matches.length === 0) {
+                resultDiv.innerHTML = '<span class="text-red-600">No applications found matching your criteria.</span>';
+                return;
+            }
+
+            var html = '<div class="space-y-3">';
+            matches.forEach(function(app, index) {
+                var status = app.status || 'pending';
+                var statusColor = status === 'accepted' ? 'bg-green-100 text-green-800' :
+                    status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800';
+                html += `
+                    <div class="border rounded-xl p-4 bg-white shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <strong>${escapeHtml(app.full_name || 'N/A')}</strong>
+                                <span class="inline-block px-2 py-1 rounded-full text-xs font-semibold ${statusColor} ml-2">${status.toUpperCase()}</span>
+                            </div>
+                            <span class="text-sm text-gray-500">#${index+1}</span>
+                        </div>
+                        <div class="text-sm mt-1">
+                            <span><i class="fas fa-envelope"></i> ${escapeHtml(app.email || '—')}</span>
+                            ${app.form_data && app.form_data.parent_phone ? `<span class="ml-3"><i class="fas fa-phone"></i> ${escapeHtml(app.form_data.parent_phone)}</span>` : ''}
+                        </div>
+                        <div class="text-sm text-gray-600 mt-1">
+                            Desired Class: ${escapeHtml(app.desired_class || '—')} &nbsp;|&nbsp; Applied: ${new Date(app.created_at).toLocaleDateString()}
+                        </div>
+                        ${app.status === 'accepted' && app.official_data ? `
+                            <div class="mt-2 text-sm text-green-700">
+                                Admission No: ${escapeHtml(app.official_data.admission_number || '—')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            html += '</div>';
+            resultDiv.innerHTML = html;
+        });
+
+        // ============================================================
+        //  NEW: PRINT ADMISSION LETTER (PAY N2000)
+        // ============================================================
+        document.getElementById('printLetterBtn').addEventListener('click', function() {
+            document.getElementById('printLetterModal').style.display = 'flex';
+        });
+
+        document.getElementById('payForLetterBtn').addEventListener('click', function() {
+            var admissionNumber = document.getElementById('admissionNumberInput').value.trim();
+            if (!admissionNumber) {
+                showToast('Please enter your admission number', true);
+                return;
+            }
+
+            // Find application with this admission number
+            var app = schoolData.applications.find(function(a) {
+                return a.official_data && a.official_data.admission_number === admissionNumber;
+            });
+
+            if (!app) {
+                showToast('No application found with that admission number.', true);
+                return;
+            }
+
+            // Paystack payment for N2000
+            var handler = PaystackPop.setup({
+                key: PAYSTACK_PUBLIC_KEY,
+                email: app.email || 'applicant@example.com',
+                amount: 2000 * 100, // N2000 in kobo
+                callback: function(response) {
+                    showToast('Payment successful! Your admission letter is ready.', false);
+                    closeModal('printLetterModal');
+                    printAdmissionLetter(app);
+                },
+                onClose: function() {
+                    showToast('Payment cancelled.', true);
+                }
+            });
+            handler.openIframe();
+        });
+
+        // ============================================================
         //  DOMContentLoaded
         // ============================================================
         document.addEventListener('DOMContentLoaded', async function() {
+            // Load the stamp first (then proceed)
+            await loadStamp();
+
             await refreshData();
             renderLandingCarouselAndAnnouncement();
 
@@ -4157,20 +4688,6 @@
             document.getElementById('prevSlide').addEventListener('click', prevSlide);
             document.getElementById('nextSlide').addEventListener('click', nextSlide);
 
-            document.getElementById('checkStatusSubmit').addEventListener('click', async function() {
-                var email = document.getElementById('statusEmail').value.trim();
-                if (!email) { showToast('Enter email', true); return; }
-                var app = schoolData.applications.find(function(a) { return a.email === email; });
-                var resultDiv = document.getElementById('statusResult');
-                if (!app) { resultDiv.innerHTML =
-                        '<span class="text-red-600">No application found with this email.</span>'; return; }
-                resultDiv.innerHTML = '<div class="p-3 rounded-lg ' + (app.status === 'accepted' ?
-                    'bg-green-100' : app.status === 'rejected' ? 'bg-red-100' : 'bg-yellow-100') +
-                    '">Status: <strong>' + (app.status?.toUpperCase() || 'PENDING') +
-                    '</strong><br>Full Name: ' + escapeHtml(app.full_name) +
-                    '<br>Desired Class: ' + app.desired_class + '</div>';
-            });
-
             setInterval(function() {
                 var d = new Date();
                 document.getElementById('liveTime').innerText = d.toLocaleTimeString();
@@ -4179,4 +4696,4 @@
         });
     </script>
 </body>
-                </html>
+</html>

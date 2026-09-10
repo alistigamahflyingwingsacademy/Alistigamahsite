@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,9 +35,7 @@
         .close-modal-x:hover { color: black; }
         .dot { height: 12px; width: 12px; background: #bbb; border-radius: 50%; display: inline-block; margin: 0 4px; cursor: pointer; transition: 0.2s; }
         .dot.active { background: #f59e0b; transform: scale(1.2); }
-        /* FIX: was scoped to #receipt-print-area which no longer exists -> made printing the whole app blank. */
         @media print { .no-print { display: none !important; } }
-        /* FIX: shared pill styling so partial/unpaid look identical to paid */
         .status-paid, .status-partial, .status-unpaid {
             padding: 2px 10px; border-radius: 999px; font-size: 0.8rem; display: inline-block; white-space: nowrap;
         }
@@ -163,12 +160,6 @@
 
     <!-- ===== MODALS ===== -->
 
-    <!-- ============================================================
-         FIX #1 — THESE FOUR MODALS WERE COMPLETELY MISSING.
-         The landing-page buttons called getElementById(...).style.display
-         on non-existent elements -> TypeError on click.
-         ============================================================ -->
-
     <!-- Staff / Admin Login Modal -->
     <div id="loginModal" class="modal">
         <div class="modal-content relative" style="max-width:450px;">
@@ -245,7 +236,7 @@
         </div>
     </div>
 
-    <!-- Applicant Authentication Modal (Login/Register) -->
+    <!-- Applicant Authentication Modal -->
     <div id="applicantAuthModal" class="modal">
         <div class="modal-content relative" style="max-width:450px;">
             <span class="close-modal-x" onclick="closeModal('applicantAuthModal')">&times;</span>
@@ -575,8 +566,6 @@
     <script>
         // ============================================================
         //  SUPABASE CONFIG
-        //  NOTE: Replace the Paystack key below with your live/test key.
-        //  The value shipped here is a placeholder and will fail.
         // ============================================================
         const SUPABASE_URL = 'https://kabqdeulwpfftbtwwouw.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_OIE7KFQ3quev7pQgKsvFXg_ralf9SMM';
@@ -644,7 +633,6 @@
                 'Staff Appraisal', 'Announce', 'Slides', 'Profile'],
             der: ['Dashboard', 'Enroll', 'Students', 'Unified Staff', 'Academic performance', 'Sections analysis',
                 'Staff Appraisal', 'Announce', 'Slides', 'Profile'],
-            // FIX #2: was 'Section analysis' (singular) which does not exist in viewMap -> fell back to Dashboard.
             dprpa: ['Dashboard', 'Enroll', 'Students', 'Academic performance', 'Sections analysis',
                 'Download Records', 'Staff Appraisal', 'Announce', 'Slides', 'Profile'],
             parent: ['Result', 'Fee payment', 'Payment history'],
@@ -785,7 +773,7 @@
                 profile = newProfile;
             }
             currentUser = { id: profile.id, full_name: profile.full_name, role: profile.role, source: 'profile',
-                avatar_url: profile.avatar_url || '' };
+                email: profile.email || email, avatar_url: profile.avatar_url || '' };
             await refreshData();
             closeModal('loginModal');
             document.getElementById('landingPage').style.display = 'none';
@@ -923,7 +911,6 @@
                 return;
             }
 
-            // Upload attachments first (before payment so we don't charge then fail)
             var fileAttachments = {};
             showLoading(true);
             try {
@@ -1883,7 +1870,6 @@
                 document.getElementById('reportCardContainer').innerHTML = cardHtml;
                 attachResultEditable(sid);
 
-                // FIX #3: window.print() printed a blank page because of the old global print CSS.
                 document.getElementById('printReportBtn').onclick = function() {
                     const content = document.getElementById('reportCardContainer').innerHTML;
                     const win = window.open('', '_blank');
@@ -2158,7 +2144,7 @@
         });
 
         // ============================================================
-        //  APPLICATIONS (admin view)
+        //  APPLICATIONS (admin view) — WITH PRINT ADMISSION LETTER
         // ============================================================
         async function applicationsViewEnhanced() {
             var apps = schoolData.applications;
@@ -2185,10 +2171,14 @@
                         '">' + escapeHtml(app.status || 'pending') + '</span></div><p class="text-sm text-gray-600 mt-1"><i class="fas fa-envelope mr-1"></i> ' +
                         escapeHtml(app.email || '—') + '</p><p class="text-sm text-gray-600"><i class="fas fa-graduation-cap mr-1"></i> ' +
                         escapeHtml(app.desired_class || '—') + '</p></div><div class="p-4 flex flex-wrap gap-2 justify-between items-center"><button class="view-app-details text-blue-600 hover:text-blue-800 text-sm" data-id="' +
-                        app.id + '"><i class="fas fa-eye mr-1"></i> View Details</button><div class="flex gap-2">' +
-                        (app.status !== 'accepted' ? '<button class="accept-app-with-details bg-green-600 text-white px-3 py-1 rounded-full text-xs" data-id="' + app.id + '">Accept</button>' : '') +
-                        (app.status !== 'rejected' ? '<button class="reject-app bg-red-600 text-white px-3 py-1 rounded-full text-xs" data-id="' + app.id + '">Reject</button>' : '') +
-                        '<button class="delete-app bg-gray-500 text-white px-3 py-1 rounded-full text-xs" data-id="' + app.id + '">Delete</button></div></div></div>';
+                        app.id + '"><i class="fas fa-eye mr-1"></i> View Details</button><div class="flex gap-2 flex-wrap">' +
+                        (app.status !== 'accepted' ?
+                            '<button class="accept-app-with-details bg-green-600 text-white px-3 py-1 rounded-full text-xs" data-id="' + app.id + '">Accept</button>' : '') +
+                        (app.status !== 'rejected' ?
+                            '<button class="reject-app bg-red-600 text-white px-3 py-1 rounded-full text-xs" data-id="' + app.id + '">Reject</button>' : '') +
+                        '<button class="print-letter-btn bg-indigo-600 text-white px-3 py-1 rounded-full text-xs" data-id="' + app.id + '"><i class="fas fa-print mr-1"></i>Print Letter</button>' +
+                        '<button class="delete-app bg-gray-500 text-white px-3 py-1 rounded-full text-xs" data-id="' + app.id + '">Delete</button>' +
+                        '</div></div></div>';
                 }).join('');
                 attachAppEvents();
             }
@@ -2277,6 +2267,12 @@
                         }
                     });
                 });
+                // ✅ PRINT ADMISSION LETTER — RESTORED
+                document.querySelectorAll('.print-letter-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        printAdmissionLetter(this.dataset.id);
+                    });
+                });
             }
 
             document.getElementById('appSearch').addEventListener('input', renderApps);
@@ -2298,6 +2294,113 @@
             });
             renderApps();
         }
+
+        // ============================================================
+        //  ✅ PRINT ADMISSION LETTER — RESTORED
+        // ============================================================
+        async function printAdmissionLetter(appId) {
+            var app = schoolData.applications.find(function(a) { return a.id == appId; });
+            if (!app) { showToast('Application not found', true); return; }
+
+            var fd = app.form_data || {};
+            var official = app.official_data || {};
+
+            var studentName = app.full_name || (((fd.first_name || '') + ' ' + (fd.surname || '')).trim()) || 'N/A';
+            var admittedClass = official.admitted_class || app.desired_class || 'N/A';
+            var admissionNumber = official.admission_number || '____________';
+            var admissionDate = official.admission_date
+                ? new Date(official.admission_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+                : new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            var entranceScore = official.entrance_score || '—';
+            var interviewRemarks = official.interview_remarks || '';
+            var headName = official.authorized_signature_name || 'Head Master';
+            var headSig = official.authorized_signature_image || '';
+            var regName = official.register_signature_name || 'Register';
+            var regSig = official.register_signature_image || '';
+
+            var refNo = 'AIFW/' + new Date().getFullYear() + '/' + String(app.id).slice(-4).toUpperCase();
+            var parentName = fd.father_name || fd.guardian_name || fd.mother_name || 'Parent/Guardian';
+            var parentAddress = fd.parent_residence || fd.home_address || '';
+
+            var letterHtml = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Admission Letter - ' + escapeHtml(studentName) + '</title>'
+                + '<style>'
+                + 'body{font-family:"Times New Roman",serif;margin:0;padding:0.6in;color:#000;line-height:1.6;}'
+                + '.letter{max-width:800px;margin:0 auto;}'
+                + '.letterhead{text-align:center;border-bottom:3px double #0a2e2c;padding-bottom:12px;margin-bottom:24px;}'
+                + '.letterhead img{max-height:80px;display:block;margin:0 auto 6px;}'
+                + '.letterhead h1{margin:0;font-size:26px;color:#0a2e2c;letter-spacing:1px;}'
+                + '.letterhead h2{margin:2px 0 0;font-size:18px;color:#0a2e2c;font-weight:normal;}'
+                + '.letterhead p{margin:4px 0 0;font-size:13px;color:#444;}'
+                + '.ref-line{display:flex;justify-content:space-between;margin-bottom:20px;font-size:14px;}'
+                + '.salutation{margin-bottom:12px;font-size:15px;}'
+                + '.subject{font-weight:bold;text-decoration:underline;margin-bottom:16px;font-size:16px;}'
+                + '.body p{margin:10px 0;font-size:15px;text-align:justify;}'
+                + '.details-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;}'
+                + '.details-table th,.details-table td{border:1px solid #333;padding:8px 10px;text-align:left;}'
+                + '.details-table th{background:#f3f4f6;width:40%;}'
+                + '.requirements{margin:16px 0;padding-left:20px;}'
+                + '.requirements li{margin:6px 0;font-size:14px;}'
+                + '.signatures{margin-top:48px;display:flex;justify-content:space-between;gap:20px;}'
+                + '.sig-block{text-align:center;font-size:14px;flex:1;}'
+                + '.sig-block img{max-height:60px;display:block;margin:0 auto 4px;}'
+                + '.sig-line{border-top:1px solid #000;margin-top:6px;padding-top:4px;}'
+                + '.footer{margin-top:40px;text-align:center;font-size:11px;color:#555;border-top:1px solid #ccc;padding-top:10px;}'
+                + '@media print{.no-print{display:none;}}'
+                + '</style></head><body><div class="letter">'
+                + '<div class="letterhead">'
+                + '<img src="logo.jpg" alt="School Logo" onerror="this.style.display=\'none\'">'
+                + '<h1>AL-ISTIQAAMAH FLYING WINGS ACADEMY</h1>'
+                + '<h2>أكاديمية الاستقامة أجنحة التحليق</h2>'
+                + '<p>No. 10 Federal Government Layout, Samaru, Zaria, Kaduna State</p>'
+                + '<p>Tel: 08072550691 | 07025553245 | 08084816590</p>'
+                + '</div>'
+                + '<div class="ref-line"><span><strong>Ref:</strong> ' + refNo + '</span><span><strong>Date:</strong> ' + admissionDate + '</span></div>'
+                + '<div class="salutation">Dear ' + escapeHtml(parentName) + (parentAddress ? '<br>' + escapeHtml(parentAddress) : '') + ',</div>'
+                + '<div class="subject">RE: OFFER OF PROVISIONAL ADMISSION &ndash; ' + escapeHtml(studentName).toUpperCase() + '</div>'
+                + '<div class="body">'
+                + '<p>Assalamu Alaikum Warahmatullahi Wabarakatuh.</p>'
+                + '<p>We are pleased to inform you that following the successful completion of the entrance assessment and interview, your ward <strong>'
+                + escapeHtml(studentName) + '</strong> has been offered <strong>provisional admission</strong> into <strong>' + escapeHtml(admittedClass)
+                + '</strong> at Al-Istiqaamah Flying Wings Academy for the current academic session.</p>'
+                + '<p>The details of the admission are as follows:</p>'
+                + '<table class="details-table">'
+                + '<tr><th>Student Name</th><td>' + escapeHtml(studentName) + '</td></tr>'
+                + '<tr><th>Admission Number</th><td>' + escapeHtml(admissionNumber) + '</td></tr>'
+                + '<tr><th>Class Admitted Into</th><td>' + escapeHtml(admittedClass) + '</td></tr>'
+                + '<tr><th>Entrance Test Score</th><td>' + escapeHtml(String(entranceScore)) + '</td></tr>'
+                + '<tr><th>Date of Admission</th><td>' + admissionDate + '</td></tr>'
+                + (interviewRemarks ? '<tr><th>Interview Remarks</th><td>' + escapeHtml(interviewRemarks) + '</td></tr>' : '')
+                + '</table>'
+                + '<p>This offer is subject to the following conditions:</p>'
+                + '<ol class="requirements">'
+                + '<li>Payment of all applicable fees (acceptance, tuition and other charges) within two (2) weeks of this offer.</li>'
+                + '<li>Presentation of original birth certificate, previous school report and transfer certificate (where applicable).</li>'
+                + '<li>Procurement of the prescribed school uniform and other required materials from the school.</li>'
+                + '<li>Strict adherence to the rules and regulations of Al-Istiqaamah Flying Wings Academy.</li>'
+                + '</ol>'
+                + '<p>We congratulate you and your ward on this achievement and look forward to welcoming you into the Al-Istiqaamah Flying Wings family. May Allah (SWT) bless this new chapter of learning and growth.</p>'
+                + '<p>Wassalam.</p>'
+                + '</div>'
+                + '<div class="signatures">'
+                + '<div class="sig-block">' + (headSig ? '<img src="' + headSig + '" alt="Head Signature">' : '')
+                + '<div class="sig-line">' + escapeHtml(headName) + '<br><strong>Head Master</strong></div></div>'
+                + '<div class="sig-block">' + (regSig ? '<img src="' + regSig + '" alt="Register Signature">' : '')
+                + '<div class="sig-line">' + escapeHtml(regName) + '<br><strong>Register</strong></div></div>'
+                + '</div>'
+                + '<div class="footer">Al-Istiqaamah Flying Wings Academy &ndash; Faith &bull; Knowledge &bull; Leadership<br>This is a computer-generated letter. Retain this copy for your records.</div>'
+                + '</div>'
+                + '<div class="no-print" style="text-align:center;margin-top:20px;">'
+                + '<button onclick="window.print();" style="padding:10px 24px;background:#f59e0b;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer;margin-right:10px;">Print Letter</button>'
+                + '<button onclick="window.close();" style="padding:10px 24px;background:#6b7280;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">Close</button>'
+                + '</div>'
+                + '</body></html>';
+
+            var win = window.open('', '_blank');
+            if (!win) { showToast('Please allow pop-ups to print the letter', true); return; }
+            win.document.write(letterHtml);
+            win.document.close();
+        }
+        window.printAdmissionLetter = printAdmissionLetter;
 
         // ============================================================
         //  SIGNATURE PADS
@@ -2325,7 +2428,6 @@
                 registerSignaturePad.clear();
             }
 
-            // Guard so these are only bound once
             if (!window._sigButtonsBound) {
                 window._sigButtonsBound = true;
                 document.getElementById('clearSignatureBtn')?.addEventListener('click', function() { signaturePad && signaturePad.clear(); });
@@ -2898,7 +3000,6 @@
                 });
             }
 
-            // FIX #4: expose the loader so the *globally bound* edit-grade handler can call it.
             window._reloadSubjects = loadSubjects;
 
             document.getElementById('addSubjectGradeBtn').onclick = async function() {
@@ -2949,10 +3050,7 @@
         }
 
         // ============================================================
-        //  EDIT GRADE FORM — FIX #5: bound ONCE at top level.
-        //  Previously this was inside teacherResultEntry(), so every time the
-        //  teacher opened the view, another duplicate submit listener stacked up,
-        //  causing the same grade to be saved multiple times.
+        //  EDIT GRADE FORM (bound once)
         // ============================================================
         (function bindEditGradeFormOnce() {
             var form = document.getElementById('editGradeForm');
@@ -3614,7 +3712,6 @@
                 return;
             }
 
-            // Always refresh from server so the status is current
             showLoading(true);
             try { await refreshData(); } finally { showLoading(false); }
 
@@ -3667,7 +3764,7 @@
             await refreshData();
             renderLandingCarouselAndAnnouncement();
 
-            // Populate the class dropdown for the application form
+            // Populate class dropdown for the application form
             var appDesiredClass = document.getElementById('appDesiredClass');
             if (appDesiredClass) {
                 CLASSES.forEach(function(c) {
@@ -3677,7 +3774,7 @@
                 });
             }
 
-            // ---- Landing page buttons ----
+            // Landing page buttons
             document.getElementById('staffAdminBtn').onclick = function() { document.getElementById('loginModal').style.display = 'flex'; };
             document.getElementById('parentBtn').onclick = function() { document.getElementById('parentModal').style.display = 'flex'; };
             document.getElementById('adminSignupBtn').onclick = function() { document.getElementById('adminSignupModal').style.display = 'flex'; };
@@ -3685,7 +3782,7 @@
             document.getElementById('checkStatusBtn').onclick = function() { document.getElementById('statusCheckModal').style.display = 'flex'; };
             document.getElementById('publicApplyBtn').onclick = function() { document.getElementById('applicantAuthModal').style.display = 'flex'; };
 
-            // ---- Applicant auth tabs ----
+            // Applicant auth tabs
             document.getElementById('applicantLoginTab').addEventListener('click', function() {
                 document.getElementById('applicantLoginForm').style.display = 'block';
                 document.getElementById('applicantRegisterForm').style.display = 'none';
@@ -3720,7 +3817,7 @@
                 try { await applicantRegister(email, password, fullName); } catch (err) { showToast(err.message, true); }
             });
 
-            // ---- Auth form submissions ----
+            // Auth form submissions
             document.getElementById('adminLoginForm').onsubmit = async function(e) {
                 e.preventDefault();
                 try { await adminLogin(document.getElementById('adminEmail').value, document.getElementById('adminPassword').value); }
@@ -3749,7 +3846,7 @@
                 } catch (err) { showToast(err.message, true); }
             };
 
-            // ---- Sidebar / mobile ----
+            // Sidebar / mobile
             document.getElementById('mobileMenuToggle').onclick = function() {
                 document.getElementById('dynamicSidebar').classList.add('open');
                 document.getElementById('sidebarOverlay').classList.add('active');
@@ -3767,7 +3864,7 @@
             document.getElementById('prevSlide').addEventListener('click', prevSlide);
             document.getElementById('nextSlide').addEventListener('click', nextSlide);
 
-            // ---- Live clock ----
+            // Live clock
             function tick() {
                 var d = new Date();
                 document.getElementById('liveTime').innerText = d.toLocaleTimeString();
@@ -3778,4 +3875,4 @@
         });
     </script>
 </body>
-</html>
+                    </html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signing in… — Al-Istiqaamah Flying Wings Academy</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  body{font-family:system-ui,sans-serif;background:#0a2e2c;color:#fff;
+       display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}
+  .box{text-align:center;max-width:480px;padding:2rem}
+  .box i{font-size:2.5rem;color:#f59e0b;margin-bottom:1rem}
+  .err{color:#fca5a5} .ok{color:#86efac}
+</style>
+</head>
+<body>
+<div class="box" id="status">
+  <i class="fas fa-spinner fa-spin"></i>
+  <p>Signing you in…</p>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://kabqdeulwpfftbtwwouw.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_OIE7KFQ3quev7pQgKsvFXg_ralf9SMM';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const statusEl = document.getElementById('status');
+const fail = (msg) => { statusEl.innerHTML = '<i class="fas fa-triangle-exclamation"></i><p class="err">' + msg + '</p>'; };
+const ok   = (msg) => { statusEl.innerHTML = '<i class="fas fa-circle-check"></i><p class="ok">' + msg + '</p>'; };
+
+(async () => {
+    try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        if (error || !session) {
+            fail('Google sign-in could not be completed. Please try again.');
+            return;
+        }
+
+        const { error: rpcErr } = await supabaseClient.rpc('link_google_applicant');
+        if (rpcErr) {
+            console.error('link_google_applicant failed:', rpcErr);
+            fail('We could not link your Google account to an admission application. ' +
+                 'Please contact the school admission office.');
+            return;
+        }
+
+        ok('Signed in. Redirecting…');
+        setTimeout(() => { window.location.replace('/?applicant=1'); }, 700);
+    } catch (e) {
+        console.error(e);
+        fail('Google sign-in could not be completed. Please try again.');
+    }
+})();
+</script>
+</body>
+</html>

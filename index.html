@@ -236,11 +236,26 @@
         </div>
     </div>
 
-    <!-- Applicant Authentication Modal -->
+    <!-- ============================================================
+         Applicant Authentication Modal
+         [CHANGE #1] Google OAuth button added above login form.
+         ============================================================ -->
     <div id="applicantAuthModal" class="modal">
         <div class="modal-content relative" style="max-width:450px;">
             <span class="close-modal-x" onclick="closeModal('applicantAuthModal')">&times;</span>
             <h2 class="text-2xl font-bold mb-4">Applicant Portal</h2>
+
+            <!-- [CHANGE #1a] Google OAuth button — applicant only -->
+            <button type="button" id="googleApplicantBtn"
+                    class="w-full flex items-center justify-center gap-3 border-2 border-amber-500 bg-amber-500 hover:bg-amber-600 text-gray-900 font-semibold rounded-xl py-3 transition">
+                <i class="fab fa-google"></i>
+                Continue with Google — Admission Applicant
+            </button>
+            <div class="flex items-center my-3 text-xs text-gray-400">
+                <hr class="flex-1"><span class="px-2">OR</span><hr class="flex-1">
+            </div>
+            <!-- [/CHANGE #1a] -->
+
             <div class="flex gap-3 mb-4">
                 <button type="button" id="applicantLoginTab" class="flex-1 py-2 bg-amber-500 rounded-full text-white">Login</button>
                 <button type="button" id="applicantRegisterTab" class="flex-1 py-2 bg-gray-200 rounded-full">Register</button>
@@ -1154,6 +1169,92 @@
             closeModal('applicantAuthModal');
             openApplicationForm();
         }
+
+        // ============================================================
+        //  [CHANGE #2] GOOGLE OAUTH — Applicant only
+        // ============================================================
+        async function signInWithGoogle() {
+            const { error } = await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + '/auth/callback.html',
+                    queryParams: { prompt: 'select_account' }
+                }
+            });
+            if (error) {
+                console.error('Google OAuth error:', error.message);
+                showToast('Google sign-in could not be completed. Please try again.', true);
+            }
+            // On success Supabase redirects the browser automatically.
+        }
+        window.signInWithGoogle = signInWithGoogle;
+
+        // ============================================================
+        //  [CHANGE #3] POST-OAUTH / SESSION GUARD (Applicant)
+        //  Runs on page load AND whenever Supabase fires SIGNED_IN.
+        //  If the current session belongs to an applicant, it opens
+        //  the application form directly and hydrates currentUser.
+        // ============================================================
+        async function bootstrapApplicantSession() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) return;
+
+            const uid = session.user.id;
+
+            // Look up the profile row keyed to this auth uid.
+            const { data: profile, error } = await supabaseClient
+                .from('profiles')
+                .select('id, full_name, email, role')
+                .eq('id', uid)
+                .maybeSingle();
+
+            if (error || !profile) return;
+            if (profile.role !== 'applicant') return;
+
+            // Already hydrated? Avoid re-opening the modal.
+            if (currentUser && currentUser.id === profile.id && currentUser.role === 'applicant') return;
+
+            currentUser = {
+                id: profile.id,
+                full_name: profile.full_name,
+                email: profile.email,
+                role: 'applicant',
+                source: 'profile'
+            };
+
+            await refreshData();
+            closeModal('applicantAuthModal');
+            closeModal('loginModal');
+            document.getElementById('landingPage').style.display = 'block';
+            document.getElementById('appContainer').classList.add('hidden');
+            showToast('Signed in as ' + (profile.full_name || profile.email));
+            openApplicationForm();
+        }
+
+        // React to auth state changes (covers the OAuth return trip).
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+                setTimeout(bootstrapApplicantSession, 0);
+            }
+            if (event === 'SIGNED_OUT') {
+                if (currentUser && currentUser.role === 'applicant') {
+                    currentUser = null;
+                }
+            }
+        });
+
+        // ============================================================
+        //  [CHANGE #4] APPLICANT LOGOUT
+        // ============================================================
+        async function logoutApplicant() {
+            await supabaseClient.auth.signOut();
+            currentUser = null;
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('landingPage').style.display = 'block';
+            renderLandingCarouselAndAnnouncement();
+            showToast('Signed out');
+        }
+        window.logoutApplicant = logoutApplicant;
 
         async function openApplicationForm() {
             if (!currentUser || currentUser.role !== 'applicant') {
@@ -3915,6 +4016,10 @@
             document.getElementById('checkStatusBtn').onclick = function() { document.getElementById('statusCheckModal').style.display = 'flex'; };
             document.getElementById('publicApplyBtn').onclick = function() { document.getElementById('applicantAuthModal').style.display = 'flex'; };
 
+            // [CHANGE #5] Wire the Google applicant button
+            document.getElementById('googleApplicantBtn')
+                ?.addEventListener('click', signInWithGoogle);
+
             // Applicant auth tabs
             document.getElementById('applicantLoginTab').addEventListener('click', function() {
                 document.getElementById('applicantLoginForm').style.display = 'block';
@@ -3991,7 +4096,16 @@
                 document.getElementById('sidebarOverlay').classList.remove('active');
             };
 
-            document.getElementById('logoutBtn').onclick = function() { logoutUser(); };
+            // [CHANGE #6] Logout button branches on role:
+            // applicants must call Supabase signOut(); everyone else uses
+            // the existing client-only logoutUser().
+            document.getElementById('logoutBtn').onclick = function() {
+                if (currentUser && currentUser.role === 'applicant') {
+                    logoutApplicant();
+                } else {
+                    logoutUser();
+                }
+            };
             document.getElementById('prevSlide').addEventListener('click', prevSlide);
             document.getElementById('nextSlide').addEventListener('click', nextSlide);
 
@@ -4002,7 +4116,12 @@
             }
             tick();
             setInterval(tick, 1000);
+
+            // [CHANGE #7] On page load, if the user just returned from Google
+            // OAuth (/auth/callback.html), a Supabase session already exists.
+            // This picks it up and opens the applicant form automatically.
+            setTimeout(bootstrapApplicantSession, 0);
         });
     </script>
 </body>
-    </html>
+                    </html>

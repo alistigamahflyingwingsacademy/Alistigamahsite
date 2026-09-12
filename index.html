@@ -442,6 +442,7 @@
                     <option value="der">DER</option>
                     <option value="dprpa">DPRPA</option>
                     <option value="dg_ceo">DG/CEO</option>
+                    <option value="management_committee">Management Committee</option>
                 </select>
                 <input id="staffSection" placeholder="Section" class="border p-3 w-full mb-2 rounded-xl" />
                 <input id="staffAssignedClass" placeholder="Assigned Class" class="border p-3 w-full mb-2 rounded-xl" />
@@ -585,7 +586,8 @@
         const SUPABASE_URL = 'https://kabqdeulwpfftbtwwouw.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_OIE7KFQ3quev7pQgKsvFXg_ralf9SMM';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const PAYSTACK_PUBLIC_KEY = 'pk_test_d4f8b2c1a3e5f6b7c8d9e0f1a2b3c4d5e6f7a8b9'; // <-- replace me
+        // ⚠️ Replace with your real Paystack public key before going live.
+        const PAYSTACK_PUBLIC_KEY = 'pk_test_d4f8b2c1a3e5f6b7c8d9e0f1a2b3c4d5e6f7a8b9';
 
         const CLASSES = ["Pre-Nursery", "Nursery 1", "Nursery 2", "Nursery 3", "Primary 1", "Primary 2", "Primary 3",
             "Primary 4", "Primary 5", "Primary 6", "JSS 1", "JSS 2", "JSS 3", "SS 1", "SS 2", "SS 3"
@@ -774,8 +776,7 @@
         }
 
         // ============================================================
-        //  ADMISSION LETTER — Standalone function (uses logo.jpg & stamp.png
-        //  from the same folder as this HTML file)
+        //  ADMISSION LETTER
         // ============================================================
         function printAdmissionLetter(application) {
             var official = application.official_data || {};
@@ -1126,8 +1127,11 @@
             closeModal('adminSignupModal');
         }
 
-        function logoutUser() {
+        // [CHANGE #3] Now actually signs out of Supabase so the session
+        // doesn't survive in localStorage on shared computers.
+        async function logoutUser() {
             if (carouselInterval) clearInterval(carouselInterval);
+            try { await supabaseClient.auth.signOut(); } catch (e) { /* ignore */ }
             currentUser = null;
             document.getElementById('appContainer').classList.add('hidden');
             document.getElementById('landingPage').style.display = 'block';
@@ -1171,13 +1175,17 @@
         }
 
         // ============================================================
-        //  [CHANGE #2] GOOGLE OAUTH — Applicant only
+        //  GOOGLE OAUTH — Applicant only
         // ============================================================
+        // [CHANGE #4] Redirect target now points to the current page
+        // instead of the non-existent /auth/callback.html.
+        // Remember to allow-list this URL in Supabase → Auth → URL Config.
         async function signInWithGoogle() {
+            const cleanUrl = window.location.href.split('#')[0].split('?')[0];
             const { error } = await supabaseClient.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: window.location.origin + '/auth/callback.html',
+                    redirectTo: cleanUrl,
                     queryParams: { prompt: 'select_account' }
                 }
             });
@@ -1185,15 +1193,11 @@
                 console.error('Google OAuth error:', error.message);
                 showToast('Google sign-in could not be completed. Please try again.', true);
             }
-            // On success Supabase redirects the browser automatically.
         }
         window.signInWithGoogle = signInWithGoogle;
 
         // ============================================================
-        //  [CHANGE #3] POST-OAUTH / SESSION GUARD (Applicant)
-        //  Runs on page load AND whenever Supabase fires SIGNED_IN.
-        //  If the current session belongs to an applicant, it opens
-        //  the application form directly and hydrates currentUser.
+        //  POST-OAUTH / SESSION GUARD (Applicant)
         // ============================================================
         async function bootstrapApplicantSession() {
             const { data: { session } } = await supabaseClient.auth.getSession();
@@ -1201,7 +1205,6 @@
 
             const uid = session.user.id;
 
-            // Look up the profile row keyed to this auth uid.
             const { data: profile, error } = await supabaseClient
                 .from('profiles')
                 .select('id, full_name, email, role')
@@ -1211,7 +1214,6 @@
             if (error || !profile) return;
             if (profile.role !== 'applicant') return;
 
-            // Already hydrated? Avoid re-opening the modal.
             if (currentUser && currentUser.id === profile.id && currentUser.role === 'applicant') return;
 
             currentUser = {
@@ -1231,7 +1233,6 @@
             openApplicationForm();
         }
 
-        // React to auth state changes (covers the OAuth return trip).
         supabaseClient.auth.onAuthStateChange((event, session) => {
             if (event === 'SIGNED_IN' && session) {
                 setTimeout(bootstrapApplicantSession, 0);
@@ -1243,17 +1244,9 @@
             }
         });
 
-        // ============================================================
-        //  [CHANGE #4] APPLICANT LOGOUT
-        // ============================================================
-        async function logoutApplicant() {
-            await supabaseClient.auth.signOut();
-            currentUser = null;
-            document.getElementById('appContainer').classList.add('hidden');
-            document.getElementById('landingPage').style.display = 'block';
-            renderLandingCarouselAndAnnouncement();
-            showToast('Signed out');
-        }
+        // [CHANGE #3] Applicant logout is now an alias for the shared
+        // logoutUser() (which already calls supabaseClient.auth.signOut()).
+        const logoutApplicant = logoutUser;
         window.logoutApplicant = logoutApplicant;
 
         async function openApplicationForm() {
@@ -1446,6 +1439,9 @@
                 'Dashboard': dashboardView,
                 'Students': studentsViewEditable,
                 'Enroll': enrollViewModern,
+                // [CHANGE #5] Teachers still see Results but with admin-mode ON,
+                // and enhancedResultView() now restricts the student list to
+                // their own assigned class.
                 'Results': enhancedResultView,
                 'Fees': feeManagementEnhanced,
                 'Unified Staff': unifiedStaffList,
@@ -2011,7 +2007,9 @@
                 document.getElementById('payrollAddModal').style.display = 'flex';
             });
 
-            document.getElementById('payrollAddForm').addEventListener('submit', async function(e) {
+            // [CHANGE #2] onsubmit = replaces any previous handler instead of
+            // stacking a new one every time the payroll view is opened.
+            document.getElementById('payrollAddForm').onsubmit = async function(e) {
                 e.preventDefault();
                 const editId = document.getElementById('payrollEditId').value;
                 const employee_name = document.getElementById('payrollEmpName').value.trim();
@@ -2043,7 +2041,7 @@
                     closeModal('payrollAddModal');
                     renderTable();
                 } catch (err) { showToast(err.message, true); } finally { showLoading(false); }
-            });
+            };
 
             document.getElementById('printPayrollBtn').addEventListener('click', function() {
                 const printContent = document.querySelector('.payroll-table').outerHTML;
@@ -2158,7 +2156,13 @@
                 var section = document.getElementById('resultSectionFilter').value,
                     classVal = document.getElementById('resultClassFilter').value,
                     search = document.getElementById('resultSearch').value.toLowerCase();
+                // [CHANGE #5b] Teachers only see their own class.
+                var teacherClass = currentUser.role === 'teacher'
+                    ? (currentUser.assigned_class ||
+                       (schoolData.teachers.find(function(t){ return t.id === currentUser.id; }) || {}).assigned_class)
+                    : null;
                 var filtered = students.filter(function(s) {
+                    if (teacherClass && s.academic_class !== teacherClass) return false;
                     return (section === 'all' || s.section === section) &&
                         (classVal === 'all' || s.academic_class === classVal) &&
                         (s.name.toLowerCase().includes(search) || (s.reg_number || '').toLowerCase().includes(search));
@@ -2634,7 +2638,6 @@
                         }
                     });
                 });
-                // ✅ PRINT ADMISSION LETTER — pass the full application object
                 document.querySelectorAll('.print-letter-btn').forEach(function(btn) {
                     btn.addEventListener('click', function() {
                         var app = schoolData.applications.find(function(a) { return a.id == this.dataset.id; }.bind(this));
@@ -3770,26 +3773,45 @@
             loadResult();
         }
 
+        // ============================================================
+        //  PARENT PAYMENT PORTAL — [CHANGE #7]
+        //  Parents can now choose term and year.
+        // ============================================================
         async function parentPaymentPortalView() {
             var studentId = currentUser.studentId;
             var student = schoolData.students.find(function(s) { return s.id == studentId; });
             if (!student) { showToast('Student not found', true); return; }
-            var currentYear = new Date().getFullYear(), term = '1st Term';
+
+            var currentYear = new Date().getFullYear();
+            var term = (window._parentSelectedTerm || '1st Term');
+            var year = (window._parentSelectedYear || currentYear);
             var termFee = student.term_fee || 30000;
+
             var paid = schoolData.payments.filter(function(p) {
-                return p.student_id == studentId && p.term === term && p.year == currentYear;
+                return p.student_id == studentId && p.term === term && p.year == year;
             }).reduce(function(a, b) { return a + (b.amount || 0); }, 0);
             var due = Math.max(0, termFee - paid);
             var pendingTransfer = schoolData.bankTransfers.find(function(bt) {
-                return bt.student_id == studentId && bt.term === term && bt.year == currentYear && bt.status === 'pending';
+                return bt.student_id == studentId && bt.term === term && bt.year == year && bt.status === 'pending';
             });
             var proofUploaded = !!pendingTransfer;
             var proofUrl = pendingTransfer ? pendingTransfer.proof_url : null;
 
             var html =
-                '<div class="card p-6 max-w-2xl mx-auto bg-white rounded-2xl shadow"><h2 class="text-2xl font-bold text-emerald-800 mb-4">Fee Payment Portal</h2><div class="bg-gray-50 p-5 rounded-2xl mb-6"><p><strong>Student:</strong> ' +
+                '<div class="card p-6 max-w-2xl mx-auto bg-white rounded-2xl shadow">' +
+                '<h2 class="text-2xl font-bold text-emerald-800 mb-4">Fee Payment Portal</h2>' +
+                '<div class="flex gap-2 mb-4 flex-wrap items-center">' +
+                  '<label class="text-sm font-medium text-gray-700">Term:</label>' +
+                  '<select id="parentTermSelect" class="border p-2 rounded">' +
+                    TERMS.map(function(t){ return '<option' + (t === term ? ' selected' : '') + '>' + t + '</option>'; }).join('') +
+                  '</select>' +
+                  '<label class="text-sm font-medium text-gray-700">Year:</label>' +
+                  '<input type="number" id="parentYearSelect" value="' + year + '" class="border p-2 rounded w-28">' +
+                  '<button id="parentTermApply" class="apply-btn px-4 py-2 rounded">Apply</button>' +
+                '</div>' +
+                '<div class="bg-gray-50 p-5 rounded-2xl mb-6"><p><strong>Student:</strong> ' +
                 escapeHtml(student.name) + ' (' + escapeHtml(student.reg_number) + ')</p><p><strong>Class:</strong> ' +
-                escapeHtml(student.academic_class || 'N/A') + '</p><p><strong>Term:</strong> ' + term + ' ' + currentYear +
+                escapeHtml(student.academic_class || 'N/A') + '</p><p><strong>Term:</strong> ' + term + ' ' + year +
                 '</p><hr class="my-3"><p><strong>Term Fee:</strong> ₦' + termFee.toLocaleString() + '</p><p><strong>Paid:</strong> ₦' +
                 paid.toLocaleString() + '</p><p><strong>Outstanding Balance:</strong> ₦' + due.toLocaleString() +
                 '</p><p><span class="status-' + (due <= 0 ? 'paid' : paid > 0 ? 'partial' : 'unpaid') + '">' +
@@ -3808,6 +3830,12 @@
             html += '</div>';
             document.getElementById('mainContent').innerHTML = html;
 
+            document.getElementById('parentTermApply').addEventListener('click', function() {
+                window._parentSelectedTerm = document.getElementById('parentTermSelect').value;
+                window._parentSelectedYear = parseInt(document.getElementById('parentYearSelect').value) || currentYear;
+                parentPaymentPortalView();
+            });
+
             if (due > 0) {
                 document.getElementById('parentPayNowBtn')?.addEventListener('click', function() {
                     var handler = PaystackPop.setup({
@@ -3816,7 +3844,7 @@
                         amount: due * 100,
                         callback: async function(response) {
                             await supabaseClient.from('payments').insert([{
-                                student_id: studentId, amount: due, term: term, year: currentYear,
+                                student_id: studentId, amount: due, term: term, year: year,
                                 payment_method: 'paystack_online', payment_reference: response.reference, payment_status: 'success'
                             }]);
                             await refreshData(); parentPaymentPortalView();
@@ -3839,7 +3867,7 @@
                         } else {
                             await supabaseClient.from('bank_transfers').insert([{
                                 student_id: studentId, proof_url: pub.data.publicUrl, status: 'pending',
-                                amount: termFee, term: term, year: currentYear
+                                amount: termFee, term: term, year: year
                             }]);
                         }
                         await refreshData(); showToast('Bank proof uploaded. Admin will verify.');
@@ -3981,7 +4009,6 @@
             html += '</div>';
             resultDiv.innerHTML = html;
 
-            // Bind print buttons for accepted applications (passes full application object)
             resultDiv.querySelectorAll('.print-letter-from-status').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     var app = schoolData.applications.find(function(a) { return a.id == this.dataset.id; }.bind(this));
@@ -3998,7 +4025,6 @@
             await refreshData();
             renderLandingCarouselAndAnnouncement();
 
-            // Populate class dropdown for the application form
             var appDesiredClass = document.getElementById('appDesiredClass');
             if (appDesiredClass) {
                 CLASSES.forEach(function(c) {
@@ -4008,7 +4034,6 @@
                 });
             }
 
-            // Landing page buttons
             document.getElementById('staffAdminBtn').onclick = function() { document.getElementById('loginModal').style.display = 'flex'; };
             document.getElementById('parentBtn').onclick = function() { document.getElementById('parentModal').style.display = 'flex'; };
             document.getElementById('adminSignupBtn').onclick = function() { document.getElementById('adminSignupModal').style.display = 'flex'; };
@@ -4016,11 +4041,9 @@
             document.getElementById('checkStatusBtn').onclick = function() { document.getElementById('statusCheckModal').style.display = 'flex'; };
             document.getElementById('publicApplyBtn').onclick = function() { document.getElementById('applicantAuthModal').style.display = 'flex'; };
 
-            // [CHANGE #5] Wire the Google applicant button
             document.getElementById('googleApplicantBtn')
                 ?.addEventListener('click', signInWithGoogle);
 
-            // Applicant auth tabs
             document.getElementById('applicantLoginTab').addEventListener('click', function() {
                 document.getElementById('applicantLoginForm').style.display = 'block';
                 document.getElementById('applicantRegisterForm').style.display = 'none';
@@ -4096,15 +4119,9 @@
                 document.getElementById('sidebarOverlay').classList.remove('active');
             };
 
-            // [CHANGE #6] Logout button branches on role:
-            // applicants must call Supabase signOut(); everyone else uses
-            // the existing client-only logoutUser().
+            // [CHANGE #3c] Single shared logout handler.
             document.getElementById('logoutBtn').onclick = function() {
-                if (currentUser && currentUser.role === 'applicant') {
-                    logoutApplicant();
-                } else {
-                    logoutUser();
-                }
+                logoutUser();
             };
             document.getElementById('prevSlide').addEventListener('click', prevSlide);
             document.getElementById('nextSlide').addEventListener('click', nextSlide);
@@ -4117,11 +4134,8 @@
             tick();
             setInterval(tick, 1000);
 
-            // [CHANGE #7] On page load, if the user just returned from Google
-            // OAuth (/auth/callback.html), a Supabase session already exists.
-            // This picks it up and opens the applicant form automatically.
             setTimeout(bootstrapApplicantSession, 0);
         });
     </script>
 </body>
-                    </html>
+    </html>
